@@ -1,0 +1,46 @@
+body {
+  display: flex;
+  flex-direction: row;
+  padding: 8px;
+}
+
+nav {
+  margin-right: 48px;
+}
+
+nav > ul {
+  list-style-type: none;
+}
+
+nav > ul > li {
+  font-size: 20px;
+  margin: 32px 0;
+}
+
+@media screen and (max-width: 425px) {
+  body {
+    display: flex;
+    flex-direction: column;
+  }
+  nav > ul {
+    display: flex;
+    justify-content: space-between;
+    list-style-type: none;
+    margin: 0;
+  }
+  nav > ul > li {
+    text-align: center;
+    padding: 10px;
+    margin: 0;
+    font-size: 20px;
+  }
+}
+
+a {
+  color: inherit;
+}
+
+time {
+  font-weight: 600;
+}
+
