@@ -2,6 +2,7 @@ body {
   display: flex;
   flex-direction: row;
   padding: 8px;
+  margin: 16px;
 }
 
 nav {
@@ -21,12 +22,19 @@ nav > ul > li {
   body {
     display: flex;
     flex-direction: column;
+    margin: 8px;
   }
+
+  nav {
+    margin-right: 0;
+  }
+
   nav > ul {
     display: flex;
     justify-content: space-between;
     list-style-type: none;
     margin: 0;
+    padding: 0;
   }
   nav > ul > li {
     text-align: center;
