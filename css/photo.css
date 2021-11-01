@@ -7,13 +7,12 @@ ul {
   grid-template-columns: repeat(3, 1fr);
   grid-auto-rows: 256px;
   row-gap: 48px;
+  column-gap: 8px;
 }
 
 @media screen and (max-width: 425px) {
   .grid-photo {
-    display: grid;
     grid-template-columns: repeat(1, 1fr);
-    grid-auto-rows: 256px;
     row-gap: 72px;
   }
 }
@@ -27,6 +26,7 @@ ul {
 .grid-photo > figure > a > img {
   width: 100%;
   height: 100%;
+  border-radius: 4px;
 }
 
 .grid-photo > figure {
