@@ -3,7 +3,8 @@ body {
   flex-direction: row;
   justify-content: center;
   padding: 8px;
-  margin: 16px;
+  margin: 16px auto;
+  max-width: 1024px;
 }
 
 nav {
