@@ -4,7 +4,10 @@ body {
   justify-content: center;
   padding: 8px;
   margin: 16px auto;
-  max-width: 1024px;
+}
+
+main {
+  width: 876px;
 }
 
 nav {
@@ -25,6 +28,10 @@ nav > ul > li {
     display: flex;
     flex-direction: column;
     margin: 8px;
+  }
+
+  main {
+    width: 100%;
   }
 
   nav {
