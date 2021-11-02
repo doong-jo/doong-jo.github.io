@@ -3,11 +3,10 @@ body {
   flex-direction: row;
   justify-content: center;
   padding: 8px;
-  margin: 16px auto;
 }
 
 main {
-  width: 876px;
+  width: 900px;
 }
 
 nav {
