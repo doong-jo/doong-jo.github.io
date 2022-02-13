@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Sungdong Jo | Frontend Engineer</title>
+    <meta name="author" content="Sungdong Jo" />
+    <meta name="description" content="about doong-jo" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="../css/common.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li>
+          <a href="/tech">Blog</a>
+        </li>
+        <li>
+          <a href="https://github.com/doong-jo" target="_blank">GitHub</a>
+        </li>
+        <li>
+          <a href="/about.html">About</a>
+        </li>
+      </ul>
+    </nav>
+    <main>
+      <h1>Sungdong Jo</h1>
+      <h2>Skills</h2>
+      <h3>Development</h3>
+      <ul>
+        <li>Javascript</li>
+        <li>HTML</li>
+        <li>CSS</li>
+        <li>Typescript</li>
+        <li>React</li>
+      </ul>
+      <h3>Testing, Monitoring</h3>
+      <ul>
+        <li>Jest</li>
+        <li>Cypress</li>
+        <li>Storybook</li>
+      </ul>
+      <h3>Build, Deploy</h3>
+      <ul>
+        <li>npm package</li>
+        <li>GitHub Actions</li>
+        <li>Docker</li>
+        <li>AWS (S3, EC2, route53)</li>
+      </ul>
+      <h2>Carrer</h2>
+      <h3><time datetime="2021">2021-present</time>. Banksalad. Frontend Engineer.</h3>
+      <p>웹 개발자 동료가 사용하는 공통 라이브러리 또는 백오피스 툴을 개발해 팀의 생산성을 높이는 데 집중하고 있습니다.</p>
+      <ul>
+        <li>gRPC IDL 명세(protobuf) 패키지 작성</li>
+        <ul>
+          <li>(Do) 사내에서 웹팀을 제외하고 많은 개발팀들이 IDL 명세를 각각의 플랫폼에 맞게 자동으로 generate 하고 이를 활용하는 상황이었으나 웹팀에서는 개발자가 손수 IDL 명세를 코드로 옮겨가며 사용하고 있었습니다. web에서도 사용할 수 있게 자동으로 생성하고 쉽게 명세를 import하여 사용하게끔 개선하였습니다.</li>
+          <li>(Skill) Typescript, npm, ts-proto</li>
+          <li>(Result) IDL 명세 자동화에 따른 웹 구성원의 생산성 향상</li>
+        </ul>
+        <li>네이티브 앱과 호환성을 위한 Javascript Interface 개발</li>
+        <ul>
+          <li>
+            <p>(Do) 네이트브 앱과 호환하는 인터페이스는는 필연적으로 네이티브 앱과 의존성이 존재할 수 밖에 없습니다. 기존에는 웹에 App-like한 UI가 부족하여 네이티브 UI 의존성이 높아 웹에서 자유로운 UI 핸들링, 다양한 상황에서 나오는 엣지 케이스들에 대한 대응이 힘든 상태였습니다.</p>
+            <p>따라서 네이티브에 최대한 의존하지 않으면서 웹으로 대체될 수 없는 최소한의 네이티브 기능만을 통신하는 형태로 가고자 하였습니다. 이 내용의 일환으로 웹뷰를 핸들링하는데 있어 필요한 기능을 "전체화면을 차지하는 웹뷰", "네이티브의 백버튼 핸들링" 두가지로 좁혔고 이 과정에서 필요한 디자인 시스템 UI도 함께 개발하여 의존성을 최대한 끊어내고자 하였습니다.</p>
+            <p>더해서 인터페이스는 미리 만들어져 있지 않으면 구버전의 사용자는 쓰기 어려운 점을 감안하여 서비스에서 필요할 니즈를 먼저 파악하고 선제적으로 개발 하였습니다.</p>
+          </li>
+          <li>(Skill) React, Typescript, Storybook</li>
+          <li>(Result) 웹 구성원들이 App-like한 웹뷰를 만드는 데 있어 인터페이스로 인한 제한과 병목이 줄어 앞으로의 개발 생산성 향상</li>
+        </ul>
+        <li>뱅크샐러드 앱 내 부동산 관련 웹 서비스 개발 및 운영</li>
+        <ul>
+          <li>(Do) 내 부동산 섹션 화면 개선</li>
+          <li>(Do) 주택청약 관련 기능 개발</li>
+          <li>(Skill) React, Typescript, emotion</li>
+          <li>
+            <p>(Result) 부동산 상세, 청약 진입 수가 크게 증가(android: +992.1%, ios: +790.8%), 부동산 섹션 상세를 개발함으로써 접근성을 성공적으로 개선함</p>
+            <i>
+              <p>
+                실험 기간: 21.12.21 ~ 22.1.3, 실험 모수: android: 106753 vs 106606, ios: 116782 vs 117214
+              </p>
+            </i>
+        </ul>
+      </ul>
+      <h3>
+        <time datetime="2020">2020-2021</time>. 
+        MyRealTrip. Frontend Engineer.
+      </h3>
+      <p>마이리얼트립 숙소 FE를 담당하였습니다. 코드와 디자인의 일관성에 대해 관심을 갖다가 Monorepo, Design System을 접하며 프론트엔드 아키텍쳐에 관심을 갖게 되었습니다.</p>
+      <ul>
+        <li>숙소 도메인 서비스 개편</li>
+        <ul>
+          <li>(Do) 메인/상품 상세/옵션 상세/숙소 예약/결제/예약 상세 flow의 화면 개발</li>
+          <li>(Do)상품 결제를 위한 각 PG사 연동</li>
+          <li>(Do)브라우저 호환성(IE 11) 대응 작업</li>
+          <li>(Skill) React, Typescript, Webpack, Ruby On Rails, Recoil, Context API, emotion</li>
+          <li>(Result) <a href="https://www.myrealtrip.com/accommodations">마이리얼트립 숙소</a></li>
+          <li>(Result) 숙소 예약 취소와 재고 관리를 입점사와 사내 담당자가 수동으로 관리하던 사항이 자동화되었음</li>
+        </ul>
+        <li>디자인 시스템 구축 및 개발</li>
+        <ul>
+          <li>(Do) 디자인팀과 협업하여 디자인팀 내에서만 사용하던 시스템을 실제 FE 영역의 컴포넌트로 구현</li>
+          <li>(Do) 정적 아이콘 관리 백오피스 개발</li>
+          <li>(Skill) React, Typescript, Rollup, emotion</li>
+          <li>(Result) 디자인 일관성 개선</li>
+        </ul>
+        <li>
+          <a href="https://medium.com/myrealtrip-product/monorepo%EB%A1%9C-%EB%8C%80%EA%B7%9C%EB%AA%A8-react-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B4%80%EB%A6%AC%ED%95%98%EA%B8%B0-d12b65340306">Monorepo로 대규모 React 프로젝트 관리</a>
+        </li>
+      </ul>
+      <h3>
+        <time datetime="2019">2019</time>. NAVER Connect Foundation. Boostcamp, Web Fullstack
+      </h3>
+      <p>
+        개발자의 지속 가능한 성장을 위한 학습 과정 수료 (<a href="https://boostcamp.connect.or.kr/" target="_blank">자세히 보기</a>)
+      </p>
+      <h3><time datetime="2013">2013-2019</time>. Sejong University, Digital Contents.</h3>
+      <p>
+        Computer Science 커리큘럼 이수
+      </p>
+      
+    </main>
+    <script src="js/common.js"></script>
+  </body>
+</html>
