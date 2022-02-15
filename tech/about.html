@@ -50,11 +50,12 @@
       <h3><time datetime="2021">2021-present</time>. Banksalad. Frontend Engineer.</h3>
       <p>웹 개발자 동료가 사용하는 공통 라이브러리 또는 백오피스 툴을 개발해 팀의 생산성을 높이는 데 집중하고 있습니다.</p>
       <ul>
-        <li>gRPC IDL 명세(protobuf) 패키지 작성</li>
+        <li>뱅크샐러드 웹 Monrepo migration (-ing)</li>
         <ul>
-          <li>(Do) 사내에서 웹팀을 제외하고 많은 개발팀들이 IDL 명세를 각각의 플랫폼에 맞게 자동으로 generate 하고 이를 활용하는 상황이었으나 웹팀에서는 개발자가 손수 IDL 명세를 코드로 옮겨가며 사용하고 있었습니다. web에서도 사용할 수 있게 자동으로 생성하고 쉽게 명세를 import하여 사용하게끔 개선하였습니다.</li>
-          <li>(Skill) Typescript, npm, ts-proto</li>
-          <li>(Result) IDL 명세 자동화에 따른 웹 구성원의 생산성 향상</li>
+          <li>(Do) 백오피스 서비스 부터 monrepo로 전환하고 있으며 실제 사용자를 만나는 서비스도 이전을 계획중</li>
+          <li>(Skill) npm workspace, turborepo(TBD)</li>
+          <li>(Result) 웹팀의 코드 베이스 재사용성 및 일관성 개선</li>
+          <li>(Result) 공통의 이슈 해결 용이</li>
         </ul>
         <li>네이티브 앱과 호환성을 위한 Javascript Interface 개발</li>
         <ul>
@@ -84,6 +85,18 @@
           <li>(Do) 뱅크샐러드 제품에 사용되는 디자인 시스템을 디자이너와 함께 구현</li>
           <li>(Skill) React, Typescript, Rollup, emotion, tailwindcss</li>
           <li>(Result) 디자인 일관성 개선</li>
+        </ul>
+        <li>다크모드 적용</li>
+        <ul>
+          <li>(Do) 다크모드 스타일을 불러오기 전 flicker 현상 방지 (렌더링 블러킹)</li>
+          <li>(Do) 다크모드 적용이 어려운 페이지는 filter 속성을 이용</li>
+          <li>(Result) 웹 접근성 향상</li>
+        </ul>
+        <li>gRPC IDL 명세(protobuf) 패키지 작성</li>
+        <ul>
+          <li>(Do) 사내에서 웹팀을 제외하고 많은 개발팀들이 IDL 명세를 각각의 플랫폼에 맞게 자동으로 generate 하고 이를 활용하는 상황이었으나 웹팀에서는 개발자가 손수 IDL 명세를 코드로 옮겨가며 사용하고 있었습니다. web에서도 사용할 수 있게 자동으로 생성하고 쉽게 명세를 import하여 사용하게끔 개선하였습니다.</li>
+          <li>(Skill) Typescript, npm, ts-proto</li>
+          <li>(Result) IDL 명세 자동화에 따른 웹 구성원의 생산성 향상</li>
         </ul>
       </ul>
       <h3>
