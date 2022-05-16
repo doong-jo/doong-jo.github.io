@@ -1,5 +1,5 @@
 {
     "componentChunkName": "component---src-pages-posts-you-dont-need-a-ui-framework-mdx",
     "path": "/posts/you_dont_need_a_ui_framework/",
-    "result": {"pageContext":{"frontmatter":{"title":"[번역] 당신은 UI 프레임워크가 필요하지 않습니다.","description":"UI 프레임워크에 손을 뻗어 많은 시간을 절약하고 전문적인 앱을 빠르게 만들 수 있기를 희망합니다. 하지만 기대와 달리, 대부분 이런 방법으로 해결되지 않습니다.","keywords":"조성동,doong-jo,프론트엔드,개발,개발 블로그,기술 블로그,frontend,tech,blog,developer,javascript,css,html,typescript,react,ui,framework","author":"doong-jo","date":"2022-05-17","image":"https://doong-jo.github.io/og/front-end_testing.png","url":"https://doong-jo.github.io/posts/you_dont_need_a_ui_framework"}}},
+    "result": {"pageContext":{"frontmatter":{"title":"[번역] 당신은 UI 프레임워크가 필요하지 않습니다.","description":"UI 프레임워크에 손을 뻗어 많은 시간을 절약하고 전문적인 앱을 빠르게 만들 수 있기를 희망합니다. 하지만 기대와 달리, 대부분 이런 방법으로 해결되지 않습니다.","keywords":"조성동,doong-jo,프론트엔드,개발,개발 블로그,기술 블로그,frontend,tech,blog,developer,javascript,css,html,typescript,react,ui,framework","author":"doong-jo","date":"2022-05-17","image":"https://doong-jo.github.io/og/doong-jo.png","url":"https://doong-jo.github.io/posts/you_dont_need_a_ui_framework"}}},
     "staticQueryHashes": []}
