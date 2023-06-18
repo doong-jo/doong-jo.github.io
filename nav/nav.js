@@ -1,6 +1,15 @@
-async function createNav() {
-  const navData = await (await fetch("../resources/data/nav.json")).json();
+const navData = [
+  {
+    href: "/index.html",
+    textContent: "Post",
+  },
+  {
+    href: "/about.html",
+    textContent: "About",
+  },
+];
 
+function createNav() {
   const navElement = document.querySelector("nav");
   const ulElement = document.querySelector("nav > #nav-list");
 
@@ -25,11 +34,7 @@ function highlightCurrentNavItem() {
 
   const currentNavItem = Array.from(navItems).find((navItem) => {
     if (navItem.href.endsWith("index.html")) {
-      return (
-        currentPath.startsWith("/posts/") ||
-        currentPath === "/" ||
-        currentPath.endsWith("index.html")
-      );
+      return currentPath.startsWith("/posts/") || currentPath === "/" || currentPath.endsWith("index.html");
     }
 
     return navItem.href.endsWith(currentPath);
@@ -40,7 +45,5 @@ function highlightCurrentNavItem() {
   }
 }
 
-(async function () {
-  await createNav();
-  highlightCurrentNavItem();
-})();
+createNav();
+highlightCurrentNavItem();
