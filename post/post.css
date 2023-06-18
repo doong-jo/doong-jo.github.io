@@ -2,6 +2,11 @@ main > time {
   margin-bottom: 24px;
 }
 
+.content {
+  display: flex;
+  flex-direction: column;
+}
+
 main a {
   color: rgb(0, 0, 148);
 }
