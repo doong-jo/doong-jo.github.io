@@ -1,0 +1,9 @@
+.work-experience-block > span,
+.work-experience-block > time {
+  font-size: 0.9em;
+}
+
+a {
+  text-decoration: underline;
+  padding: 0;
+}
