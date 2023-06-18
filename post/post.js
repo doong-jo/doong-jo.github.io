@@ -36,7 +36,7 @@ function showPostList() {
       textContent,
       date,
     }))
-    .sort((a, b) => new Date(a.date) - new Date(b.date));
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
 
   const postsElement = document.getElementById("posts");
   const ulElement = document.createElement("ul");
