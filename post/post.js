@@ -12,7 +12,7 @@ const postData = [
   {
     href: "https://medium.com/myrealtrip-product/monorepo%EB%A1%9C-%EB%8C%80%EA%B7%9C%EB%AA%A8-react-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B4%80%EB%A6%AC%ED%95%98%EA%B8%B0-d12b65340306",
     textContent: "Monorepo로 대규모 React 프로젝트 관리하기",
-    date: "2020-03-20",
+    date: "2020-05-20",
   },
   {
     href: "https://medium.com/@sdong001_28201/api-%EC%97%86%EC%9D%B4-%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%94%EB%93%9C-%EA%B0%9C%EB%B0%9C%ED%95%98%EA%B8%B0-89fdabceaa19",
@@ -36,7 +36,7 @@ function showPostList() {
       textContent,
       date,
     }))
-    .sort((a, b) => new Date(a) - new Date(b));
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
 
   const postsElement = document.getElementById("posts");
   const ulElement = document.createElement("ul");
