@@ -35,7 +35,6 @@ body {
   padding: 0;
   font-family: "Roboto", sans-serif;
   font-size: 1.2rem;
-  /* 오래된 양피지 배경색 */
   background-color: var(--carbon-paper);
   display: flex;
   flex-direction: row;
