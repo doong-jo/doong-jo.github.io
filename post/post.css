@@ -10,3 +10,9 @@ main > time {
 main a {
   color: rgb(0, 0, 148);
 }
+
+main,
+p,
+span {
+  line-height: 1.5;
+}

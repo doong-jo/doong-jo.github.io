@@ -7,7 +7,7 @@ nav {
   border: 2px solid var(--black);
   display: flex;
   margin-right: 16px;
-  background-color: var(--cream);
+  background-color: var(--white);
   flex-shrink: 0;
 }
 

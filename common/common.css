@@ -11,6 +11,8 @@
   --carbon-paper-dark: #78736e;
   --cream: #fff8e7;
   --white: #ffffff;
+  --code-background: #f5f2f0;
+  --code-highlight: #dd4a68;
   --black: #000000;
 }
 
@@ -50,7 +52,7 @@ main {
   border: 2px solid var(--black);
   padding: 16px;
   width: 100%;
-  background-color: var(--cream);
+  background-color: var(--white);
 }
 
 code,
@@ -62,8 +64,8 @@ time {
 }
 
 code {
-  background-color: #f5f2f0;
-  color: #dd4a68;
+  background-color: var(--code-background);
+  color: var(--code-highlight);
 }
 
 h1 {
