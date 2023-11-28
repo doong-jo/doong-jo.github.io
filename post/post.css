@@ -2,10 +2,6 @@ main > time {
   margin-bottom: 24px;
 }
 
-body {
-  justify-content: center;
-}
-
 .content {
   display: flex;
   flex-direction: column;
