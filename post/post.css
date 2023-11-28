@@ -2,10 +2,15 @@ main > time {
   margin-bottom: 24px;
 }
 
+body {
+  justify-content: center;
+}
+
 .content {
   display: flex;
   flex-direction: column;
   width: 100%;
+  max-width: 680px;
 }
 
 main a {
