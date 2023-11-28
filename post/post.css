@@ -5,6 +5,7 @@ main > time {
 .content {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 main a {
@@ -15,4 +16,22 @@ main,
 p,
 span {
   line-height: 1.5;
+}
+
+img {
+  max-width: 80%;
+  height: auto;
+}
+
+q,
+blockquote {
+  font-style: italic;
+  border-radius: 8px;
+  padding: 8px;
+  background-color: rgb(240, 240, 240);
+  white-space: pre-line;
+}
+
+strong {
+  font-weight: bold;
 }

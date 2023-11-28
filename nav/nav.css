@@ -2,13 +2,18 @@ nav {
   float: left;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   align-items: center;
   justify-content: flex-start;
   border: 2px solid var(--black);
-  display: flex;
   margin-right: 16px;
+
+  @media screen and (min-width: 768px) {
+    padding-bottom: 16px;
+  }
+
   background-color: var(--white);
-  flex-shrink: 0;
+  height: 100%;
 }
 
 nav > h1 {
