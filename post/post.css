@@ -30,7 +30,6 @@ blockquote {
   border-radius: 8px;
   padding: 8px;
   background-color: rgb(240, 240, 240);
-  white-space: pre-line;
 }
 
 strong {
