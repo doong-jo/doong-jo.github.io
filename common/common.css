@@ -105,10 +105,6 @@ blockquote p::after {
   content: "\201D";
 }
 
-ul > li > time {
-  margin-right: 8px;
-}
-
 ul > li {
   line-height: 1.5em;
 }
