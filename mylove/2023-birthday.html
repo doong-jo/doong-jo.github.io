@@ -2,7 +2,7 @@
 <html lang="ko">
   <head>
     <title>성정이의 29번째 생일</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1 user-scalable=no" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
     <script src="https://cdn.jsdelivr.net/npm/js-confetti@0.9.0/dist/js-confetti.browser.js"></script>
     <style>
       @font-face {
@@ -164,9 +164,9 @@
     </div>
     <script>
       const cardEl = document.querySelector('.card');
-      cardEl.addEventListener('click', () => {
-        alert('hi');
-      });
+      cardEl.addEventListener('click', () => {});
+      document.body.addEventListener('click', () => {});
+
       window.onload = function() {
         // Globals
         var random = Math.random
