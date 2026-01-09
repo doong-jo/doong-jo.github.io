@@ -25,6 +25,10 @@ a {
   padding: 4px;
 }
 
+.link {
+  color: rgb(0, 0, 148);
+}
+
 a:hover {
   text-decoration: underline;
 }
