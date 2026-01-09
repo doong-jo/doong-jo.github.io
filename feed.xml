@@ -2,13 +2,13 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>doong-jo</title>
-    <description>Sungdong Jo의 기술 블로그</description>
+    <description>Sungdong Cho의 기술 블로그</description>
     <link>https://doong-jo.github.io/</link>
     <atom:link href="https://doong-jo.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <language>ko-KR</language>
     <lastBuildDate>Fri, 09 Jan 2026 00:00:00 +0900</lastBuildDate>
-    <managingEditor>doong-jo@github.io (Sungdong Jo)</managingEditor>
-    <webMaster>doong-jo@github.io (Sungdong Jo)</webMaster>
+    <managingEditor>doong-jo@github.io (Sungdong Cho)</managingEditor>
+    <webMaster>doong-jo@github.io (Sungdong Cho)</webMaster>
 
     <item>
       <title>제목</title>
@@ -16,7 +16,7 @@
       <description></description>
       <pubDate>Fri, 09 Jan 2026 00:00:00 +0900</pubDate>
       <guid isPermaLink="true">https://doong-jo.github.io/posts/iOS_WebView%EC%97%90%EC%84%9C_input%EC%9D%84_%EB%8B%A4%EB%A3%A8%EB%8A%94_%EB%B0%A9%EB%B2%95.html</guid>
-      <author>doong-jo@github.io (Sungdong Jo)</author>
+      <author>doong-jo@github.io (Sungdong Cho)</author>
     </item>
 
     <item>
@@ -25,7 +25,7 @@
       <description>처음으로 테크리드가 되고 나서의 고민과 경험을 공유합니다. 테크리드의 책임, 위임의 중요성, 팀 성장에 대한 인사이트.</description>
       <pubDate>Tue, 28 Nov 2023 00:00:00 +0900</pubDate>
       <guid isPermaLink="true">https://doong-jo.github.io/posts/%ED%85%8C%ED%81%AC%EB%A6%AC%EB%93%9C_1%EB%85%84_%ED%9A%8C%EA%B3%A0.html</guid>
-      <author>doong-jo@github.io (Sungdong Jo)</author>
+      <author>doong-jo@github.io (Sungdong Cho)</author>
     </item>
 
     <item>
@@ -34,7 +34,7 @@
       <description>블로그를 직접 개발할 때 프레임워크 대신 Vanilla JS를 선택한 이유. 글쓰기에 집중하기 위한 최소한의 기술 스택.</description>
       <pubDate>Sun, 18 Jun 2023 00:00:00 +0900</pubDate>
       <guid isPermaLink="true">https://doong-jo.github.io/posts/%EB%B8%94%EB%A1%9C%EA%B7%B8%EB%8A%94_Vanilla%EB%A1%9C_%EB%A7%8C%EB%93%A4%EC%9E%90.html</guid>
-      <author>doong-jo@github.io (Sungdong Jo)</author>
+      <author>doong-jo@github.io (Sungdong Cho)</author>
     </item>
 
   </channel>
