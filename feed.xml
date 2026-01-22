@@ -6,16 +6,16 @@
     <link>https://doong-jo.github.io/</link>
     <atom:link href="https://doong-jo.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <language>ko-KR</language>
-    <lastBuildDate>Fri, 09 Jan 2026 00:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 21 Jan 2026 00:00:00 +0900</lastBuildDate>
     <managingEditor>doong-jo@github.io (Sungdong Cho)</managingEditor>
     <webMaster>doong-jo@github.io (Sungdong Cho)</webMaster>
 
     <item>
-      <title>제목</title>
-      <link>https://doong-jo.github.io/posts/iOS_WebView%EC%97%90%EC%84%9C_input%EC%9D%84_%EB%8B%A4%EB%A3%A8%EB%8A%94_%EB%B0%A9%EB%B2%95.html</link>
-      <description></description>
-      <pubDate>Fri, 09 Jan 2026 00:00:00 +0900</pubDate>
-      <guid isPermaLink="true">https://doong-jo.github.io/posts/iOS_WebView%EC%97%90%EC%84%9C_input%EC%9D%84_%EB%8B%A4%EB%A3%A8%EB%8A%94_%EB%B0%A9%EB%B2%95.html</guid>
+      <title>퇴사 후 창업 그리고 다시 취업</title>
+      <link>https://doong-jo.github.io/posts/%ED%87%B4%EC%82%AC_%ED%9B%84_%EC%B0%BD%EC%97%85_%EA%B7%B8%EB%A6%AC%EA%B3%A0_%EB%8B%A4%EC%8B%9C_%EC%B7%A8%EC%97%85.html</link>
+      <description>퇴사 후 창업을 통해 경험한 기술 개발, 영업, 마케팅의 현실. 수익화 실패와 오픈소스 전환을 거쳐 헬스케어 기업으로 재취업하기까지의 여정을 공유합니다.</description>
+      <pubDate>Wed, 21 Jan 2026 00:00:00 +0900</pubDate>
+      <guid isPermaLink="true">https://doong-jo.github.io/posts/%ED%87%B4%EC%82%AC_%ED%9B%84_%EC%B0%BD%EC%97%85_%EA%B7%B8%EB%A6%AC%EA%B3%A0_%EB%8B%A4%EC%8B%9C_%EC%B7%A8%EC%97%85.html</guid>
       <author>doong-jo@github.io (Sungdong Cho)</author>
     </item>
 
@@ -23,7 +23,7 @@
       <title>테크리드 1년 회고</title>
       <link>https://doong-jo.github.io/posts/%ED%85%8C%ED%81%AC%EB%A6%AC%EB%93%9C_1%EB%85%84_%ED%9A%8C%EA%B3%A0.html</link>
       <description>처음으로 테크리드가 되고 나서의 고민과 경험을 공유합니다. 테크리드의 책임, 위임의 중요성, 팀 성장에 대한 인사이트.</description>
-      <pubDate>Tue, 28 Nov 2023 00:00:00 +0900</pubDate>
+      <pubDate>Mon, 27 Nov 2023 00:00:00 +0900</pubDate>
       <guid isPermaLink="true">https://doong-jo.github.io/posts/%ED%85%8C%ED%81%AC%EB%A6%AC%EB%93%9C_1%EB%85%84_%ED%9A%8C%EA%B3%A0.html</guid>
       <author>doong-jo@github.io (Sungdong Cho)</author>
     </item>
@@ -32,7 +32,7 @@
       <title>블로그는 Vanilla로 만들자</title>
       <link>https://doong-jo.github.io/posts/%EB%B8%94%EB%A1%9C%EA%B7%B8%EB%8A%94_Vanilla%EB%A1%9C_%EB%A7%8C%EB%93%A4%EC%9E%90.html</link>
       <description>블로그를 직접 개발할 때 프레임워크 대신 Vanilla JS를 선택한 이유. 글쓰기에 집중하기 위한 최소한의 기술 스택.</description>
-      <pubDate>Sun, 18 Jun 2023 00:00:00 +0900</pubDate>
+      <pubDate>Sat, 17 Jun 2023 00:00:00 +0900</pubDate>
       <guid isPermaLink="true">https://doong-jo.github.io/posts/%EB%B8%94%EB%A1%9C%EA%B7%B8%EB%8A%94_Vanilla%EB%A1%9C_%EB%A7%8C%EB%93%A4%EC%9E%90.html</guid>
       <author>doong-jo@github.io (Sungdong Cho)</author>
     </item>
