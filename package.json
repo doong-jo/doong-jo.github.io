@@ -1,0 +1,13 @@
+{
+  "name": "doong-jo-blog",
+  "version": "1.0.0",
+  "description": "doong-jo's personal blog",
+  "scripts": {
+    "generate:feed": "node scripts/generate-feed.js",
+    "generate:sitemap": "node scripts/generate-sitemap.js",
+    "generate": "npm run generate:feed && npm run generate:sitemap"
+  },
+  "keywords": ["blog", "github-pages"],
+  "author": "Sungdong Cho",
+  "license": "MIT"
+}
