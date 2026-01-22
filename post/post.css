@@ -6,7 +6,14 @@ main > time {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1024px;
+  max-width: 680px;
+
+}
+
+@media (min-width: 500px) {
+  .content {
+    margin: 0 auto;
+  }
 }
 
 main a {
@@ -16,7 +23,7 @@ main a {
 main,
 p,
 span {
-  line-height: 1.5;
+  line-height: 2;
 }
 
 img {
@@ -34,4 +41,19 @@ blockquote {
 
 strong {
   font-weight: bold;
+}
+
+.back-to-list {
+  margin-top: 48px;
+}
+
+.back-button {
+  display: inline-block;
+  padding: 4px;
+  color: inherit;
+  font-weight: normal;
+}
+
+.back-button:hover {
+  text-decoration: underline;
 }

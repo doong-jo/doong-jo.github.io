@@ -113,6 +113,15 @@ ul > li {
   line-height: 1.5em;
 }
 
+
+ol {
+  list-style-type: decimal;
+}
+
+ol > li {
+  line-height: 1.5em;
+}
+
 /* octo cat */
 .github-corner .octo-root {
   fill: #151513;
