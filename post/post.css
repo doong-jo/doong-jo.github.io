@@ -10,12 +10,6 @@ main > time {
 
 }
 
-@media (min-width: 500px) {
-  .content {
-    margin: 0 auto;
-  }
-}
-
 main a {
   color: rgb(0, 0, 148);
 }
