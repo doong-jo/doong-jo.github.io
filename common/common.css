@@ -58,7 +58,6 @@ main {
   background-color: var(--white);
 }
 
-code,
 time {
   font-family: Programma, mono;
   font-size: 100%;
@@ -66,7 +65,12 @@ time {
   font-weight: bold;
 }
 
-code {
+/* 인라인 코드만 (코드 블록 제외) */
+:not(pre) > code {
+  font-family: Programma, mono;
+  font-size: 100%;
+  font-style: normal;
+  font-weight: bold;
   background-color: var(--code-background);
   color: var(--code-highlight);
 }
@@ -113,14 +117,15 @@ ul > li {
   line-height: 1.5em;
 }
 
-/* 태그 스타일 */
+/* 태그 스타일 (Prism .token.tag와 충돌 방지) */
 .tags {
   display: inline-flex;
   gap: 4px;
   margin-left: 8px;
 }
 
-.tag {
+.tags > .tag,
+.post-tags > .tag {
   display: inline-block;
   font-size: 0.75rem;
   font-family: Programma, mono;
@@ -129,12 +134,14 @@ ul > li {
   text-decoration: underline;
 }
 
-.tag:hover {
+.tags > .tag:hover,
+.post-tags > .tag:hover {
   text-decoration: underline;
   opacity: 0.7;
 }
 
-.tag.active {
+.tags > .tag.active,
+.post-tags > .tag.active {
   font-weight: bold;
 }
 
