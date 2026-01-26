@@ -113,6 +113,58 @@ ul > li {
   line-height: 1.5em;
 }
 
+/* 태그 스타일 */
+.tags {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: 8px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  font-family: Programma, mono;
+  background-color: var(--code-background);
+  border: 1px solid var(--carbon-paper-dark);
+  border-radius: 4px;
+  color: var(--black);
+  cursor: pointer;
+}
+
+.tag:hover {
+  background-color: var(--carbon-paper);
+  text-decoration: none;
+}
+
+.tag.active {
+  background-color: var(--black);
+  color: var(--white);
+}
+
+/* 포스트 목록 태그 레이아웃 */
+.posts ul > li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px;
+}
+
+/* 포스트 상세 페이지 태그 */
+.post-tags {
+  margin: 8px 0 16px;
+  display: flex;
+  gap: 4px;
+}
+
+@media screen and (max-width: 600px) {
+  .tags {
+    display: flex;
+    margin-left: 0;
+    margin-top: 4px;
+  }
+}
+
 
 ol {
   list-style-type: decimal;
