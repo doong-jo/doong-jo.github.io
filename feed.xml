@@ -56,7 +56,7 @@
     </item>
 
     <item>
-      <title>블로그는 바닐라 스크립트로 만듭니다</title>
+      <title>블로그는 바닐라 자바스크립트로 만듭니다</title>
       <link>https://doong-jo.github.io/posts/blog-with-vanilla.html</link>
       <description>블로그를 직접 개발할 때 프레임워크 대신 Vanilla JS를 선택한 이유. 글쓰기에 집중하기 위한 최소한의 기술 스택을 공유합니다.</description>
       <pubDate>Sat, 17 Jun 2023 00:00:00 +0900</pubDate>
