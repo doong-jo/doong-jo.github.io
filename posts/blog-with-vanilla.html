@@ -1,24 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
     <!-- Basic SEO -->
-    <title>블로그는 Vanilla로 만들자 | doong-jo</title>
+    <title>블로그는 바닐라 스크립트로 만듭니다 | doong-jo</title>
     <meta
       name="description"
-      content="블로그를 직접 개발할 때 프레임워크 대신 Vanilla JS를 선택한 이유. 글쓰기에 집중하기 위한 최소한의 기술 스택."
+      content="블로그를 직접 개발할 때 프레임워크 대신 Vanilla JS를 선택한 이유. 글쓰기에 집중하기 위한 최소한의 기술 스택을 공유합니다."
     />
     <meta name="author" content="Sungdong Cho" />
     <meta name="keywords" content="블로그, Vanilla JS, HTML, CSS, JavaScript, 개발 블로그, 기술 블로그" />
     <meta name="post-tags" content="기술, 블로그" />
 
     <!-- Canonical -->
-    <link
-      rel="canonical"
-      href="https://doong-jo.github.io/posts/blog-with-vanilla.html"
-    />
+    <link rel="canonical" href="https://doong-jo.github.io/posts/blog-with-vanilla.html" />
 
     <!-- RSS Feed -->
     <link
@@ -30,15 +27,12 @@
 
     <!-- Open Graph -->
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="블로그는 Vanilla로 만들자" />
+    <meta property="og:title" content="블로그는 바닐라 스크립트로 만듭니다" />
     <meta
       property="og:description"
-      content="블로그를 직접 개발할 때 프레임워크 대신 Vanilla JS를 선택한 이유. 글쓰기에 집중하기 위한 최소한의 기술 스택."
+      content="블로그를 직접 개발할 때 프레임워크 대신 Vanilla JS를 선택한 이유. 글쓰기에 집중하기 위한 최소한의 기술 스택을 공유합니다."
     />
-    <meta
-      property="og:url"
-      content="https://doong-jo.github.io/posts/blog-with-vanilla.html"
-    />
+    <meta property="og:url" content="https://doong-jo.github.io/posts/blog-with-vanilla.html" />
     <meta property="og:site_name" content="doong-jo" />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:image" content="https://doong-jo.github.io/resources/images/og/default-og.png" />
@@ -49,8 +43,11 @@
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="블로그는 Vanilla로 만들자" />
-    <meta name="twitter:description" content="블로그를 직접 개발할 때 프레임워크 대신 Vanilla JS를 선택한 이유." />
+    <meta name="twitter:title" content="블로그는 바닐라 스크립트로 만듭니다" />
+    <meta
+      name="twitter:description"
+      content="블로그를 직접 개발할 때 프레임워크 대신 Vanilla JS를 선택한 이유. 글쓰기에 집중하기 위한 최소한의 기술 스택을 공유합니다."
+    />
     <meta name="twitter:image" content="https://doong-jo.github.io/resources/images/og/default-og.png" />
 
     <!-- JSON-LD: BlogPosting Schema -->
@@ -58,8 +55,8 @@
       {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
-        "headline": "블로그는 Vanilla로 만들자",
-        "description": "블로그를 직접 개발할 때 프레임워크 대신 Vanilla JS를 선택한 이유. 글쓰기에 집중하기 위한 최소한의 기술 스택.",
+        "headline": "블로그는 바닐라 스크립트로 만듭니다",
+        "description": "블로그를 직접 개발할 때 프레임워크 대신 Vanilla JS를 선택한 이유. 글쓰기에 집중하기 위한 최소한의 기술 스택을 공유합니다.",
         "image": "https://doong-jo.github.io/resources/images/og/default-og.png",
         "author": {
           "@type": "Person",
@@ -102,7 +99,7 @@
           <span class="tag">기술</span>
           <span class="tag">블로그</span>
         </div>
-        <h1>블로그는 Vanilla로 만들자</h1>
+        <h1>블로그는 바닐라 스크립트로 만듭니다</h1>
         <h2>블로그의 본질은 글쓰기</h2>
         <p>
           이 글은 블로그를 직접 개발하고 운영할 때의 애로사항을 적어보았습니다. 플랫폼에 블로그를 개설하고 글을 쓰는
@@ -139,16 +136,22 @@
         <ol>
           <li>Code highlight: <a href="https://prismjs.com/">Prisim</a></li>
           <li>Hosting: <a href="https://pages.github.com/">GitHub pages</a></li>
+          <li>Comment: <a href="https://utteranc.es/">Utterances</a></li>
         </ol>
         <p>
           글 본문에 코드 블럭을 삽입할 일이 있기에 Prism이라는 라이브러리를 추가하였고, GitHub Pages는 무료 호스팅이고,
-          github.io 도메인의 cool 함을.. 놓칠 수 없어 사용합니다.
+          개인적으로 github.io 도메인의 cool한 점을 놓칠 수 없어 사용합니다. 댓글도 GitHub 저장소의 이슈 기능을 활용하는
+          utterances를 사용하니 복잡한 설정을 할 필요도 없습니다.
         </p>
-        <p>이제 더 이상의 외부 의존성은 "글쓰기"에 꼭 필요한 것이 아니라면 최대한 추가하지 않으려고 합니다.</p>
+        <p>
+          이제 더 이상의 외부 의존성은 "글쓰기"에 꼭 필요한 것이 아니라면 최대한 추가하지 않으려고 합니다. 당장
+          프레임워크를 사용하면 멋져보이고 쉬울 것 같지만 시간이 지나면 의존성 업데이트가 숙제가 됩니다. 전 10년이
+          지나도 바꾸지 않아도 되는 기술 스택을 선택했습니다. 여러분은 어떻게 하시나요?
+        </p>
         <h2>요약</h2>
         <ol>
           <li>블로그는 글쓰기를 위한 것이다.</li>
-          <li>1번에 집중하기 위해 직접 운영/개발하는 블로그는 Vanilla JS로 만든다.</li>
+          <li>1번에 집중하기 위해 직접 운영/개발하는 블로그는 바닐라 스크립트로 만든다.</li>
         </ol>
         <p>
           이 블로그를 구성하는 코드는
