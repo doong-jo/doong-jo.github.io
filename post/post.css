@@ -25,6 +25,22 @@ img {
   height: auto;
 }
 
+.post-thumbnail {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+}
+
+.image-credit {
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 0;
+  margin-bottom: 24px;
+}
+
 q,
 blockquote {
   font-style: italic;
