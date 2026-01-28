@@ -168,6 +168,93 @@ ul > li {
   }
 }
 
+/* 포스트 카드 레이아웃 */
+.posts ul {
+  list-style: none;
+  padding: 0;
+}
+
+.posts ul > li {
+  display: block;
+  margin-bottom: 20px;
+}
+
+.post-card {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  text-decoration: none;
+  color: inherit;
+  padding: 4px;
+}
+
+.post-card:hover {
+  text-decoration: none;
+}
+
+.post-card:hover .post-title {
+  text-decoration: underline;
+}
+
+.post-thumb {
+  width: 120px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.post-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.post-title {
+  display: block;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.post-desc {
+  margin: 4px 0;
+  font-size: 0.85rem;
+  color: #555;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.post-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.post-meta time {
+  font-size: 0.85rem;
+}
+
+.post-meta .tags {
+  margin-left: 0;
+}
+
+@media screen and (max-width: 600px) {
+  .post-thumb {
+    width: 80px;
+    height: 54px;
+  }
+
+  .post-title {
+    font-size: 0.9rem;
+  }
+
+  .post-desc {
+    font-size: 0.8rem;
+  }
+}
+
 
 ol {
   list-style-type: decimal;
