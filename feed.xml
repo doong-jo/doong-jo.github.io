@@ -6,9 +6,18 @@
     <link>https://doong-jo.github.io/</link>
     <atom:link href="https://doong-jo.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <language>ko-KR</language>
-    <lastBuildDate>Tue, 27 Jan 2026 00:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 28 Jan 2026 00:00:00 +0900</lastBuildDate>
     <managingEditor>doong-jo@github.io (Sungdong Cho)</managingEditor>
     <webMaster>doong-jo@github.io (Sungdong Cho)</webMaster>
+
+    <item>
+      <title>일정 2배로 불러도 야근하는 이유</title>
+      <link>https://doong-jo.github.io/posts/estimating-development-schedule.html</link>
+      <description>개발 일정 예측이 어려운 이유와 예측 정확도를 높이는 실용적인 방법을 소개합니다.</description>
+      <pubDate>Wed, 28 Jan 2026 00:00:00 +0900</pubDate>
+      <guid isPermaLink="true">https://doong-jo.github.io/posts/estimating-development-schedule.html</guid>
+      <author>doong-jo@github.io (Sungdong Cho)</author>
+    </item>
 
     <item>
       <title>시니어 엔지니어인 줄 알았는데, 도메인 전문가였습니다</title>
