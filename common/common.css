@@ -161,6 +161,10 @@ ul > li {
 }
 
 @media screen and (max-width: 600px) {
+  body {
+    margin: 13px;
+  }
+
   .tags {
     display: flex;
     margin-left: 0;
