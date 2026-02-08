@@ -252,14 +252,23 @@ Modal.CloseButton = ({ children }) =&gt; {
         </ul>
 
         <h2>닭 잡는데 소 잡는 칼을 쓰지 마세요</h2>
-        <p>Compound Pattern이 만능은 아닙니다. 모든 컴포넌트에 적용하면 오히려 복잡해집니다.</p>
-        <p><strong>Compound Pattern이 적합한 경우</strong></p>
+        <p>
+          Compound Pattern이 만능은 아닙니다. 모든 컴포넌트에 적용하면 오히려 복잡해집니다. 어떤 경우에 사용하면 효용이
+          커지는 지 정리해보겠습니다.
+        </p>
+        <p>
+          <strong>Compound Pattern이 적합한 경우</strong>
+        </p>
+        <p>대개 단일 마크업이 단일 태그가 아닌 여러 조합으로 구성된 경우에 해당합니다.</p>
         <ul>
           <li>복잡한 UI 구조를 가진 컴포넌트 (Modal, Accordion, Tabs, Menu, Card)</li>
           <li>자식 컴포넌트들 간에 상태 공유가 필요한 경우</li>
           <li>사용처마다 구조가 유연하게 달라져야 하는 경우</li>
         </ul>
-        <p><strong>Compound Pattern이 적합하지 않은 경우</strong></p>
+        <p>
+          <strong>Compound Pattern이 적합하지 않은 경우</strong>
+        </p>
+        <p>하나의 태그로 구성되어 있거나 내부 레이아웃이 유연하지 않은 경우가 해당됩니다.</p>
         <ul>
           <li>단순한 컴포넌트 (Button, Input, Badge, Avatar)</li>
           <li>구조가 항상 고정된 컴포넌트</li>
@@ -269,15 +278,18 @@ Modal.CloseButton = ({ children }) =&gt; {
 &lt;Button variant="primary" loading={isLoading}&gt;저장&lt;/Button&gt;</code></pre>
         <p><strong>Compound Pattern의 단점</strong></p>
         <ul>
-          <li><strong>러닝 커브</strong>: 처음 접하는 개발자에게는 Context와 서브 컴포넌트 구조가 낯설 수 있음</li>
+          <li>
+            <strong>러닝 커브</strong>: 처음 접하는 개발자에게는 Context와 서브 컴포넌트 구조가 낯설 수 있습니다. 이에
+            대한 학습 비용이 듭니다.
+          </li>
           <li>
             <strong>설계 시 커뮤니케이션 비용</strong>: 어떤 서브 컴포넌트를 만들지, 어떤 상태를 공유할지 팀 내 합의
-            필요
+            필요합니다. 정답이 없고 상황에 따라 유연하게 대처해야하므로 코드 리뷰 과정에서 시간이 소요될 수 있습니다.
           </li>
         </ul>
         <p>
-          하지만 확장성을 챙기지 않았을 때의 비용을 생각해보세요. Props가 20개를 넘어가는 컴포넌트를 유지보수하거나,
-          결국 "새로 만들자"며 처음부터 다시 개발하는 비용에 비하면 충분히 감수할 만합니다.
+          단점이 있지만 확장성을 챙기지 않았을 때의 비용을 생각해보세요. Props가 20개를 넘어가는 컴포넌트를
+          유지보수하거나, 결국 "새로 만들자"며 처음부터 다시 개발하는 비용에 비하면 충분히 감수할 만합니다.
         </p>
 
         <h2>요약</h2>
