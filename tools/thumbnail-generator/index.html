@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Thumbnail Generator | doong-jo</title>
+    <meta name="robots" content="noindex" />
+
+    <link rel="stylesheet" href="../../common/common.css" />
+    <link rel="stylesheet" href="../../nav/nav.css" />
+    <style>
+      main {
+        width: 100%;
+        max-width: 800px;
+      }
+
+      .tool-section {
+        margin-bottom: 24px;
+      }
+
+      .tool-section label {
+        display: block;
+        font-family: Programma, mono;
+        font-weight: bold;
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+      }
+
+      .tool-section textarea {
+        width: 100%;
+        border: 2px solid var(--black);
+        padding: 10px 12px;
+        font-family: "Roboto", sans-serif;
+        font-size: 1rem;
+        resize: vertical;
+        background: var(--white);
+        min-height: 80px;
+      }
+
+      .tool-section textarea:focus {
+        outline: none;
+        border-color: #555;
+      }
+
+      .controls-row {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        margin-bottom: 20px;
+      }
+
+      .control-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .control-item label {
+        font-family: Programma, mono;
+        font-weight: bold;
+        font-size: 0.8rem;
+      }
+
+      .control-item select,
+      .control-item input[type="range"] {
+        border: 2px solid var(--black);
+        padding: 4px 8px;
+        font-size: 0.9rem;
+        background: var(--white);
+        cursor: pointer;
+      }
+
+      .control-item input[type="range"] {
+        width: 140px;
+        padding: 4px 0;
+        border: none;
+        cursor: pointer;
+      }
+
+      .control-item .range-label {
+        font-family: Programma, mono;
+        font-size: 0.75rem;
+        color: var(--carbon-paper-dark);
+      }
+
+      .preview-wrapper {
+        border: 2px solid var(--black);
+        display: inline-block;
+        line-height: 0;
+        width: 100%;
+      }
+
+      .preview-wrapper canvas {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .preview-meta {
+        font-family: Programma, mono;
+        font-size: 0.75rem;
+        color: var(--carbon-paper-dark);
+        margin-top: 6px;
+      }
+
+      .download-btn {
+        display: inline-block;
+        margin-top: 16px;
+        padding: 10px 24px;
+        background: var(--black);
+        color: var(--white);
+        font-family: Programma, mono;
+        font-weight: bold;
+        font-size: 0.9rem;
+        border: 2px solid var(--black);
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.15s, color 0.15s;
+      }
+
+      .download-btn:hover {
+        background: var(--white);
+        color: var(--black);
+        text-decoration: none;
+      }
+
+      h1 {
+        margin-bottom: 4px;
+      }
+
+      .page-desc {
+        font-size: 0.9rem;
+        color: var(--carbon-paper-dark);
+        margin-bottom: 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <h1><a href="/">doong-jo</a></h1>
+      <ul id="nav-list">
+        <li><a href="/index.html" id="nav-post" class="current">Post</a></li>
+        <li><a href="/about.html" id="nav-about">About</a></li>
+      </ul>
+    </nav>
+    <main>
+      <h1>Thumbnail Generator</h1>
+      <p class="page-desc">Threads · X · LinkedIn 용 포스트 썸네일 생성 도구 (1080×1080)</p>
+
+      <div class="tool-section">
+        <label for="title-input">글 제목</label>
+        <textarea id="title-input" placeholder="제목을 입력하세요..."></textarea>
+      </div>
+
+      <div class="controls-row">
+        <div class="control-item">
+          <label for="style-select">배경 스타일</label>
+          <select id="style-select">
+            <option value="grid">Dot Grid</option>
+            <option value="circuit">Circuit</option>
+            <option value="minimal">Minimal</option>
+          </select>
+        </div>
+        <div class="control-item">
+          <label>폰트 크기 <span class="range-label" id="font-size-label">72px</span></label>
+          <input type="range" id="font-size" min="36" max="120" value="72" step="4" />
+        </div>
+        <div class="control-item">
+          <label for="accent-select">액센트 컬러</label>
+          <select id="accent-select">
+            <option value="#58a6ff">Blue</option>
+            <option value="#3fb950">Green</option>
+            <option value="#f78166">Coral</option>
+            <option value="#d2a8ff">Purple</option>
+            <option value="#e3b341">Yellow</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="preview-wrapper">
+        <canvas id="thumbnail-canvas" width="1080" height="1080"></canvas>
+      </div>
+      <p class="preview-meta">1080 × 1080 px · Threads / X / LinkedIn 공용</p>
+
+      <button class="download-btn" id="download-btn">PNG 다운로드</button>
+    </main>
+
+    <script src="../../nav/nav.js"></script>
+    <script>
+      const canvas = document.getElementById("thumbnail-canvas");
+      const ctx = canvas.getContext("2d");
+      const W = 1080, H = 1080;
+
+      const titleInput = document.getElementById("title-input");
+      const styleSelect = document.getElementById("style-select");
+      const fontSizeRange = document.getElementById("font-size");
+      const fontSizeLabel = document.getElementById("font-size-label");
+      const accentSelect = document.getElementById("accent-select");
+      const downloadBtn = document.getElementById("download-btn");
+
+      function drawDotGrid(accentColor) {
+        ctx.fillStyle = "#0d1117";
+        ctx.fillRect(0, 0, W, H);
+
+        const spacing = 32;
+        const dotRadius = 1.2;
+        ctx.fillStyle = "rgba(255,255,255,0.07)";
+        for (let x = spacing; x < W; x += spacing) {
+          for (let y = spacing; y < H; y += spacing) {
+            ctx.beginPath();
+            ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        const grad = ctx.createLinearGradient(0, 0, W * 0.6, 0);
+        grad.addColorStop(0, accentColor + "cc");
+        grad.addColorStop(1, accentColor + "00");
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, 4);
+      }
+
+      function drawCircuit(accentColor) {
+        ctx.fillStyle = "#0d1117";
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.strokeStyle = "rgba(255,255,255,0.05)";
+        ctx.lineWidth = 1;
+        const step = 54;
+        for (let x = 0; x <= W; x += step) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+        }
+        for (let y = 0; y <= H; y += step) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+        }
+
+        const nodes = [
+          [162, 216], [486, 108], [756, 270], [324, 486],
+          [648, 432], [216, 648], [864, 594], [432, 810], [702, 864],
+        ];
+        ctx.strokeStyle = accentColor + "30";
+        ctx.lineWidth = 1.5;
+        for (let i = 0; i < nodes.length - 1; i++) {
+          const [x1, y1] = nodes[i];
+          const [x2, y2] = nodes[i + 1];
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+        }
+        nodes.forEach(([x, y]) => {
+          ctx.beginPath();
+          ctx.arc(x, y, 4, 0, Math.PI * 2);
+          ctx.fillStyle = accentColor + "60";
+          ctx.fill();
+        });
+
+        const grad = ctx.createLinearGradient(0, 0, W * 0.6, 0);
+        grad.addColorStop(0, accentColor + "cc");
+        grad.addColorStop(1, accentColor + "00");
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, 4);
+      }
+
+      function drawMinimal(accentColor) {
+        ctx.fillStyle = "#0d1117";
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.strokeStyle = "rgba(255,255,255,0.04)";
+        ctx.lineWidth = 1;
+        const step = 108;
+        for (let x = 0; x <= W; x += step) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+        }
+        for (let y = 0; y <= H; y += step) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+        }
+
+        ctx.strokeStyle = accentColor + "20";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(W * 0.05, H * 0.05);
+        ctx.lineTo(W * 0.05, H * 0.95);
+        ctx.lineTo(W * 0.95, H * 0.95);
+        ctx.stroke();
+
+        const grad = ctx.createLinearGradient(0, 0, W * 0.5, 0);
+        grad.addColorStop(0, accentColor + "cc");
+        grad.addColorStop(1, accentColor + "00");
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, 4);
+      }
+
+      function buildLines(text, maxWidth) {
+        const words = text.split(" ");
+        let line = "";
+        const lines = [];
+        for (let n = 0; n < words.length; n++) {
+          const testLine = line + words[n] + " ";
+          if (ctx.measureText(testLine).width > maxWidth && n > 0) {
+            lines.push(line.trim());
+            line = words[n] + " ";
+          } else {
+            line = testLine;
+          }
+        }
+        lines.push(line.trim());
+        return lines;
+      }
+
+      function render() {
+        const title = titleInput.value || "글 제목을 입력하세요";
+        const style = styleSelect.value;
+        const fontSize = parseInt(fontSizeRange.value);
+        const accent = accentSelect.value;
+
+        if (style === "circuit") drawCircuit(accent);
+        else if (style === "minimal") drawMinimal(accent);
+        else drawDotGrid(accent);
+
+        const pad = 80;
+        const maxWidth = W - pad * 2;
+        const lineHeight = fontSize * 1.35;
+
+        ctx.font = `bold ${fontSize}px "Roboto", sans-serif`;
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "center";
+
+        const lines = buildLines(title, maxWidth);
+        const totalTextHeight = lines.length * lineHeight;
+        const centerY = H / 2;
+        const startY = centerY - totalTextHeight / 2 + lineHeight / 2;
+
+        ctx.fillStyle = "rgba(255,255,255,0.08)";
+        const bgPad = 40;
+        ctx.fillRect(pad - bgPad, startY - lineHeight / 2 - bgPad, maxWidth + bgPad * 2, totalTextHeight + bgPad * 2);
+
+        ctx.fillStyle = "#ffffff";
+        lines.forEach((l, i) => {
+          ctx.fillText(l, W / 2, startY + i * lineHeight);
+        });
+
+        const brandY = H - pad - 10;
+        ctx.font = `bold 26px "Programma", monospace`;
+        ctx.textAlign = "left";
+        ctx.fillStyle = "rgba(255,255,255,0.3)";
+        ctx.fillText("doong-jo.github.io", pad, brandY);
+
+        ctx.font = `bold 26px "Programma", monospace`;
+        ctx.textAlign = "right";
+        ctx.fillStyle = accent + "cc";
+        ctx.fillText("doong-jo", W - pad, brandY);
+
+        ctx.textAlign = "left";
+      }
+
+      titleInput.addEventListener("input", render);
+      styleSelect.addEventListener("change", render);
+      fontSizeRange.addEventListener("input", () => {
+        fontSizeLabel.textContent = fontSizeRange.value + "px";
+        render();
+      });
+      accentSelect.addEventListener("change", render);
+
+      downloadBtn.addEventListener("click", () => {
+        const title = titleInput.value.trim().replace(/\s+/g, "-").replace(/[^\w\-가-힣]/g, "") || "thumbnail";
+        canvas.toBlob((blob) => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `thumbnail-${title}.png`;
+          a.click();
+          URL.revokeObjectURL(url);
+        }, "image/png");
+      });
+
+      render();
+    </script>
+  </body>
+</html>
