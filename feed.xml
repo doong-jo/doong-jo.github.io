@@ -6,9 +6,18 @@
     <link>https://doong-jo.github.io/</link>
     <atom:link href="https://doong-jo.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <language>ko-KR</language>
-    <lastBuildDate>Mon, 13 Apr 2026 00:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 12 May 2026 00:00:00 +0900</lastBuildDate>
     <managingEditor>doong-jo@github.io (Sungdong Cho)</managingEditor>
     <webMaster>doong-jo@github.io (Sungdong Cho)</webMaster>
+
+    <item>
+      <title>개발하기 어렵습니다. 오래 걸립니다. 라고 말하는 당신은 시니어가 아닙니다</title>
+      <link>https://doong-jo.github.io/posts/you-are-not-senior-if-you-say-dev-is-hard-and-slow.html</link>
+      <description>에이전틱 코딩 시대에도 '개발은 어렵고 오래 걸린다'는 말이 오간다면, 그 원인은 기술만은 아닐 수 있습니다. 시니어로서의 마음가짐에 대한 생각을 정리했습니다.</description>
+      <pubDate>Tue, 12 May 2026 00:00:00 +0900</pubDate>
+      <guid isPermaLink="true">https://doong-jo.github.io/posts/you-are-not-senior-if-you-say-dev-is-hard-and-slow.html</guid>
+      <author>doong-jo@github.io (Sungdong Cho)</author>
+    </item>
 
     <item>
       <title>개발 팀의 우선순위가 비즈니스 중심이어야 하는 이유</title>
