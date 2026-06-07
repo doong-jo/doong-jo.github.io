@@ -117,6 +117,34 @@ ul > li {
   line-height: 1.5em;
 }
 
+/* 상단 태그 필터 바 */
+.tag-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.tag-filter-bar > .tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-family: Programma, mono;
+  color: var(--black);
+  cursor: pointer;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.tag-filter-bar > .tag:hover {
+  opacity: 0.7;
+}
+
+.tag-filter-bar > .tag.active {
+  font-weight: bold;
+}
+
 /* 태그 스타일 (Prism .token.tag와 충돌 방지) */
 .tags {
   display: inline-flex;
