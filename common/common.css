@@ -117,12 +117,21 @@ ul > li {
   line-height: 1.5em;
 }
 
-/* 상단 태그 필터 바 */
+/* 상단 태그 필터 바 (nav.css 사이드 네비 스타일 리셋) */
 .tag-filter-bar {
+  float: none;
+  width: 100%;
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
+  margin-right: 0;
   margin-bottom: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  height: auto;
 }
 
 .tag-filter-bar > .tag {
