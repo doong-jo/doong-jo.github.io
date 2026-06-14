@@ -14,7 +14,7 @@
       <title>프론트엔드 에러 핸들링, 단순히 throw와 captureException만이 다가 아닙니다</title>
       <link>https://doong-jo.github.io/posts/frontend-error-handling-beyond-throw-and-capture.html</link>
       <description>Sentry Tag·Context, beforeSend 정규화, 커스텀 Error 클래스, React Query mutationCache throwOnError와 Error Boundary까지. throw + captureException만으로는 부족한 이유와 실무 패턴.</description>
-      <pubDate>Sun, 14 Jun 2026 00:00:00 +0900</pubDate>
+      <pubDate>Sat, 13 Jun 2026 00:00:00 +0900</pubDate>
       <guid isPermaLink="true">https://doong-jo.github.io/posts/frontend-error-handling-beyond-throw-and-capture.html</guid>
       <author>doong-jo@github.io (Sungdong Cho)</author>
     </item>
@@ -32,7 +32,7 @@
       <title>Next.js 웹뷰에서 JWT 인증, Authorization 헤더가 아닌 Cookie로 바꾼 이유</title>
       <link>https://doong-jo.github.io/posts/nextjs-webview-jwt-cookie-auth.html</link>
       <description>Authorization Header + 브릿지 방식의 한계와, 네이티브 쿠키 주입으로 Next.js 웹뷰 SSR·API 호출을 단순화한 설계.</description>
-      <pubDate>Sun, 14 Jun 2026 00:00:00 +0900</pubDate>
+      <pubDate>Sat, 13 Jun 2026 00:00:00 +0900</pubDate>
       <guid isPermaLink="true">https://doong-jo.github.io/posts/nextjs-webview-jwt-cookie-auth.html</guid>
       <author>doong-jo@github.io (Sungdong Cho)</author>
     </item>
@@ -41,7 +41,7 @@
       <title>웹뷰 다크모드 대응기: 깜빡임 현상과 SSR의 한계를 넘어선 방법</title>
       <link>https://doong-jo.github.io/posts/webview-dark-mode-prefer-color-scheme.html</link>
       <description>Next.js WebView에서 FOUC 없이 다크모드를 맞춘 방법. SSR 헤더 분기·JS 테마 상태의 한계, prefers-color-scheme + CSS 변수, iOS/Android 네이티브 연동, 앱 버전별 data attribute 분기.</description>
-      <pubDate>Sun, 14 Jun 2026 00:00:00 +0900</pubDate>
+      <pubDate>Sat, 13 Jun 2026 00:00:00 +0900</pubDate>
       <guid isPermaLink="true">https://doong-jo.github.io/posts/webview-dark-mode-prefer-color-scheme.html</guid>
       <author>doong-jo@github.io (Sungdong Cho)</author>
     </item>
