@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <!-- Google AdSense -->
+    <meta name="google-adsense-account" content="ca-pub-9401013749529244" />
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9401013749529244"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Basic SEO -->
+    <title>프론트엔드 에러 핸들링, 단순히 throw와 captureException만이 다가 아닙니다 | doong-jo</title>
+    <meta
+      name="description"
+      content="Sentry Tag·Context, beforeSend 정규화, 커스텀 Error 클래스, React Query mutationCache throwOnError와 Error Boundary까지. throw + captureException만으로는 부족한 이유와 실무 패턴."
+    />
+    <meta name="author" content="doong-jo" />
+    <meta
+      name="keywords"
+      content="프론트엔드, 에러 핸들링, Sentry, React Query, Error Boundary, captureException, beforeSend"
+    />
+    <meta name="post-tags" content="구현, React, Sentry" />
+
+    <!-- Canonical -->
+    <link
+      rel="canonical"
+      href="https://doong-jo.github.io/posts/frontend-error-handling-beyond-throw-and-capture.html"
+    />
+
+    <!-- RSS Feed -->
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="doong-jo RSS Feed"
+      href="https://doong-jo.github.io/feed.xml"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article" />
+    <meta
+      property="og:title"
+      content="프론트엔드 에러 핸들링, 단순히 throw와 captureException만이 다가 아닙니다"
+    />
+    <meta
+      property="og:description"
+      content="Sentry Tag·Context, beforeSend, 커스텀 Error, React Query mutationCache + Error Boundary로 에러를 기록·분류·전파·표현하는 4단계 패턴."
+    />
+    <meta
+      property="og:url"
+      content="https://doong-jo.github.io/posts/frontend-error-handling-beyond-throw-and-capture.html"
+    />
+    <meta property="og:site_name" content="doong-jo" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta
+      property="og:image"
+      content="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png?transform=w:1200,format:webp,dpr:2"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="article:author" content="Sungdong Cho" />
+    <meta property="article:published_time" content="2026-06-14" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="프론트엔드 에러 핸들링, 단순히 throw와 captureException만이 다가 아닙니다"
+    />
+    <meta
+      name="twitter:description"
+      content="Sentry Tag·Context, beforeSend, 커스텀 Error, React Query mutationCache + Error Boundary로 에러를 기록·분류·전파·표현하는 4단계 패턴."
+    />
+    <meta
+      name="twitter:image"
+      content="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png?transform=w:1200,format:webp,dpr:2"
+    />
+
+    <!-- JSON-LD: BlogPosting Schema -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "프론트엔드 에러 핸들링, 단순히 throw와 captureException만이 다가 아닙니다",
+        "description": "Sentry Tag·Context, beforeSend 정규화, 커스텀 Error 클래스, React Query mutationCache throwOnError와 Error Boundary 실무 패턴.",
+        "image": "https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png?transform=w:1200,format:webp,dpr:2",
+        "author": {
+          "@type": "Person",
+          "name": "doong-jo",
+          "url": "https://doong-jo.github.io/about.html"
+        },
+        "publisher": {
+          "@type": "Person",
+          "name": "doong-jo"
+        },
+        "datePublished": "2026-06-14",
+        "dateModified": "2026-06-14",
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "https://doong-jo.github.io/posts/frontend-error-handling-beyond-throw-and-capture.html"
+        },
+        "inLanguage": "ko-KR"
+      }
+    </script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../common/common.css" />
+    <link rel="stylesheet" href="../nav/nav.css" />
+    <link rel="stylesheet" href="../post/post.css" />
+    <link rel="stylesheet" href="../post/prism.css" />
+    <style>
+      .table-wrap {
+        overflow-x: auto;
+        margin: 16px 0 24px;
+      }
+      .post-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88em;
+        line-height: 1.5;
+      }
+      .post-table th,
+      .post-table td {
+        border: 1px solid #ddd;
+        padding: 8px 10px;
+        text-align: left;
+        vertical-align: top;
+      }
+      .post-table th {
+        background-color: #f5f5f5;
+        font-weight: bold;
+      }
+      .post-table code {
+        font-size: 0.92em;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <h1><a href="/">doong-jo</a></h1>
+      <ul id="nav-list">
+        <li><a href="/index.html" id="nav-post" class="current">Post</a></li>
+        <li><a href="/about.html" id="nav-about">About</a></li>
+      </ul>
+    </nav>
+    <div class="content">
+      <main>
+        <time>2026-06-14</time>
+        <div class="post-tags">
+          <span class="tag">구현</span>
+          <span class="tag">React</span>
+          <span class="tag">Sentry</span>
+        </div>
+        <h1>프론트엔드 에러 핸들링, 단순히 throw와 captureException만이 다가 아닙니다</h1>
+        <img
+          class="post-thumbnail"
+          src="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png?transform=w:680,format:webp,dpr:2"
+          alt=""
+        />
+
+        <p>
+          프론트엔드에서 에러 처리를 처음 정비할 때 흔한 패턴은 두 가지입니다. API 호출이 실패하면
+          <code>throw</code>하고, catch 블록에서 <code>Sentry.captureException(error)</code>를 호출합니다. Sentry를
+          붙였으니 “에러 핸들링은 끝”이라고 생각하기 쉽습니다.
+        </p>
+        <p>
+          실제로 운영해 보면 이 방식만으로는 부족합니다. axios/fetch 실패마다 captureException을 호출하면 Sentry
+          Issues에 <strong>같은 API 500이 수백 건</strong> 쌓이고, stack trace와 message만 조금씩 달라 triage가
+          불가능해집니다. 사용자 측면에서도 “재고 부족”은 toast로 충분한데 결제 실패는 페이지 fallback UI가 필요한
+          상황에서, 모든 에러를 같은 방식으로 처리하기 어렵습니다.
+        </p>
+        <p>
+          에러는 한 번에 처리할 대상이 아니라 <strong>기록·분류·전파·표현</strong>의 4단계로 나눠 설계해야 합니다. 이
+          글에서는 Sentry Tag/Context, beforeSend 정규화, 커스텀 Error 클래스, React Query mutationCache +
+          Error Boundary를 순서대로 쌓는 패턴을 공유합니다. 코드 예시는 익명 API를 사용한 일반화된 TypeScript/React
+          패턴입니다.
+        </p>
+
+        <pre class="mermaid">flowchart TB
+  subgraph app [Application]
+    DomainError["Custom Error throw"]
+    ApiLayer["API client wrap"]
+    RQ["React Query mutationCache"]
+  end
+  subgraph observability [Observability]
+    TagsContext["Sentry Tag / Context"]
+    BeforeSend["beforeSend normalize"]
+  end
+  subgraph ui [UI]
+    Toast["Toast / inline message"]
+    Boundary["Error Boundary fallback"]
+  end
+  DomainError --> TagsContext
+  ApiLayer --> BeforeSend
+  RQ -->|"meta.throwOnError"| Boundary
+  RQ -->|"default"| Toast
+  BeforeSend --> Sentry["Sentry Issues"]
+  TagsContext --> Sentry</pre>
+
+        <h2>예측 가능한 에러는 커스텀 Error 클래스로 throw</h2>
+        <p>
+          비즈니스 규칙 위반 — 재고 부족, 권한 없음, 입력값 오류 — 은 버그가 아니라
+          <strong>의도된 operational error</strong>입니다. <code>Error('something went wrong')</code>로 던지면 Sentry,
+          toast, Error Boundary 어디에서도 일관되게 분기할 수 없습니다.
+        </p>
+        <p>
+          먼저 베이스 클래스와 도메인별 서브클래스를 정의합니다. <code>isOperational</code> 플래그로 “사용자에게
+          설명 가능한 에러”와 “프로그래머 버그”를 구분합니다.
+        </p>
+        <pre><code class="language-typescript">// errors/app-error.ts
+export class AppError extends Error {
+  constructor(
+    message: string,
+    public readonly code: string,
+    public readonly isOperational = true,
+  ) {
+    super(message);
+    this.name = this.constructor.name;
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+
+export class ValidationError extends AppError {
+  constructor(message: string, public readonly field?: string) {
+    super(message, "VALIDATION_ERROR");
+  }
+}
+
+export class UnauthorizedError extends AppError {
+  constructor(message = "로그인이 필요합니다.") {
+    super(message, "UNAUTHORIZED");
+  }
+}
+
+export class OutOfStockError extends AppError {
+  constructor(public readonly productId: string) {
+    super("재고가 부족합니다.", "OUT_OF_STOCK");
+  }
+}</code></pre>
+
+        <p>
+          HTTP 응답 에러는 별도의 <code>ApiError</code>로 wrap합니다. axios의 raw error는 message와 stack이 제각각이라
+          Sentry에서 그룹핑하기 어렵습니다. API 클라이언트 한곳에서 변환해 두면 이후 레이어가 일관된 형태를 받습니다.
+        </p>
+        <pre><code class="language-typescript">// errors/api-error.ts
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number,
+    public readonly method: string,
+    public readonly endpoint: string,
+    public readonly responseBody?: unknown,
+  ) {
+    super(message);
+    this.name = "ApiError";
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+
+// api/client.ts — axios interceptor 예시
+import axios from "axios";
+import { ApiError } from "../errors/api-error";
+
+const client = axios.create({ baseURL: "https://api.example.com" });
+
+client.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (axios.isAxiosError(error) &amp;&amp; error.response) {
+      const { status, config, data } = error.response;
+      throw new ApiError(
+        data?.message ?? error.message,
+        status,
+        (config?.method ?? "GET").toUpperCase(),
+        config?.url ?? "unknown",
+        data,
+      );
+    }
+    throw error;
+  },
+);
+
+export { client };</code></pre>
+
+        <p>
+          도메인 로직에서는 HTTP status를 직접 해석하지 않고, 비즈니스 규칙에 맞는 Error를 throw합니다.
+        </p>
+        <pre><code class="language-typescript">// features/checkout/submit-order.ts
+export async function submitOrder(cartId: string) {
+  const cart = await fetchCart(cartId);
+
+  if (cart.items.some((item) => item.stock === 0)) {
+    throw new OutOfStockError(cart.items.find((i) => i.stock === 0)!.productId);
+  }
+
+  try {
+    return await client.post("/orders", { cartId });
+  } catch (error) {
+    if (error instanceof ApiError &amp;&amp; error.status === 401) {
+      throw new UnauthorizedError();
+    }
+    throw error;
+  }
+}</code></pre>
+
+        <p>
+          <code>instanceof</code>로 Sentry 전송 여부와 UX 분기를 결정합니다. operational error는 사용자 메시지만
+          보여주고 Sentry에는 보내지 않거나 severity를 낮게 설정합니다.
+        </p>
+        <pre><code class="language-typescript">import * as Sentry from "@sentry/react";
+
+export function reportError(error: unknown) {
+  if (error instanceof AppError &amp;&amp; error.isOperational) {
+    // toast 등 UX 처리만 — Sentry 생략 또는 breadcrumb만
+    return;
+  }
+  Sentry.captureException(error);
+}</code></pre>
+        <p>
+          <strong>주의:</strong> Error message나 Sentry context에 PII(이메일, 토큰, 카드번호)를 넣지 마세요.
+          <code>orderId</code>처럼 디버깅에 필요한 식별자만 context에 담습니다.
+        </p>
+
+        <h2>Sentry Tag vs Context — 언제 무엇을 쓰는가</h2>
+        <p>
+          Tag와 Context는 둘 다 이벤트에 메타데이터를 붙이지만 용도가 다릅니다. 혼용하면 Sentry 대시보드가 노이즈로
+          가득 찹니다.
+        </p>
+
+        <div class="table-wrap">
+          <table class="post-table">
+            <thead>
+              <tr>
+                <th>구분</th>
+                <th>Tag</th>
+                <th>Context</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>용도</td>
+                <td>Issues 필터·알림·대시보드 그룹핑</td>
+                <td>이벤트 상세 패널에서 디버깅</td>
+              </tr>
+              <tr>
+                <td>값의 형태</td>
+                <td>짧은 문자열, cardinality 낮음</td>
+                <td>객체·배열 (중첩 가능)</td>
+              </tr>
+              <tr>
+                <td>예시</td>
+                <td><code>http.status</code>, <code>feature.checkout</code></td>
+                <td><code>order: { orderId, step }</code></td>
+              </tr>
+              <tr>
+                <td>검색</td>
+                <td>Issues 목록 필터·알림 규칙에 사용</td>
+                <td>이벤트 상세에서만 확인 — 검색용 아님</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          전역 scope에 feature 태그를 붙이고, 이벤트 단위로는 <code>Sentry.withScope</code>로 격리합니다.
+          <code>setTag</code>를 전역에 남겨 두면 다음 capture까지 값이 유지되는 함정이 있습니다.
+        </p>
+        <pre><code class="language-typescript">// sentry.ts
+import * as Sentry from "@sentry/react";
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  initialScope: {
+    tags: { app: "shop-web" },
+  },
+});
+
+// 이벤트 단위로 Tag + Context 격리
+export function captureCheckoutError(
+  error: unknown,
+  ctx: { orderId: string; step: string },
+) {
+  Sentry.withScope((scope) => {
+    scope.setTag("feature.checkout", "true");
+    scope.setTag("checkout.step", ctx.step);
+    scope.setContext("order", {
+      orderId: ctx.orderId,
+      step: ctx.step,
+    });
+    Sentry.captureException(error);
+  });
+}</code></pre>
+
+        <p>Tag naming convention 예시:</p>
+        <ul>
+          <li><code>feature.{name}</code> — 기능 단위 (<code>feature.checkout</code>)</li>
+          <li><code>http.status</code> — HTTP 상태 코드</li>
+          <li><code>api.method</code>, <code>api.endpoint</code> — 정규화된 API 경로</li>
+        </ul>
+        <p>
+          Context는 상세 패널용입니다. 모든 필드를 context에 넣으면 이벤트 payload가 비대해지고, 실제로 필요한
+          정보를 찾기 어려워집니다. 디버깅에 꼭 필요한 필드만 담으세요.
+        </p>
+
+        <h2>beforeSend로 서버 응답 에러 normalize</h2>
+        <p>
+          <code>ApiError</code>를 도입해도 Sentry Issues 목록을 열어 보면 여전히 문제가 남습니다. 같은
+          <code>GET /orders/123</code>, <code>GET /orders/456</code> 실패가 path param 때문에
+          <strong>별도 Issue</strong>로 쌓입니다. fingerprint가 stack trace에 의존하면 message만 다른 동일 502가
+          수십 건으로 분산됩니다.
+        </p>
+        <p>
+          <code>beforeSend</code>에서 API 에러를 endpoint + status 기준으로 normalize하면 Issues 목록이
+          <strong>「어떤 API · 어떤 상태코드」</strong> 조합으로 묶입니다.
+        </p>
+
+        <h3>endpoint 정규화</h3>
+        <p>path param을 placeholder로 치환합니다.</p>
+        <pre><code class="language-typescript">// sentry/normalize-endpoint.ts
+const UUID_RE =
+  /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
+const NUMERIC_ID_RE = /\/\d+(?=\/|$)/g;
+
+export function normalizeEndpoint(raw: string): string {
+  return raw
+    .replace(UUID_RE, ":id")
+    .replace(NUMERIC_ID_RE, "/:id")
+    .split("?")[0]; // query string 제거
+}</code></pre>
+
+        <h3>beforeSend 구현</h3>
+        <pre><code class="language-typescript">import * as Sentry from "@sentry/react";
+import { ApiError } from "./errors/api-error";
+import { normalizeEndpoint } from "./sentry/normalize-endpoint";
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  beforeSend(event, hint) {
+    const error = hint.originalException;
+
+    if (!(error instanceof ApiError)) {
+      return event;
+    }
+
+    const endpoint = normalizeEndpoint(error.endpoint);
+
+    event.fingerprint = [
+      "api-error",
+      error.method,
+      endpoint,
+      String(error.status),
+    ];
+    event.message = `[${error.status}] ${error.method} ${endpoint}`;
+    event.tags = {
+      ...event.tags,
+      "http.status": String(error.status),
+      "api.method": error.method,
+      "api.endpoint": endpoint,
+    };
+
+    // response body는 context에 — Tag cardinality 폭발 방지
+    if (error.responseBody) {
+      event.contexts = {
+        ...event.contexts,
+        response: { body: error.responseBody },
+      };
+    }
+
+    return event;
+  },
+});</code></pre>
+
+        <p>
+          <strong>Before:</strong> Issues에 <code>Request failed with status code 502</code>,
+          <code>Network Error</code>, <code>timeout of 10000ms exceeded</code> 등 message만 다른 동일 API 실패가
+          흩어짐.
+        </p>
+        <p>
+          <strong>After:</strong> <code>[502] GET /orders/:id</code> 하나로 묶이고, Tag 필터
+          <code>http.status:502</code> + <code>api.endpoint:GET /orders/:id</code>로 triage 가능.
+        </p>
+
+        <h2>React Query mutationCache, throwOnError, Error Boundary</h2>
+        <p>
+          Sentry 정비는 “관측” 레이어입니다. 사용자에게 보이는 UX는 별도입니다. mutation 에러를 전부 toast로 처리하면
+          결제 실패처럼 페이지 전체 fallback이 필요한 케이스를 놓치고, 전부 Error Boundary로 올리면 “닉네임 변경
+          실패”에 전체 화면 에러 UI가 뜹니다.
+        </p>
+        <p>
+          React Query v5의 <code>MutationCache.onError</code>에서 mutation <code>meta</code>로 UX 정책을 분리합니다.
+        </p>
+
+        <h3>mutationCache — throwOnError 분기</h3>
+        <pre><code class="language-typescript">import {
+  QueryClient,
+  MutationCache,
+} from "@tanstack/react-query";
+import { reportError } from "./sentry/report-error";
+import { toUserMessage } from "./errors/to-user-message";
+import { showToast } from "./ui/toast";
+
+declare module "@tanstack/react-query" {
+  interface Register {
+    mutationMeta: {
+      throwOnError?: boolean;
+      feature?: string;
+    };
+  }
+}
+
+export const queryClient = new QueryClient({
+  mutationCache: new MutationCache({
+    onError: (error, _variables, _context, mutation) => {
+      reportError(error);
+
+      if (mutation.meta?.throwOnError) {
+        throw error; // Error Boundary로 전파
+      }
+
+      showToast(toUserMessage(error));
+    },
+  }),
+});</code></pre>
+
+        <h3>mutation meta로 정책 지정</h3>
+        <pre><code class="language-tsx">// 닉네임 변경 — toast로 충분
+const updateProfile = useMutation({
+  mutationFn: (name: string) => client.patch("/profile", { name }),
+  meta: { feature: "profile" },
+});
+
+// 결제 — 페이지 fallback 필요
+const checkout = useMutation({
+  mutationFn: submitOrder,
+  meta: { throwOnError: true, feature: "checkout" },
+});</code></pre>
+
+        <h3>Error Boundary 배치</h3>
+        <p>
+          Error Boundary는 전역 1개만 두기보다 <strong>route/feature 단위</strong>로 배치하는 편이 낫습니다. 결제
+          flow만 fallback UI를 보여주고 나머지 앱 shell은 유지할 수 있습니다.
+        </p>
+        <pre><code class="language-tsx">import { Component, type ReactNode } from "react";
+
+type Props = { children: ReactNode; fallback: ReactNode };
+type State = { hasError: boolean };
+
+class FeatureErrorBoundary extends Component&lt;Props, State&gt; {
+  state: State = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) return this.props.fallback;
+    return this.props.children;
+  }
+}
+
+// checkout route
+function CheckoutPage() {
+  return (
+    &lt;FeatureErrorBoundary fallback={&lt;CheckoutErrorFallback /&gt;}&gt;
+      &lt;CheckoutForm /&gt;
+    &lt;/FeatureErrorBoundary&gt;
+  );
+}</code></pre>
+
+        <p>
+          Query와 Mutation의 차이도 짚어 둡니다. query는 <code>throwOnError: true</code> + Suspense/Error Boundary
+          조합이 일반적이고, mutation은 <strong>mutationCache.onError</strong>가 전역 관문 역할을 합니다.
+        </p>
+
+        <h3>함정</h3>
+        <ul>
+          <li>
+            <code>meta.throwOnError</code> mutation을 Error Boundary <strong>바깥</strong>에서 호출하면 uncaught
+            promise rejection이 됩니다. mutation을 호출하는 컴포넌트는 boundary 안에 있어야 합니다.
+          </li>
+          <li>
+            <code>OutOfStockError</code> 같은 operational error는 boundary까지 올리지 말고 toast로 처리하세요.
+            <code>toUserMessage</code>에서 <code>instanceof AppError</code> 분기를 두면 됩니다.
+          </li>
+          <li>
+            mutationCache에서 <code>throw error</code>는 React의 render phase가 아니라 microtask에서 실행됩니다.
+            boundary가 catch하려면 React 18+ 환경에서 정상 동작하지만, 테스트 시 async flush가 필요할 수 있습니다.
+          </li>
+        </ul>
+
+        <h2>요약 — 4단계 체크리스트</h2>
+        <ol>
+          <li>
+            <strong>도메인:</strong> operational error는 커스텀 Error 클래스로 throw. HTTP 실패는
+            <code>ApiError</code>로 wrap.
+          </li>
+          <li>
+            <strong>관측:</strong> Tag는 필터·그룹핑(cardinality 낮음), Context는 상세 디버깅. API 에러는
+            <code>beforeSend</code>에서 fingerprint·message·tags normalize.
+          </li>
+          <li>
+            <strong>데이터:</strong> <code>MutationCache.onError</code>에서 <code>meta.throwOnError</code>로 전파
+            정책 분리.
+          </li>
+          <li>
+            <strong>UI:</strong> toast(가벼운 실패) vs Error Boundary(페이지 fallback). operational error는 toast,
+            programmer error는 Sentry + boundary.
+          </li>
+        </ol>
+        <p>
+          <code>throw</code> + <code>captureException</code>은 시작점일 뿐입니다. 에러 타입을 먼저 정의하고, Sentry
+          에서 어떻게 묶일지 정규화하고, React Query에서 어떻게 전파할지 결정해야 운영 가능한 에러 핸들링이
+          됩니다.
+        </p>
+
+        <div class="back-to-list">
+          <a href="/index.html" class="back-button">← 글 목록으로 돌아가기</a>
+        </div>
+      </main>
+      <script
+        src="https://utteranc.es/client.js"
+        repo="doong-jo/doong-jo.github.io"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async
+      ></script>
+    </div>
+    <script src="../common/common.js"></script>
+    <script src="../nav/nav.js"></script>
+    <script src="../post/prism.js"></script>
+    <script src="../post/mermaid.min.js"></script>
+    <script src="../post/mermaid.js"></script>
+  </body>
+</html>
