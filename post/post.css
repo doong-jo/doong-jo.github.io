@@ -7,7 +7,75 @@ main > time {
   flex-direction: column;
   width: 100%;
   max-width: 680px;
+  min-width: 0;
+}
 
+main pre {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 0.5em 0;
+  padding: 1em;
+  background-color: var(--code-background);
+  font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  tab-size: 4;
+}
+
+main pre code {
+  display: block;
+  white-space: pre;
+}
+
+main pre.mermaid,
+main .mermaid {
+  background: transparent;
+  padding: 16px 0;
+  margin: 16px 0 24px;
+  text-align: center;
+  overflow-x: auto;
+  line-height: normal;
+}
+
+main pre.mermaid svg,
+main .mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.mermaid-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 24px 0 32px;
+}
+
+.mermaid-compare figure {
+  margin: 0;
+  min-width: 0;
+}
+
+.mermaid-compare figcaption {
+  text-align: center;
+  font-size: 0.9em;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.mermaid-compare pre.mermaid {
+  margin: 0;
+  padding: 8px 0;
+}
+
+@media screen and (max-width: 600px) {
+  .mermaid-compare {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+main {
+  min-width: 0;
 }
 
 main a {

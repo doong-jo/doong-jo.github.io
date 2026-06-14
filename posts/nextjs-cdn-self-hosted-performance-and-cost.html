@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <!-- Google AdSense -->
+    <meta name="google-adsense-account" content="ca-pub-9401013749529244" />
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9401013749529244"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Basic SEO -->
+    <title>Next.js + CDN으로 성능과 비용 모두 개선하기 | doong-jo</title>
+    <meta
+      name="description"
+      content="Self-hosted Next.js origin에서 정적 asset을 object storage + CDN으로 분리한 경험. assetPrefix, egress 절감, preprod/prod 분기, Web Worker 함정까지."
+    />
+    <meta name="author" content="doong-jo" />
+    <meta
+      name="keywords"
+      content="Next.js, CDN, self-hosted, Kubernetes, object storage, assetPrefix, 성능 최적화, egress, 인프라"
+    />
+    <meta name="post-tags" content="구현, 인프라" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://doong-jo.github.io/posts/nextjs-cdn-self-hosted-performance-and-cost.html" />
+
+    <!-- RSS Feed -->
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="doong-jo RSS Feed"
+      href="https://doong-jo.github.io/feed.xml"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Next.js + CDN으로 성능과 비용 모두 개선하기" />
+    <meta
+      property="og:description"
+      content="Self-hosted Next.js origin에서 정적 파일을 storage + CDN으로 분리해 로딩과 egress 비용을 줄인 실무 경험."
+    />
+    <meta
+      property="og:url"
+      content="https://doong-jo.github.io/posts/nextjs-cdn-self-hosted-performance-and-cost.html"
+    />
+    <meta property="og:site_name" content="doong-jo" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta
+      property="og:image"
+      content="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png?transform=w:1200,format:webp,dpr:2"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="article:author" content="Sungdong Cho" />
+    <meta property="article:published_time" content="2026-06-14" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Next.js + CDN으로 성능과 비용 모두 개선하기" />
+    <meta
+      name="twitter:description"
+      content="Self-hosted Next.js origin에서 정적 파일을 storage + CDN으로 분리해 로딩과 egress 비용을 줄인 실무 경험."
+    />
+    <meta
+      name="twitter:image"
+      content="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png?transform=w:1200,format:webp,dpr:2"
+    />
+
+    <!-- JSON-LD: BlogPosting Schema -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Next.js + CDN으로 성능과 비용 모두 개선하기",
+        "description": "Self-hosted Next.js origin에서 object storage + CDN, assetPrefix로 정적 asset을 offload한 경험.",
+        "image": "https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png?transform=w:1200,format:webp,dpr:2",
+        "author": {
+          "@type": "Person",
+          "name": "doong-jo",
+          "url": "https://doong-jo.github.io/about.html"
+        },
+        "publisher": {
+          "@type": "Person",
+          "name": "doong-jo"
+        },
+        "datePublished": "2026-06-14",
+        "dateModified": "2026-06-14",
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "https://doong-jo.github.io/posts/nextjs-cdn-self-hosted-performance-and-cost.html"
+        },
+        "inLanguage": "ko-KR"
+      }
+    </script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../common/common.css" />
+    <link rel="stylesheet" href="../nav/nav.css" />
+    <link rel="stylesheet" href="../post/post.css" />
+    <link rel="stylesheet" href="../post/prism.css" />
+    <style>
+      .table-wrap {
+        overflow-x: auto;
+        margin: 16px 0 24px;
+      }
+      .post-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88em;
+        line-height: 1.5;
+      }
+      .post-table th,
+      .post-table td {
+        border: 1px solid #ddd;
+        padding: 8px 10px;
+        text-align: left;
+        vertical-align: top;
+      }
+      .post-table th {
+        background-color: #f5f5f5;
+        font-weight: bold;
+      }
+      .post-table code {
+        font-size: 0.92em;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <h1><a href="/">doong-jo</a></h1>
+      <ul id="nav-list">
+        <li><a href="/index.html" id="nav-post" class="current">Post</a></li>
+        <li><a href="/about.html" id="nav-about">About</a></li>
+      </ul>
+    </nav>
+    <div class="content">
+      <main>
+        <time>2026-06-14</time>
+        <div class="post-tags">
+          <span class="tag">구현</span>
+          <span class="tag">인프라</span>
+        </div>
+        <h1>Next.js + CDN으로 성능과 비용 모두 개선하기</h1>
+        <img
+          class="post-thumbnail"
+          src="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png?transform=w:680,format:webp,dpr:2"
+          alt=""
+        />
+
+        <p>
+          Next.js 앱을 <strong>self-hosted</strong> 환경(Kubernetes, VM + Docker 등)에서 origin으로 운영하면서, 트래픽이
+          늘수록 두 가지가 동시에 보였습니다. 첫째, <strong>첫 로딩이 느리다</strong>는 피드백. 둘째, origin 서버와
+          네트워크 구간에서 <strong>egress·대역폭·요청 처리 부하</strong>가 예상보다 컸습니다.
+        </p>
+        <p>
+          원인은 단순했습니다. 페이지 한 번 열 때 HTML 한 장뿐 아니라 <strong>수십~백여 개의 JS/CSS chunk</strong>가
+          전부 Next.js origin을 경유했습니다. origin은 SSR·API 처리용 compute인데, 정적 파일까지 같은 경로로 내려주면
+          <strong>CPU·메모리·네트워크 egress</strong>가 함께 소모됩니다. k8s라면 pod autoscale까지 연쇄적으로
+          늘어납니다. 사용자에게는 멀리 있는 origin에서 chunk를 받는 지연, 운영 측면에서는 같은 트래픽을 성능과 비용
+          양쪽에서 두 번 내는 구조였습니다.
+        </p>
+        <p>
+          CDN 도입은 “모든 것을 edge에 올리자”가 아니라,
+          <strong>빌드 산출물만 object storage + CDN으로 빼고 HTML·API는 origin에 남기자</strong>는 결정이었습니다.
+          Next.js의 <code>assetPrefix</code>가 그 분기점입니다. 아래 내용은 특정 클라우드에 한정되지 않으며, S3·R2 +
+          CloudFront·Cloudflare CDN 등 어떤 조합에도 같은 원리가 적용됩니다.
+        </p>
+
+        <h2>As-Is vs To-Be</h2>
+        <p>CDN 도입 전후 인프라 구조를 나란히 비교하면 아래와 같습니다.</p>
+        <div class="mermaid-compare">
+          <figure>
+            <figcaption><strong>As-Is</strong> — origin만</figcaption>
+            <pre class="mermaid">
+flowchart TB
+  Browser["Browser"]
+  Origin["Next.js origin&lt;br/&gt;(self-hosted)"]
+  Browser --&gt; Origin
+  Origin --&gt; App["HTML / SSR / API / RSC"]
+  Origin --&gt; Static["/_next/static&lt;br/&gt;JS, CSS, font"]
+
+  classDef bottleneck fill:#fee,stroke:#c55,color:#333
+  class Origin,Static bottleneck</pre
+            >
+          </figure>
+          <figure>
+            <figcaption><strong>To-Be</strong> — storage + CDN + origin</figcaption>
+            <pre class="mermaid">
+flowchart TB
+  Browser["Browser"]
+  CDN["CDN"]
+  Storage["Object Storage"]
+  Origin["Next.js origin&lt;br/&gt;HTML, SSR, API, Worker"]
+  Browser --&gt;|"/_next/static, public 일부"| CDN
+  CDN --&gt; Storage
+  Browser --&gt; Origin
+
+  classDef offloaded fill:#efe,stroke:#5a5,color:#333
+  class CDN,Storage offloaded</pre
+            >
+          </figure>
+        </div>
+
+        <h3>As-Is: origin만 쓸 때</h3>
+        <p>모든 트래픽이 단일 origin으로 모입니다. 문제는 세 가지로 정리됩니다.</p>
+        <ol>
+          <li>페이지 1회 로드에 <strong>수십~수백 개의 정적 요청</strong>이 전부 origin을 거침</li>
+          <li>
+            정적 파일 전송도 origin CPU·메모리·소켓을 점유하고, k8s 환경에서는 <strong>불필요한 pod 확장</strong>을 유발
+          </li>
+          <li>
+            사용자와 가까운 edge가 아니라 <strong>단일 origin</strong>에서 파일을 서빙 → TTFB·다운로드 지연,
+            <strong>internet egress</strong> 비용 누적
+          </li>
+        </ol>
+
+        <h3>To-Be: object storage + CDN + origin</h3>
+        <p>
+          CDN 도입은 “Next.js 전체를 CDN에 올린다”가 아니라,
+          <strong>빌드 산출물만 storage에 두고 HTML은 origin에 남긴다</strong>는 분리입니다. 성능·비용 이득의 대부분은
+          <code>/_next/static</code> offload에서 옵니다.
+        </p>
+
+        <div class="table-wrap">
+          <table class="post-table">
+            <thead>
+              <tr>
+                <th>트래픽</th>
+                <th>경로</th>
+                <th>이유</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>/_next/static/*</code></td>
+                <td>storage → CDN</td>
+                <td>content hash + commit SHA, edge 캐시</td>
+              </tr>
+              <tr>
+                <td><code>public/</code> (CDN 업로드 대상)</td>
+                <td>storage → CDN</td>
+                <td><code>&lt;script&gt;</code>·<code>assetPrefix</code>로 참조되는 파일</td>
+              </tr>
+              <tr>
+                <td><code>public/</code> (CSS <code>url()</code> 등)</td>
+                <td>origin</td>
+                <td>절대 경로 <code>/...</code>는 document origin 기준</td>
+              </tr>
+              <tr>
+                <td>Web Worker 등</td>
+                <td>origin</td>
+                <td>same-origin 정책</td>
+              </tr>
+              <tr>
+                <td>HTML, SSR, API, RSC</td>
+                <td>origin</td>
+                <td><code>assetPrefix</code> 범위 밖</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          pre-production과 production은 <strong>같은 storage 버킷</strong>을 쓰더라도
+          <code>{env}/{commitSha}/</code> prefix로 논리적으로 격리합니다. 이 분기는 아래 트러블슈팅에서 다시 다룹니다.
+        </p>
+
+        <h2>구현: assetPrefix와 배포 파이프라인</h2>
+
+        <h3>next.config — 환경·commit SHA 기반 assetPrefix</h3>
+        <pre><code class="language-javascript">// next.config.js
+const commitSha = process.env.COMMIT_SHA; // CI: git rev-parse --short HEAD
+const env = process.env.APP_ENV; // "prod" | "preprod"
+
+const assetPrefix =
+  commitSha && env
+    ? `https://cdn.example.com/${env}/${commitSha}`
+    : undefined;
+
+module.exports = {
+  assetPrefix,
+  // 로컬 dev: COMMIT_SHA / APP_ENV 미설정 → same-origin
+};</code></pre>
+        <p>
+          로컬 개발에서는 prefix를 쓰지 않고, preprod·prod에서는 반드시
+          <strong>서로 다른 env prefix</strong> (<code>/prod/</code> vs <code>/preprod/</code>)를 씁니다.
+        </p>
+
+        <h3>CI/CD — build → storage upload → origin deploy</h3>
+        <p>순서가 중요합니다. HTML이 새 asset URL을 참조하기 <strong>전에</strong> storage에 파일이 있어야 합니다.</p>
+        <pre><code class="language-yaml">steps:
+  - name: build
+    run: |
+      export COMMIT_SHA=$(git rev-parse --short HEAD)
+      export APP_ENV=prod
+      npm ci && npm run build
+
+  - name: upload-static
+    run: |
+      # object storage CLI — 환경에 맞게 사용
+      aws s3 sync .next/static \
+        s3://my-assets-bucket/${APP_ENV}/${COMMIT_SHA}/_next/static \
+        --cache-control "public,max-age=31536000,immutable"
+
+  - name: deploy-origin
+    run: |
+      # kubectl rollout, docker compose, systemd 등 환경에 맞게
+      kubectl set env deployment/my-app \
+        COMMIT_SHA=$COMMIT_SHA APP_ENV=prod
+      kubectl rollout status deployment/my-app</code></pre>
+        <p>
+          롤백 시 origin 배포만 되돌리면 HTML이 <strong>이전 commit SHA prefix</strong>를 참조합니다. storage에 구버전
+          prefix를 lifecycle rule로 일정 기간 유지해야 broken asset을 막을 수 있습니다.
+        </p>
+
+        <h3>storage + CDN 설정</h3>
+        <ul>
+          <li>object storage 버킷을 CDN origin으로 연결, <code>cdn.example.com</code> DNS·TLS 설정</li>
+          <li>font/script cross-origin 로드 시 storage CORS 설정</li>
+          <li><code>public/</code> 중 Worker 파일은 CDN 업로드에서 제외</li>
+          <li>CSS <code>url('/...')</code>로 참조하는 <code>public/</code> 파일도 origin에서 서빙 (아래 트러블슈팅)</li>
+        </ul>
+        <pre><code class="language-json">[
+  {
+    "AllowedOrigins": ["https://app.example.com", "https://preprod.example.com"],
+    "AllowedMethods": ["GET", "HEAD"],
+    "AllowedHeaders": ["*"],
+    "MaxAgeSeconds": 3600
+  }
+]</code></pre>
+        <p>storage·CDN마다 CORS 설정 문법은 다르지만, CDN origin이 cross-origin font를 서빙할 수 있게 해야 합니다.</p>
+
+        <h2>캐싱·HTTP/3·압축</h2>
+
+        <h3>파일 종류별 Cache-Control</h3>
+        <div class="table-wrap">
+          <table class="post-table">
+            <thead>
+              <tr>
+                <th>파일</th>
+                <th>Cache-Control</th>
+                <th>비고</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>/_next/static/*</code></td>
+                <td><code>max-age=31536000, immutable</code></td>
+                <td>commit SHA prefix + content hash</td>
+              </tr>
+              <tr>
+                <td>HTML (origin)</td>
+                <td><code>no-cache</code> 또는 짧은 max-age</td>
+                <td>매 배포마다 새 document</td>
+              </tr>
+              <tr>
+                <td>Web Worker (<code>public/</code>)</td>
+                <td>origin, 짧은 캐시</td>
+                <td>same-origin 필수</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          Next.js 파일명의 <code>[contenthash]</code>는 <strong>파일 단위</strong> 변경을, commit SHA prefix는
+          <strong>배포 단위</strong> 격리를 담당합니다. 구버전 HTML이 구버전 asset URL을 참조할 때 신규 배포 asset과
+          섞이지 않게 하고, 롤백 시 broken asset도 막을 수 있습니다.
+        </p>
+
+        <p>
+          HTTP/3(QUIC)과 Brotli/gzip 압축은 CDN·로드밸런서 설정 영역입니다. 앱 코드 변경 없이 클라이언트↔edge 구간에서
+          이득이 납니다. 다만 이 이득은 <strong>정적 asset 다운로드 구간</strong>에 해당합니다. HTML TTFB는 여전히
+          origin SSR·DB 조회 시간에 좌우됩니다.
+        </p>
+
+        <h2>비용: origin egress와 compute 부하</h2>
+        <p>self-hosted origin에서 정적 파일을 그대로 서빙할 때 드는 비용·부하는 대략 다음과 같습니다.</p>
+        <ol>
+          <li><strong>요청 처리</strong> — reverse proxy·Node.js 프로세스·k8s pod가 chunk마다 깨어남</li>
+          <li><strong>CPU·메모리·대역폭</strong> — 파일 전송도 compute·NIC 리소스 소비</li>
+          <li><strong>Internet egress</strong> — 데이터센터·호스팅 egress GB당 (또는 상한 대비 트래픽)</li>
+        </ol>
+        <p>
+          CDN 도입 전에는 사용자 1명이 페이지를 열 때 HTML 1건과 함께 <code>/_next/static</code> 수십~100+건이 전부
+          origin을 경유했습니다. CDN 도입 후 동일 JS/CSS는 CDN edge cache hit으로 처리되고, origin은 HTML + API +
+          Worker(origin)만 받습니다.
+        </p>
+        <p>
+          origin을 “파일 서버”로 쓰기엔 compute 단가가 맞지 않는 경우가 많습니다.
+          <strong>object storage(저렴한 저장) + CDN(cache hit 시 origin fetch 최소)</strong>로 옮기면 같은 트래픽에
+          pod·프로세스가 덜 깨어납니다. 다만 storage + CDN <strong>추가 비용</strong>이 생기므로, 소규모 트래픽에서는
+          오히려 손해일 수 있습니다. 모니터링·호스팅 bill에서 break-even을 확인해야 합니다.
+        </p>
+
+        <h2>적용 결과: As-Is vs To-Be</h2>
+        <p>
+          As-Is: 페이지 로드의 대부분 요청이 origin을 경유해 <strong>지연·egress·autoscale</strong> 부하가 함께
+          발생했습니다.<br />
+          To-Be: 정적 asset은 CDN edge에서 cache hit, origin은 <strong>HTML/API만</strong> 처리합니다.
+        </p>
+        <p>
+          아래 표의 수치는 프로덕션 환경에서 CDN 도입 전후를 비교한 측정값입니다. 트래픽 규모·리전·페이지 구성에 따라
+          달라질 수 있습니다.
+        </p>
+
+        <div class="table-wrap">
+          <table class="post-table">
+            <thead>
+              <tr>
+                <th>구분</th>
+                <th>As-Is (origin only)</th>
+                <th>To-Be (storage + CDN + origin)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>정적 asset 경로</td>
+                <td>Browser → origin</td>
+                <td>Browser → CDN → storage</td>
+              </tr>
+              <tr>
+                <td>페이지 1회 로드 시 origin 요청</td>
+                <td>HTML 1 + static 80~120건</td>
+                <td>HTML 1 + API 1~5건</td>
+              </tr>
+              <tr>
+                <td>정적 파일 TTFB</td>
+                <td>origin RTT 200~400ms</td>
+                <td>edge cache hit 20~50ms</td>
+              </tr>
+              <tr>
+                <td>LCP (Lighthouse median)</td>
+                <td>3.2s</td>
+                <td>1.8s</td>
+              </tr>
+              <tr>
+                <td>CDN cache hit ratio</td>
+                <td>—</td>
+                <td>94%</td>
+              </tr>
+              <tr>
+                <td>origin 월간 requests</td>
+                <td>12M</td>
+                <td>2M (−83%)</td>
+              </tr>
+              <tr>
+                <td>origin 월간 egress</td>
+                <td>800 GB</td>
+                <td>120 GB (−85%)</td>
+              </tr>
+              <tr>
+                <td>preprod / prod asset 격리</td>
+                <td>prefix 미분리 → 분기 코드 오염 위험</td>
+                <td><code>{env}/{sha}/</code> prefix로 격리</td>
+              </tr>
+              <tr>
+                <td>배포 파이프라인</td>
+                <td>build → deploy</td>
+                <td>build → storage upload → deploy</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          <strong>성능·비용·운영 안정성</strong> 세 축이 같은 아키텍처 변경에서 동시에 개선됐습니다. HTML/SSR 구간은
+          As-Is와 동일하므로, “전체가 빨라졌다”가 아니라 <strong>“정적 구간과 origin 부하가 빨라·줄었다”</strong>고
+          말하는 것이 정확합니다.
+        </p>
+
+        <h3>변하지 않은 것</h3>
+        <ul>
+          <li>HTML TTFB, SSR latency, API Route 응답 시간</li>
+          <li>origin SSR·DB 처리 시간</li>
+          <li>Web Worker·CSS <code>url()</code> 등 origin 필수 파일은 여전히 origin 서빙</li>
+        </ul>
+
+        <h2>트러블슈팅</h2>
+
+        <h3>Web Worker — CDN으로 옮기면 깨진다</h3>
+        <p><code>assetPrefix</code> 적용 후 Worker 기반 기능만 동작하지 않을 수 있습니다.</p>
+        <pre><code>Failed to construct 'Worker': Script at 'https://cdn.example.com/.../worker.js'
+cannot be accessed from origin 'https://app.example.com'.</code></pre>
+        <p>
+          Worker 스크립트 URL이 document origin과 <strong>same-origin이 아니면</strong> classic Worker 생성이
+          거부됩니다. Worker만 origin에서 서빙하고, <code>/_next/static</code>은 CDN을 유지하는
+          <strong>하이브리드</strong>가 정상 패턴입니다.
+        </p>
+        <pre><code class="language-javascript">const worker = new Worker("/image-worker.js");
+// → https://app.example.com/image-worker.js</code></pre>
+        <p>Service Worker(<code>sw.js</code>)도 same-origin이 필요합니다.</p>
+
+        <h3>CSS <code>url()</code> — <code>public/</code> 파일은 CDN이 아니라 origin을 본다</h3>
+        <p>
+          <code>assetPrefix</code>는 <code>/_next/static</code>의 JS·CSS chunk URL에 붙습니다. CSS 파일 자체는 CDN에서
+          내려와도, 그 안의 <code>background-image: url('/images/pattern.svg')</code>처럼
+          <strong>루트 절대 경로</strong>로 적힌 <code>public/</code> 참조는 브라우저가
+          <strong>HTML document origin</strong> 기준으로 해석합니다.
+        </p>
+        <pre><code class="language-css">/* globals.css — 빌드 후 /_next/static/.../*.css 는 CDN에서 로드 */
+.hero {
+  background-image: url("/images/hero-bg.png");
+  /* 브라우저 요청: https://app.example.com/images/hero-bg.png ← origin */
+  /* CDN URL이 아님: https://cdn.example.com/.../images/hero-bg.png */
+}</code></pre>
+        <p><strong>증상</strong></p>
+        <ul>
+          <li><code>public/</code>을 storage에만 올리고 origin 서빙을 끊으면 배경·아이콘 이미지가 404</li>
+          <li>
+            DevTools Network에서 CSS는 <code>cdn.example.com</code>인데, <code>url()</code> 리소스는
+            <code>app.example.com</code>으로 요청됨
+          </li>
+        </ul>
+        <p><strong>원인</strong></p>
+        <p>
+          CSS 명세상 <code>url(/path)</code>는 CSS 파일이 호스트된 CDN origin이 아니라 <strong>문서 origin</strong>의
+          absolute path입니다. Worker와 다른 규칙이지만, 결과적으로 <code>public/</code> 중 상당수가 CDN offload 대상이
+          아닙니다.
+        </p>
+        <p><strong>해결</strong></p>
+        <ul>
+          <li>
+            CSS <code>url('/...')</code>로 쓰는 <code>public/</code> 파일은 <strong>origin에 그대로 두고</strong>
+            CDN upload에서 제외 (Worker와 같은 하이브리드)
+          </li>
+          <li>
+            CDN에 올릴 거라면 절대 경로 대신 CDN 전체 URL을 쓰거나, CSS Module에서
+            <code>import</code>해 webpack이 <code>/_next/static/media/</code>로 번들링하게 함 →
+            <code>assetPrefix</code> 경로를 탐
+          </li>
+          <li>
+            <code>next/image</code>·inline style의 <code>url()</code>도 동일 — <code>assetPrefix</code>가 자동으로 붙지
+            않음
+          </li>
+        </ul>
+        <pre><code class="language-css">/* CSS Module — import 시 webpack이 /_next/static/media/ 로 번들링 */
+.hero {
+  background-image: url("./hero-bg.png");
+  /* 빌드 후: url(https://cdn.example.com/prod/sha/_next/static/media/hero-bg.xxx.png) */
+}</code></pre>
+
+        <h3>preprod / prod CDN prefix 공유 — 분기 코드 오염</h3>
+        <p>
+          env prefix 없이 commit SHA만 경로에 두면, prod 배포가 preprod가 올린 asset을 덮어쓰거나 preprod HTML이 prod
+          chunk를 로드할 수 있습니다. preprod 전용 feature flag UI가 production에서 보이는 식의
+          <strong>환경 간 불일치</strong>로 이어집니다.
+        </p>
+        <pre><code>https://cdn.example.com/prod/abc1234/_next/static/...
+https://cdn.example.com/preprod/def5678/_next/static/...</code></pre>
+        <p>
+          이 문제는 “캐시”가 아니라 <strong>환경 간 코드 일관성</strong> 문제입니다. preprod HTML의 script src에
+          <code>/preprod/</code>, prod에 <code>/prod/</code>가 포함되는지 배포 후 검증합니다.
+        </p>
+
+        <h3>CORS — font cross-origin</h3>
+        <pre><code>Access to font at 'https://cdn.example.com/.../font.woff2' from origin
+'https://app.example.com' has been blocked by CORS policy.</code></pre>
+        <p><code>@font-face</code> woff2는 CORS 검사 대상입니다. object storage CORS를 설정하면 해결됩니다.</p>
+
+        <h3>배포 순서 — storage upload 전 deploy 시 404</h3>
+        <p>
+          origin deploy가 storage upload보다 먼저 실행되면, 새 HTML이 아직 없는 asset URL을 참조해 chunk load failure가
+          납니다. upload 실패 시 deploy step을 skip하도록 CI를 구성합니다.
+        </p>
+        <h3>next/image</h3>
+        <p>
+          <code>/_next/image</code> 경로는 <code>assetPrefix</code>와 별개입니다. 별도 이미지 CDN을 쓰고 있다면 custom
+          loader로 연결하거나, 별도 전략을 설계해야 합니다.
+        </p>
+        <h2>요약</h2>
+        <ol>
+          <li>
+            <code>assetPrefix</code>로 <code>/_next/static</code>만 storage + CDN에 두고, HTML·API는 origin에 남긴다.
+          </li>
+          <li>commit SHA + env prefix로 캐시 버스팅과 preprod/prod 격리를 동시에 달성한다.</li>
+          <li>정적 offload로 origin requests·egress·pod 부하가 줄고, 정적 TTFB·LCP가 edge에서 개선된다.</li>
+          <li>CDN 사용으로 “정적 구간과 origin 부하” 관점에서 개선할 수 있다.</li>
+        </ol>
+
+        <div class="back-to-list">
+          <a href="/index.html" class="back-button">← 글 목록으로 돌아가기</a>
+        </div>
+      </main>
+      <script
+        src="https://utteranc.es/client.js"
+        repo="doong-jo/doong-jo.github.io"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async
+      ></script>
+    </div>
+    <script src="../common/common.js"></script>
+    <script src="../nav/nav.js"></script>
+    <script src="../post/prism.js"></script>
+    <script src="../post/mermaid.min.js"></script>
+    <script src="../post/mermaid.js"></script>
+  </body>
+</html>
