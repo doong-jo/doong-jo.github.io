@@ -26,10 +26,7 @@
     <meta name="post-tags" content="구현, 프론트엔드, WebView" />
 
     <!-- Canonical -->
-    <link
-      rel="canonical"
-      href="https://doong-jo.github.io/posts/webview-dark-mode-prefer-color-scheme.html"
-    />
+    <link rel="canonical" href="https://doong-jo.github.io/posts/webview-dark-mode-prefer-color-scheme.html" />
 
     <!-- RSS Feed -->
     <link
@@ -46,10 +43,7 @@
       property="og:description"
       content="Next.js WebView에서 FOUC 없이 다크모드를 맞춘 방법. prefers-color-scheme + CSS 변수, iOS/Android 네이티브 연동, 앱 버전별 data attribute 분기."
     />
-    <meta
-      property="og:url"
-      content="https://doong-jo.github.io/posts/webview-dark-mode-prefer-color-scheme.html"
-    />
+    <meta property="og:url" content="https://doong-jo.github.io/posts/webview-dark-mode-prefer-color-scheme.html" />
     <meta property="og:site_name" content="doong-jo" />
     <meta property="og:locale" content="ko_KR" />
     <meta
@@ -156,22 +150,22 @@
         />
 
         <p>
-          Next.js 페이지를 iOS·Android WebView에 임베딩하면, 앱은 다크모드인데 웹 화면은 라이트로 뜨거나 잠깐
-          라이트가 보였다가 다크로 바뀌는 <strong>깜빡임(FOUC, Flash of Unstyled Content)</strong>이 자주
-          발생합니다. 동시에 SSG·ISR로 만든 <strong>static optimization</strong>은 그대로 유지하고 싶고, 테마는
-          네이티브 앱 설정(시스템 테마·앱 내 토글)을 따라가야 합니다.
+          Next.js 페이지를 iOS·Android WebView에 임베딩하면, 앱은 다크모드인데 웹 화면은 라이트로 뜨거나 잠깐 라이트가
+          보였다가 다크로 바뀌는 <strong>깜빡임(FOUC, Flash of Unstyled Content)</strong>이 자주 납니다. 동시에
+          SSG·ISR로 만든 <strong>static optimization</strong>은 그대로 유지하고 싶고, 테마는 네이티브 앱 설정(시스템
+          테마·앱 내 토글)을 따라가야 합니다.
         </p>
         <p>
           이 글은 SSR 헤더 분기와 프론트 JS 테마 상태를 시도했다가 기각한 이유, 그리고
-          <code>prefers-color-scheme</code> + CSS 변수 + 네이티브 color scheme 강제 + 앱 버전 분기로 깜빡임 없이
-          맞춘 패턴을 정리합니다.
+          <code>prefers-color-scheme</code> + CSS 변수 + 네이티브 color scheme 강제 + 앱 버전 분기로 깜빡임 없이 맞춘
+          패턴을 정리합니다.
         </p>
 
         <h2>문제: WebView에서 다크모드가 어긋나는 이유</h2>
         <p>
-          Next.js가 SSG/ISR로 내보내는 HTML은 <strong>빌드 시점에 테마 정보가 없습니다</strong>. WebView가 이
-          HTML을 받아 paint할 때 기본값은 라이트이고, 이후 JavaScript가 테마를 읽어 class를 붙이거나 CSS를
-          덮어쓰면 그 사이에 깜빡임이 생깁니다.
+          Next.js가 SSG/ISR로 내보내는 HTML은 <strong>빌드 시점에 테마 정보가 없습니다</strong>. WebView가 이 HTML을
+          받아 paint할 때 기본값은 라이트이고, 이후 JavaScript가 테마를 읽어 class를 붙이거나 CSS를 덮어쓰면 그 사이에
+          깜빡임이 생깁니다.
         </p>
         <pre class="mermaid">
 sequenceDiagram
@@ -200,22 +194,16 @@ sequenceDiagram
             <tbody>
               <tr>
                 <td><strong>요청 헤더 + SSR 분기</strong></td>
+                <td>네이티브가 WebView 요청에 <code>X-Theme: dark</code> 등을 주입 → 서버에서 HTML/class 분기</td>
                 <td>
-                  네이티브가 WebView 요청에 <code>X-Theme: dark</code> 등을 주입 → 서버에서 HTML/class 분기
-                </td>
-                <td>
-                  요청마다 HTML이 달라져 <strong>SSG/ISR 캐시 무효</strong>, CDN edge 캐시·빌드 산출물 재사용
-                  불가
+                  요청마다 HTML이 달라져 <strong>SSG/ISR 캐시 무효</strong>, CDN edge 캐시·빌드 산출물 재사용 불가
                 </td>
               </tr>
               <tr>
                 <td><strong>프론트 JS 테마 상태</strong></td>
+                <td><code>localStorage</code>, React context, <code>classList</code> 등 웹 단독 테마 관리</td>
                 <td>
-                  <code>localStorage</code>, React context, <code>classList</code> 등 웹 단독 테마 관리
-                </td>
-                <td>
-                  네이티브 설정과 <strong>이중 소스</strong> → 불일치·동기화 버그, hydration 이후에야 반영 →
-                  깜빡임
+                  네이티브 설정과 <strong>이중 소스</strong> → 불일치·동기화 버그, hydration 이후에야 반영 → 깜빡임
                 </td>
               </tr>
             </tbody>
@@ -230,23 +218,23 @@ sequenceDiagram
           사용자별 HTML 분기도 필요해집니다.
         </p>
         <p>
-          테마별로 <code>generateStaticParams</code>로 N벌 빌드하는 방법도 있지만, 조합이 늘수록 빌드·배포·캐시
-          비용이 커지고 네이티브와 웹의 테마 정의가 따로 놀면 동기화 버그가 남습니다.
+          테마별로 <code>generateStaticParams</code>로 N벌 빌드하는 방법도 있지만, 조합이 늘수록 빌드·배포·캐시 비용이
+          커지고 네이티브와 웹의 테마 정의가 따로 놀면 동기화 버그가 남습니다.
         </p>
 
         <h3>프론트 단독 테마 정의의 함정</h3>
         <p>
-          웹에서 <code>theme: 'dark'</code>를 별도로 정의하면, 네이티브 앱 설정과 값이 어긋날 여지가 생깁니다.
-          앱에서 다크로 바꿨는데 웹은 <code>localStorage</code>의 라이트를 유지한다든지, bridge 이벤트를 놓쳐
-          반영이 늦는다든지 하는 버그가 반복됩니다. React <code>useEffect</code>로 <code>document.documentElement</code>에
-          class를 붙이는 패턴도 <strong>첫 paint 이후</strong>에 실행되므로 FOUC를 근본적으로 막지 못합니다.
+          웹에서 <code>theme: 'dark'</code>를 별도로 정의하면, 네이티브 앱 설정과 값이 어긋날 여지가 생깁니다. 앱에서
+          다크로 바꿨는데 웹은 <code>localStorage</code>의 라이트를 유지한다든지, bridge 이벤트를 놓쳐 반영이 늦는다든지
+          하는 버그가 반복됩니다. React <code>useEffect</code>로 <code>document.documentElement</code>에 class를 붙이는
+          패턴도 <strong>첫 paint 이후</strong>에 실행되므로 FOUC를 근본적으로 막지 못합니다.
         </p>
 
         <h2>채택한 핵심: prefers-color-scheme를 단일 진실 공급원으로</h2>
         <p>
-          웹은 테마 값을 “저장”하지 않습니다. <strong>OS/브라우저가 보고하는 color scheme</strong>만 따르고,
-          네이티브는 WebView에 <strong>앱 테마와 동일한 color scheme</strong>을 강제합니다. 사용자가 앱에서 테마를
-          바꾸면 네이티브가 WebView color scheme을 다시 맞추고, 웹은 별도 동기화 코드 없이 CSS만으로 따라갑니다.
+          웹은 테마 값을 "저장"하지 않습니다. <strong>OS/브라우저가 보고하는 color scheme</strong>만 따르고, 네이티브는
+          WebView에 <strong>앱 테마와 동일한 color scheme</strong>을 강제합니다. 사용자가 앱에서 테마를 바꾸면
+          네이티브가 WebView color scheme을 다시 맞추고, 웹은 별도 동기화 코드 없이 CSS만으로 따라갑니다.
         </p>
 
         <pre class="mermaid">
@@ -265,9 +253,8 @@ flowchart LR
 
         <h3>웹: CSS 변수 + prefers-color-scheme</h3>
         <p>
-          컬러 토큰은 CSS custom property로 정의하고, <code>@media (prefers-color-scheme: dark)</code>에서
-          덮어씁니다. 컴포넌트는 토큰만 참조하므로 JS 테마 토글이 필요 없고, CSS 파싱 시점부터 올바른 값이
-          적용됩니다.
+          컬러 토큰은 CSS custom property로 정의하고, <code>@media (prefers-color-scheme: dark)</code>에서 덮어씁니다.
+          컴포넌트는 토큰만 참조하므로 JS 테마 토글이 필요 없고, CSS 파싱 시점부터 올바른 값이 적용됩니다.
         </p>
         <pre><code class="language-css">:root {
   --color-bg: #ffffff;
@@ -290,8 +277,8 @@ body {
 
         <h3>네이티브: WebView color scheme 강제</h3>
         <p>
-          <strong>iOS (WKWebView)</strong> — 앱 테마에 맞게 <code>overrideUserInterfaceStyle</code>을 설정하면
-          WebView의 <code>prefers-color-scheme</code>이 따라갑니다.
+          <strong>iOS (WKWebView)</strong> — 앱 테마에 맞게 <code>overrideUserInterfaceStyle</code>을 설정하면 WebView의
+          <code>prefers-color-scheme</code>이 따라갑니다.
         </p>
         <pre><code class="language-swift">// 앱 테마가 dark일 때
 webView.overrideUserInterfaceStyle = .dark
@@ -302,13 +289,12 @@ webView.overrideUserInterfaceStyle = .light
 // 시스템 설정을 따를 때
 webView.overrideUserInterfaceStyle = .unspecified</code></pre>
         <p>
-          사용자가 앱 설정에서 테마를 바꿀 때마다 위 값을 다시 적용하면, 웹은 bridge 없이 CSS만으로 즉시
-          반영됩니다.
+          사용자가 앱 설정에서 테마를 바꿀 때마다 위 값을 다시 적용하면, 웹은 bridge 없이 CSS만으로 즉시 반영됩니다.
         </p>
 
         <p>
-          <strong>Android (WebView)</strong> — Activity·Application의 UI mode를 앱 테마와 일치시킵니다. API 29+
-          에서는 WebView가 이 설정을 <code>prefers-color-scheme</code>에 반영합니다.
+          <strong>Android (WebView)</strong> — Activity·Application의 UI mode를 앱 테마와 일치시킵니다. API 29+ 에서는
+          WebView가 이 설정을 <code>prefers-color-scheme</code>에 반영합니다.
         </p>
         <pre><code class="language-kotlin">// 앱 테마가 dark일 때 (AppCompat)
 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -320,24 +306,23 @@ AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 val isDark = (resources.configuration.uiMode and
     Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES</code></pre>
         <p>
-          구형 WebView는 <code>prefers-color-scheme</code> 미지원일 수 있으므로, 아래 버전 분기와 함께 라이트
-          fallback을 두는 것이 안전합니다.
+          구형 WebView는 <code>prefers-color-scheme</code> 미지원일 수 있으므로, 아래 버전 분기와 함께 라이트 fallback을
+          두는 것이 안전합니다.
         </p>
 
         <h2>네이티브 버전 분기: 구버전 호환 + 신규 다크모드</h2>
         <p>
-          다크모드 WebView 연동은 <strong>특정 앱 버전 이상</strong>에서만 지원해야 하는 경우가 많습니다. 그
-          이전 버전 WebView에서는 라이트 고정(다크 CSS 미적용)이 요구사항일 수 있습니다. 이때 SSR로 HTML을
-          나누지 않고, <strong>render-blocking inline script</strong> + <code>data-*</code> attribute + CSS
-          selector 조합으로 한 벌의 static HTML에서 분기합니다.
+          다크모드 WebView 연동은 <strong>특정 앱 버전 이상</strong>에서만 지원해야 하는 경우가 많습니다. 그 이전 버전
+          WebView에서는 라이트 고정(다크 CSS 미적용)이 요구사항일 수 있습니다. 이때 SSR로 HTML을 나누지 않고,
+          <strong>render-blocking inline script</strong> + <code>data-*</code> attribute + CSS selector 조합으로 한 벌의
+          static HTML에서 분기합니다.
         </p>
 
         <h3>1. head 최상단 blocking script</h3>
         <p>
           CSS 파싱 전에 <code>&lt;html&gt;</code>에 attribute가 있어야 하므로, <code>async</code>·
-          <code>defer</code> 없이 inline script를 <code>&lt;head&gt;</code> 최상단에 둡니다. 네이티브가
-          주입하는 앱 버전(예: <code>window.__APP_VERSION__</code>)을 읽어 기준 버전 이상이면 attribute를
-          설정합니다.
+          <code>defer</code> 없이 inline script를 <code>&lt;head&gt;</code> 최상단에 둡니다. 네이티브가 주입하는 앱
+          버전(예: <code>window.__APP_VERSION__</code>)을 읽어 기준 버전 이상이면 attribute를 설정합니다.
         </p>
         <pre><code class="language-html">&lt;script&gt;
   (function () {
@@ -359,15 +344,15 @@ val isDark = (resources.configuration.uiMode and
   })();
 &lt;/script&gt;</code></pre>
         <p>
-          스크립트는 semver 비교만 수행하도록 짧게 유지합니다. 외부 fetch나 bridge async 호출은 첫 paint를
-          지연시키므로 넣지 않습니다. 버전 문자열은 네이티브가 페이지 load 전
+          스크립트는 semver 비교만 수행하도록 짧게 유지합니다. 외부 fetch나 bridge async 호출은 첫 paint를 지연시키므로
+          넣지 않습니다. 버전 문자열은 네이티브가 페이지 load 전
           <code>evaluateJavaScript</code> / <code>addJavascriptInterface</code>로 주입합니다.
         </p>
 
         <h3>2. CSS: data attribute × prefers-color-scheme</h3>
         <p>
-          <code>data-dark-mode-support</code>가 없는 구버전 WebView는 라이트 토큰만 적용됩니다. attribute가
-          있는 신버전에서만 다크 미디어 쿼리가 활성화됩니다.
+          <code>data-dark-mode-support</code>가 없는 구버전 WebView는 라이트 토큰만 적용됩니다. attribute가 있는
+          신버전에서만 다크 미디어 쿼리가 활성화됩니다.
         </p>
         <pre><code class="language-css">/* 기본: 라이트 (모든 버전) */
 :root {
@@ -415,9 +400,9 @@ val isDark = (resources.configuration.uiMode and
         <h3>3. Next.js 적용 위치</h3>
         <p>
           App Router에서는 <code>app/layout.tsx</code>의 <code>&lt;html&gt;</code> 직후, Pages Router에서는
-          <code>pages/_document.tsx</code>의 <code>&lt;Head&gt;</code> 안에 inline script를 배치합니다. 글로벌
-          CSS 또는 design token 파일에 위 selector 패턴을 적용하면, <strong>SSG/ISR HTML은 버전 무관 1벌</strong>로
-          빌드·캐시할 수 있습니다.
+          <code>pages/_document.tsx</code>의 <code>&lt;Head&gt;</code> 안에 inline script를 배치합니다. 글로벌 CSS 또는
+          design token 파일에 위 selector 패턴을 적용하면, <strong>SSG/ISR HTML은 버전 무관 1벌</strong>로 빌드·캐시할
+          수 있습니다.
         </p>
         <pre><code class="language-tsx">// app/layout.tsx (App Router)
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -447,47 +432,42 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <h2>트레이드오프·주의사항</h2>
         <ul>
           <li>
-            <strong>blocking script</strong> — 의도적 trade-off입니다. semver 비교 수 ms 이내로 끝나도록
-            inline만 유지하고, 외부 리소스 로드를 넣지 않습니다.
+            <strong>blocking script</strong> — 의도적 trade-off입니다. semver 비교 수 ms 이내로 끝나도록 inline만
+            유지하고, 외부 리소스 로드를 넣지 않습니다.
           </li>
           <li>
-            <strong>일반 브라우저</strong> — <code>window.__APP_VERSION__</code>이 없으면 attribute가 설정되지
-            않아 라이트-only로 동작합니다. 마케팅 페이지를 브라우저에서도 다크로 보여줘야 한다면 별도
-            분기(예: WebView UA 감지 없이 시스템 <code>prefers-color-scheme</code>만 따르는 CSS)를 검토합니다.
+            <strong>일반 브라우저</strong> — <code>window.__APP_VERSION__</code>이 없으면 attribute가 설정되지 않아
+            라이트-only로 동작합니다. 마케팅 페이지를 브라우저에서도 다크로 보여줘야 한다면 별도 분기(예: WebView UA
+            감지 없이 시스템 <code>prefers-color-scheme</code>만 따르는 CSS)를 검토합니다.
           </li>
           <li>
-            <strong>JS 테마 class와 병행 금지</strong> — <code>useEffect</code>로 <code>dark</code> class를
-            붙이는 기존 패턴과 섞으면 다시 FOUC·네이티브 불일치가 발생합니다. CSS 변수 + 미디어 쿼리로
-            통일합니다.
+            <strong>JS 테마 class와 병행 금지</strong> — <code>useEffect</code>로 <code>dark</code> class를 붙이는 기존
+            패턴과 섞으면 다시 FOUC·네이티브 불일치가 발생합니다. CSS 변수 + 미디어 쿼리로 통일합니다.
           </li>
           <li>
             <strong>네이티브 테마 변경</strong> — iOS <code>overrideUserInterfaceStyle</code>, Android
-            <code>AppCompatDelegate</code> 변경 시 WebView를 reload하지 않아도 color scheme 미디어 쿼리가
-            재평가됩니다. 웹 쪽 추가 작업은 없습니다.
+            <code>AppCompatDelegate</code> 변경 시 WebView를 reload하지 않아도 color scheme 미디어 쿼리가 재평가됩니다.
+            웹 쪽 추가 작업은 없습니다.
           </li>
         </ul>
 
-        <h2>요약</h2>
+        <h2>마무리</h2>
         <ol>
           <li>
-            네이티브 요청 헤더로 SSR 분기하면 SSG/ISR·CDN static optimization을 포기해야 하므로, static HTML
-            1벌을 유지한다.
+            네이티브 요청 헤더로 SSR 분기하면 SSG/ISR·CDN static optimization을 포기해야 하므로, static HTML 1벌을
+            유지한다.
           </li>
+          <li>프론트에서 테마 값을 따로 정의하면 네이티브와 이중 소스가 되어 불일치·깜빡임 버그가 생긴다.</li>
           <li>
-            프론트에서 테마 값을 따로 정의하면 네이티브와 이중 소스가 되어 불일치·깜빡임 버그가 생긴다.
-          </li>
-          <li>
-            <code>prefers-color-scheme</code> + CSS 변수로 웹 테마를 표현하고, iOS·Android 네이티브가 WebView
-            color scheme을 앱 설정에 맞게 강제한다.
+            <code>prefers-color-scheme</code> + CSS 변수로 웹 테마를 표현하고, iOS·Android 네이티브가 WebView color
+            scheme을 앱 설정에 맞게 강제한다.
           </li>
           <li>
             특정 앱 버전 이상에서만 다크모드를 켜려면, head blocking script로
-            <code>data-dark-mode-support</code>를 설정하고 CSS selector와 <code>prefers-color-scheme</code>을
-            조합한다.
+            <code>data-dark-mode-support</code>를 설정하고 CSS selector와 <code>prefers-color-scheme</code>을 조합한다.
           </li>
           <li>
-            React hydration 이후 class 토글·<code>localStorage</code> 테마 상태는 피하고, CSS만으로 첫 paint부터
-            맞춘다.
+            React hydration 이후 class 토글·<code>localStorage</code> 테마 상태는 피하고, CSS만으로 첫 paint부터 맞춘다.
           </li>
         </ol>
 

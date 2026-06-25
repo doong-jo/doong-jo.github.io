@@ -152,9 +152,9 @@
         />
 
         <p>
-          Next.js 앱을 <strong>self-hosted</strong> 환경(Kubernetes, VM + Docker 등)에서 origin으로 운영하면서, 트래픽이
-          늘수록 두 가지가 동시에 보였습니다. 첫째, <strong>첫 로딩이 느리다</strong>는 피드백. 둘째, origin 서버와
-          네트워크 구간에서 <strong>egress·대역폭·요청 처리 부하</strong>가 예상보다 컸습니다.
+          Next.js 앱을 <strong>self-hosted</strong> 환경(Kubernetes, VM + Docker 등)에서 origin으로 운영하면서 트래픽이
+          늘수록 두 가지가 동시에 보였습니다. 하나는 <strong>첫 로딩이 느리다</strong>는 피드백이고, 다른 하나는 origin
+          서버와 네트워크 구간에서 <strong>egress·대역폭·요청 처리 부하</strong>가 예상보다 컸다는 점입니다.
         </p>
         <p>
           원인은 단순했습니다. 페이지 한 번 열 때 HTML 한 장뿐 아니라 <strong>수십~백여 개의 JS/CSS chunk</strong>가
@@ -388,24 +388,24 @@ module.exports = {
         <h3>Cloud Run에서 나가는 돈 세 가지</h3>
         <ol>
           <li>
-            <strong>요청(Request)</strong> — HTTP 1번 = 과금 1번. JS 파일 하나를 내려줘도 요청 1건입니다. Next.js
-            페이지 1회 로드는 대략 <strong>요청 100회</strong>에 가깝습니다.
+            <strong>요청(Request)</strong> — HTTP 1번 = 과금 1번. JS 파일 하나를 내려줘도 요청 1건입니다. Next.js 페이지
+            1회 로드는 대략 <strong>요청 100회</strong>에 가깝습니다.
           </li>
           <li>
-            <strong>CPU·메모리</strong> — 요청을 처리하는 동안 컨테이너가 켜져 있는 시간만큼 과금됩니다. 파일을
-            전송하는 동안에도 CPU·메모리가 소모됩니다.
+            <strong>CPU·메모리</strong> — 요청을 처리하는 동안 컨테이너가 켜져 있는 시간만큼 과금됩니다. 파일을 전송하는
+            동안에도 CPU·메모리가 소모됩니다.
           </li>
           <li>
-            <strong>egress(이그레스)</strong> — 서버(Cloud Run)에서 <strong>인터넷 밖, 즉 사용자 브라우저 쪽으로</strong>
-            데이터를 보낼 때 드는 <strong>출구 통행료</strong>입니다. GB 단위로 청구됩니다. ingress(들어오는
-            트래픽)와 달리 egress는 대개 유료입니다.
+            <strong>egress(이그레스)</strong> — 서버(Cloud Run)에서
+            <strong>인터넷 밖, 즉 사용자 브라우저 쪽으로</strong> 데이터를 보낼 때 드는
+            <strong>출구 통행료</strong>입니다. GB 단위로 청구됩니다. ingress(들어오는 트래픽)와 달리 egress는 대개
+            유료입니다.
           </li>
         </ol>
         <p>
           CDN 도입 전에는 JS·CSS·font를 Cloud Run이 직접 사용자에게 보냈습니다. 그래서
           <strong>요청 100번 + egress 수 MB</strong>가 페이지 조회 1번마다 반복됐습니다. Cloud Run은 SSR·API용
-          <strong>앱 서버</strong>이지, 대용량 정적 파일 배달용 CDN이 아닙니다. 같은 일을 시키면 단가가 맞지
-          않습니다.
+          <strong>앱 서버</strong>이지, 대용량 정적 파일 배달용 CDN이 아닙니다. 같은 일을 시키면 단가가 맞지 않습니다.
         </p>
 
         <h3>CDN은 왜 더 싼가</h3>
@@ -438,28 +438,26 @@ module.exports = {
             </tbody>
           </table>
         </div>
-        <p>
-          같은 1GB를 1,000명에게 보낸다고 가정해 보겠습니다. (실제론 cache hit으로 origin fetch는 훨씬 적습니다.)
-        </p>
+        <p>같은 1GB를 1,000명에게 보낸다고 가정해 보겠습니다. (실제론 cache hit으로 origin fetch는 훨씬 적습니다.)</p>
         <ul>
           <li>
-            <strong>As-Is (Cloud Run만)</strong> — Cloud Run이 1,000GB를 직접 전송.
-            egress 약 $0.12/GB × 1,000GB ≈ <strong>$120</strong> (리전·할인에 따라 다름)
+            <strong>As-Is (Cloud Run만)</strong> — Cloud Run이 1,000GB를 직접 전송. egress 약 $0.12/GB × 1,000GB ≈
+            <strong>$120</strong> (리전·할인에 따라 다름)
           </li>
           <li>
-            <strong>To-Be (CDN)</strong> — 대부분 CDN edge cache hit. 사용자에게 나가는 트래픽은 CDN egress(약
-            $0.05/GB × 1,000GB ≈ <strong>$50</strong>), storage → CDN 최초 fetch는 소량만 발생
+            <strong>To-Be (CDN)</strong> — 대부분 CDN edge cache hit. 사용자에게 나가는 트래픽은 CDN egress(약 $0.05/GB
+            × 1,000GB ≈ <strong>$50</strong>), storage → CDN 최초 fetch는 소량만 발생
           </li>
         </ul>
         <p>
-          CDN egress 단가가 Cloud Run egress보다 <strong>대략 2~3배 저렴</strong>한 경우가 많고, 더 중요한 건
-          Cloud Run이 애초에 그 GB를 보내지 않는다는 점입니다. 정적 파일 800GB를 Cloud Run이 내보내던 구조가
-          CDN으로 옮겨지면, Cloud Run egress는 HTML·API분(120GB)만 남습니다.
+          CDN egress 단가가 Cloud Run egress보다 <strong>대략 2~3배 저렴</strong>한 경우가 많고, 더 중요한 건 Cloud
+          Run이 애초에 그 GB를 보내지 않는다는 점입니다. 정적 파일 800GB를 Cloud Run이 내보내던 구조가 CDN으로 옮겨지면,
+          Cloud Run egress는 HTML·API분(120GB)만 남습니다.
         </p>
         <p>
-          CDN·storage 비용($42/월)이 새로 생기지만, Cloud Run에서 빠지는 요청·egress·CPU($290/월 절감)가 더
-          커서 <strong>합계는 줄어듭니다</strong>. 트래픽이 아주 적으면 반대일 수 있으니, 본인 환경에서 한 번
-          계산해 보는 것이 좋습니다.
+          CDN·storage 비용($42/월)이 새로 생기지만, Cloud Run에서 빠지는 요청·egress·CPU($290/월 절감)가 더 커서
+          <strong>합계는 줄어듭니다</strong>. 트래픽이 아주 적으면 반대일 수 있으니, 본인 환경에서 한 번 계산해 보는
+          것이 좋습니다.
         </p>
 
         <h2>적용 결과</h2>
@@ -595,9 +593,9 @@ module.exports = {
           </table>
         </div>
         <p>
-          정리하면, CDN은 “추가 비용”이 아니라 <strong>Cloud Run이 비싸게 하던 일(정적 파일 배달)을 더 싼
-          전문가에게 넘긴 것</strong>에 가깝습니다. egress·요청·CPU가 함께 줄어든 이유도 같습니다 — JS chunk
-          100개를 Cloud Run이 보내지 않으니까요.
+          CDN은 "추가 비용"이 아니라
+          <strong>Cloud Run이 비싸게 하던 일(정적 파일 배달)을 더 싼 전문가에게 넘긴 것</strong>에 가깝습니다.
+          egress·요청·CPU가 함께 줄어든 이유도 같습니다. JS chunk 100개를 Cloud Run이 보내지 않으니까요.
         </p>
 
         <p>
@@ -705,15 +703,15 @@ https://cdn.example.com/preprod/def5678/_next/static/...</code></pre>
           <code>/_next/image</code> 경로는 <code>assetPrefix</code>와 별개입니다. 별도 이미지 CDN을 쓰고 있다면 custom
           loader로 연결하거나, 별도 전략을 설계해야 합니다.
         </p>
-        <h2>요약</h2>
+        <h2>마무리</h2>
         <ol>
           <li>
             <code>assetPrefix</code>로 <code>/_next/static</code>만 storage + CDN에 두고, HTML·API는 origin에 남긴다.
           </li>
           <li>commit SHA + env prefix로 캐시 버스팅과 preprod/prod 격리를 동시에 달성한다.</li>
           <li>
-            CDN은 Cloud Run이 비싸게 하던 정적 배달을 storage+CDN($42)으로 넘겨, 전체 bill $424→$176(페이지
-            1,000회당 $3.53→$1.47)으로 줄었다.
+            CDN은 Cloud Run이 비싸게 하던 정적 배달을 storage+CDN($42)으로 넘겨, 전체 bill $424→$176(페이지 1,000회당
+            $3.53→$1.47)으로 줄었다.
           </li>
           <li>Web Worker·CSS <code>url('/...')</code>·font CORS 등 origin 필수 경로는 함께 설계한다.</li>
           <li>HTML/SSR은 Cloud Run에 그대로 — “정적 구간과 Cloud Run 부하·비용” 관점에서 결과를 해석한다.</li>

@@ -193,7 +193,7 @@ sequenceDiagram
           사용자 정보를 미리 가져오거나, RSC에서 API를 호출하는 패턴이 막힙니다.
         </p>
         <p>
-          “서버에서도 <code>Authorization</code> 헤더를 쓰면 되지 않나?”라고 우회할 수는 있습니다. 하지만
+          "서버에서도 <code>Authorization</code> 헤더를 쓰면 되지 않나?"라고 우회할 수는 있습니다. 다만
           <strong>첫 렌더</strong> 시점의 Next.js 서버는 네이티브 브릿지를 호출할 수 없습니다. 브릿지는 WebView 안의
           JS에서만 동작하므로, HTML을 만들 때 서버는 Authorization 정보가 없습니다. 게스트 UI로 렌더한 뒤 hydration에서
           토큰을 받아 다시 fetch하는 패턴으로 가게 되고, SSR의 이점이 줄어듭니다.
@@ -343,11 +343,11 @@ const res = await fetch("https://api.example.com/users/me", {
 
         <h3>토큰 갱신</h3>
         <p>
-          쿠키에 <code>Expires</code> 또는 <code>Max-Age</code>를 설정하면, 브라우저는 그 시각을 기준으로
-          <strong>만료된 쿠키를 자동으로 제거</strong>합니다. JS에서 지울 필요가 없고, HttpOnly와 맞물려 “만료 = 인증
-          정보 없음” 상태가 됩니다.
+          쿠키에 <code>Expires</code> 또는 <code>Max-Age</code>를 설정하면 브라우저는 그 시각을 기준으로
+          <strong>만료된 쿠키를 자동으로 제거</strong>합니다. JS에서 지울 필요가 없고, HttpOnly와 맞물려 "만료 = 인증
+          정보 없음" 상태가 됩니다.
         </p>
-        <p>따라서 네이티브에 브릿지로 갱신을 요청해야 하는 시점은 두 가지입니다.</p>
+        <p>네이티브에 브릿지로 갱신을 요청해야 하는 시점은 두 가지입니다.</p>
         <ul>
           <li><strong>만료:</strong> API가 401을 반환했을 때 — 액세스 토큰이 TTL을 넘긴 경우</li>
           <li>
@@ -449,7 +449,7 @@ const res = await fetch("https://api.example.com/users/me", {
           디버깅이 다소 불편하지만, 그만큼 XSS로 토큰이 탈취될 위험은 줄어듭니다.
         </p>
 
-        <h2>요약</h2>
+        <h2>마무리</h2>
         <ol>
           <li>
             Authorization Header + 브릿지는 SSR 불가, 이중 저장, 헤더 누락 리스크 — 인증이 코드 전반에 퍼져 운영 부담이
