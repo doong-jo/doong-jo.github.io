@@ -16,7 +16,7 @@
     <title>Next.js + CDN으로 성능과 비용 모두 개선하기 | doong-jo</title>
     <meta
       name="description"
-      content="Self-hosted Next.js origin에서 정적 asset을 object storage + CDN으로 분리한 경험. assetPrefix, egress 절감, preprod/prod 분기, Web Worker 함정까지."
+      content="Self-hosted Next.js origin에서 정적 asset을 object storage + CDN으로 분리하기. assetPrefix, egress 절감, preprod/prod 분기, Web Worker 함정까지."
     />
     <meta name="author" content="doong-jo" />
     <meta
@@ -152,25 +152,29 @@
         />
 
         <p>
-          Next.js 앱을 <strong>self-hosted</strong> 환경(Kubernetes, VM + Docker 등)에서 origin으로 운영하면서 트래픽이
-          늘수록 두 가지가 동시에 보였습니다. 하나는 <strong>첫 로딩이 느리다</strong>는 피드백이고, 다른 하나는 origin
-          서버와 네트워크 구간에서 <strong>egress·대역폭·요청 처리 부하</strong>가 예상보다 컸다는 점입니다.
+          Next.js 앱을 <strong>self-hosted</strong> 환경에서 origin으로 운영할 때 많이 간과하는 부분이 정적 파일을
+          어떻게 전달할 것인가? 입니다. 브라우저가 Next.js 앱을 요청하면 Next.js 서버는 페이지 HTML, JS 번들, CSS 파일을
+          전부 '직접' 제공합니다. 물론 Vercel 플랫폼으로 배포한다면 그들의 CDN으로 알아서 처리되지만 self-hosted 환경은
+          모든 요청을 origin(Next.js 서버)에서 직접 처리합니다. 이 점이 서버와 네트워크 비용, 성능에 영향을 줍니다.
         </p>
         <p>
-          원인은 단순했습니다. 페이지 한 번 열 때 HTML 한 장뿐 아니라 <strong>수십~백여 개의 JS/CSS chunk</strong>가
-          전부 Next.js origin을 경유했습니다. origin은 SSR·API 처리용 compute인데, 정적 파일까지 같은 경로로 내려주면
+          페이지 한 번 열 때 HTML 뿐만 아니라 <strong>수십~백여 개의 JS/CSS chunk</strong>가 전부 Next.js origin을
+          경유합니다. origin은 SSR·API 처리용 compute인데, 정적 파일까지 같은 경로로 내려주면
           <strong>CPU·메모리·네트워크 egress</strong>가 함께 소모됩니다. k8s라면 pod autoscale까지 연쇄적으로
           늘어납니다. 사용자에게는 멀리 있는 origin에서 chunk를 받는 지연, 운영 측면에서는 같은 트래픽을 성능과 비용
           양쪽에서 두 번 내는 구조였습니다.
         </p>
         <p>
-          CDN 도입은 “모든 것을 edge에 올리자”가 아니라,
-          <strong>빌드 산출물만 object storage + CDN으로 빼고 HTML·API는 origin에 남기자</strong>는 결정이었습니다.
-          Next.js의 <code>assetPrefix</code>가 그 분기점입니다. 아래 내용은 특정 클라우드에 한정되지 않으며, S3·R2 +
-          CloudFront·Cloudflare CDN 등 어떤 조합에도 같은 원리가 적용됩니다.
+          이를 해결하기 위해 CDN을 도입한 것은 "모든 것을 CDN을 이용하자" 아니라,
+          <strong
+            >서버에서 연산이 필요 없는 정적 리소스들은 object storage + CDN으로 빼고 HTML·API는 origin에 남기자</strong
+          >는 결정이었습니다. Next.js의
+          <a href="https://nextjs-ko.org/docs/pages/api-reference/next-config-js/assetPrefix">assetPrefix</a>를 이용하면
+          정적 리소스들에 대해 다른 origin을 요청하도록 분리할 수 있습니다. 아래 내용은 특정 클라우드에 한정되지 않으며,
+          S3·R2 + CloudFront·Cloudflare CDN 등 어떤 조합에도 같은 원리가 적용됩니다.
         </p>
 
-        <h2>As-Is vs To-Be</h2>
+        <h2>AS-IS vs TO-BE</h2>
         <p>CDN 도입 전후 인프라 구조를 나란히 비교하면 아래와 같습니다.</p>
         <div class="mermaid-compare">
           <figure>
@@ -205,26 +209,6 @@ flowchart TB
           </figure>
         </div>
 
-        <h3>As-Is: origin만 쓸 때</h3>
-        <p>모든 트래픽이 단일 origin으로 모입니다. 문제는 세 가지로 정리됩니다.</p>
-        <ol>
-          <li>페이지 1회 로드에 <strong>수십~수백 개의 정적 요청</strong>이 전부 origin을 거침</li>
-          <li>
-            정적 파일 전송도 origin CPU·메모리·소켓을 점유하고, k8s 환경에서는 <strong>불필요한 pod 확장</strong>을 유발
-          </li>
-          <li>
-            사용자와 가까운 edge가 아니라 <strong>단일 origin</strong>에서 파일을 서빙 → TTFB·다운로드 지연,
-            <strong>internet egress</strong> 비용 누적
-          </li>
-        </ol>
-
-        <h3>To-Be: object storage + CDN + origin</h3>
-        <p>
-          CDN 도입은 “Next.js 전체를 CDN에 올린다”가 아니라,
-          <strong>빌드 산출물만 storage에 두고 HTML은 origin에 남긴다</strong>는 분리입니다. 성능·비용 이득의 대부분은
-          <code>/_next/static</code> offload에서 옵니다.
-        </p>
-
         <div class="table-wrap">
           <table class="post-table">
             <thead>
@@ -244,11 +228,6 @@ flowchart TB
                 <td><code>public/</code> (CDN 업로드 대상)</td>
                 <td>storage → CDN</td>
                 <td><code>&lt;script&gt;</code>·<code>assetPrefix</code>로 참조되는 파일</td>
-              </tr>
-              <tr>
-                <td><code>public/</code> (CSS <code>url()</code> 등)</td>
-                <td>origin</td>
-                <td>절대 경로 <code>/...</code>는 document origin 기준</td>
               </tr>
               <tr>
                 <td>Web Worker 등</td>
