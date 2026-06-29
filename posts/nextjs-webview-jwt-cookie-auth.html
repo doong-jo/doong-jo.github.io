@@ -262,9 +262,16 @@ sequenceDiagram
 
         <h3>쿠키 설정</h3>
         <p>
-          웹(<code>app.example.com</code>)과 API(<code>api.example.com</code>)가 같은 루트 도메인을 쓰므로, Cookie
-          <code>Domain</code>을 <code>.example.com</code>으로 설정합니다. 서브도메인 간 쿠키 전송이 허용됩니다.
+          same-site 제약으로 인해 웹(<code>app.example.com</code>)과 API(<code>api.example.com</code>)가 같은 루트
+          도메인을 써야하므로, Cookie
+          <code>Domain</code>을 <code>.example.com</code>으로 설정합니다. 이 설정으로 서브도메인 간 쿠키 전송이
+          허용됩니다.
         </p>
+
+        <img
+          src="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/access-token-cookie.png"
+          alt="access token cookie 설정 화면"
+        />
 
         <div class="table-wrap">
           <table class="post-table">
@@ -309,6 +316,11 @@ sequenceDiagram
             </tbody>
           </table>
         </div>
+        <p>
+          <code>Domain</code>, <code>HttpOnly</code>, <code>Secure</code>, <code>SameSite</code> 등 쿠키 속성의 상세 설명은
+          <a href="https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Headers/Set-Cookie">MDN — Set-Cookie</a>를
+          참고하세요.
+        </p>
 
         <h3>웹 코드: stateless</h3>
         <p>
