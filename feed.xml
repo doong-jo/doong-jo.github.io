@@ -22,8 +22,8 @@
     <item>
       <title>Next.js + CDN으로 성능과 비용 모두 개선하기</title>
       <link>https://doong-jo.github.io/posts/nextjs-cdn-self-hosted-performance-and-cost.html</link>
-      <description>Self-hosted Next.js origin에서 정적 asset을 object storage + CDN으로 분리하기. assetPrefix, egress 절감, preprod/prod 분기, Web Worker 함정까지.</description>
-      <pubDate>Sat, 13 Jun 2026 00:00:00 +0900</pubDate>
+      <description>Self-hosted Next.js origin에서 정적 asset을 object storage + CDN으로 분리하기. assetPrefix, egress 절감</description>
+      <pubDate>Sat, 29 Jun 2026 00:00:00 +0900</pubDate>
       <guid isPermaLink="true">https://doong-jo.github.io/posts/nextjs-cdn-self-hosted-performance-and-cost.html</guid>
       <author>doong-jo@github.io (Sungdong Cho)</author>
     </item>
