@@ -404,6 +404,10 @@ export default function imageLoader({ src, width, quality }) {
           self-hosted 환경에서는 위와 같이 별도로 custom loader가 필요하며 Load Balancer 설정에서 이미지 최적화 서버에서
           변환 후 CDN으로 반환되도록 추가적인 인프라 설정이 필요합니다.
         </p>
+        <p>
+          next/image의 Image 컴포넌트는 (images 속성이 적용된)next.config.js 파일을 기반으로 아래와 같이 srcset을
+          자동으로 생성합니다.
+        </p>
         <img
           src="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/image-optimization.png"
           alt="이미지 최적화"
