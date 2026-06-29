@@ -32,7 +32,7 @@
       <title>Next.js 웹뷰에서 JWT 인증, Authorization 헤더가 아닌 Cookie로 바꾼 이유</title>
       <link>https://doong-jo.github.io/posts/nextjs-webview-jwt-cookie-auth.html</link>
       <description>Authorization Header + 브릿지 방식의 한계와, 네이티브 쿠키 주입으로 Next.js 웹뷰 SSR·API 호출을 단순화한 설계.</description>
-      <pubDate>Sat, 13 Jun 2026 00:00:00 +0900</pubDate>
+      <pubDate>Mon, 29 Jun 2026 00:00:00 +0900</pubDate>
       <guid isPermaLink="true">https://doong-jo.github.io/posts/nextjs-webview-jwt-cookie-auth.html</guid>
       <author>doong-jo@github.io (Sungdong Cho)</author>
     </item>
