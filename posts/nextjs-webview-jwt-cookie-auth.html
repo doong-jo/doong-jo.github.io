@@ -317,15 +317,19 @@ sequenceDiagram
           </table>
         </div>
         <p>
-          <code>Domain</code>, <code>HttpOnly</code>, <code>Secure</code>, <code>SameSite</code> 등 쿠키 속성의 상세 설명은
+          <code>Domain</code>, <code>HttpOnly</code>, <code>Secure</code>, <code>SameSite</code> 등 쿠키 속성의 상세
+          설명은
           <a href="https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Headers/Set-Cookie">MDN — Set-Cookie</a>를
           참고하세요.
         </p>
 
         <h3>웹 코드: stateless</h3>
         <p>
-          클라이언트 fetch는 <code>credentials: "include"</code>, axios는 <code>withCredentials: true</code>만 켜면
-          됩니다. interceptor로 토큰을 붙일 필요가 없습니다.
+          클라이언트 fetch는
+          <a href="https://developer.mozilla.org/ko/docs/Web/API/Request/credentials"><code>credentials: "include"</code></a
+          >, axios는
+          <a href="https://axios-http.com/docs/req_config#withcredentials"><code>withCredentials: true</code></a
+          >만 켜면 됩니다. interceptor로 토큰을 붙일 필요가 없습니다.
         </p>
 
         <pre><code class="language-javascript">// fetch: 요청마다 credentials만 포함
@@ -391,7 +395,7 @@ const res = await fetch("https://api.example.com/users/me", {
               <tr>
                 <td>클라이언트 fetch</td>
                 <td>interceptor 필수</td>
-                <td><code>credentials: "include"</code></td>
+                <td><a href="https://developer.mozilla.org/ko/docs/Web/API/Request/credentials"><code>credentials: "include"</code></a></td>
               </tr>
               <tr>
                 <td>토큰 저장</td>
@@ -459,7 +463,59 @@ const res = await fetch("https://api.example.com/users/me", {
           디버깅이 다소 불편하지만, 그만큼 XSS로 토큰이 탈취될 위험은 줄어듭니다.
         </p>
 
-        <h2>마무리</h2>
+        <h2>요약</h2>
+        <p>최종 아키텍처를 정리하면 아래와 같습니다.</p>
+
+        <div class="mermaid-stack">
+          <figure>
+            <figcaption><strong>1.</strong> Native App → WebView: 루트 도메인 쿠키 주입</figcaption>
+            <pre class="mermaid">
+flowchart TB
+  Native["Native App&lt;br/&gt;access_token 보유/갱신"]
+
+  subgraph webviewZone ["WebView — app.example.com"]
+    Store["WebView Cookie Store"]
+  end
+
+  Native --&gt;|"쿠키 주입"| Store
+
+  subgraph attrs ["주입 속성"]
+    D["Domain: .example.com"]
+    E["Expires: access_token TTL"]
+    H["HttpOnly · Secure · SameSite"]
+  end
+
+  Native -.-&gt; attrs</pre
+            >
+          </figure>
+          <figure>
+            <figcaption><strong>2.</strong> Browser 요청: 클라이언트 fetch</figcaption>
+            <pre class="mermaid">
+sequenceDiagram
+  participant WV as WebView&lt;br/&gt;app.example.com
+  participant API as API Server&lt;br/&gt;api.example.com
+
+  Note over WV,API: Domain .example.com 쿠키 공유
+  Note over WV,API: withCredentials: true
+  WV-&gt;&gt;API: 클라이언트 fetch&lt;br/&gt;요청에 Cookie 자동 포함</pre
+            >
+          </figure>
+          <figure>
+            <figcaption><strong>3.</strong> SSR 요청: 서버 fetch</figcaption>
+            <pre class="mermaid">
+sequenceDiagram
+  participant WV as WebView&lt;br/&gt;app.example.com
+  participant NX as Next.js SSR&lt;br/&gt;app.example.com
+  participant API as API Server&lt;br/&gt;api.example.com
+
+  Note over WV,API: Domain .example.com 쿠키 공유
+  WV-&gt;&gt;NX: document 요청&lt;br/&gt;Cookie 자동 포함
+  Note over NX,API: 서버 fetch는 Cookie 자동 전송 없음
+  NX-&gt;&gt;API: 요청 Cookie 헤더&lt;br/&gt;직접 전달</pre
+            >
+          </figure>
+        </div>
+
         <ol>
           <li>
             Authorization Header + 브릿지는 SSR 불가, 이중 저장, 헤더 누락 리스크: 인증이 코드 전반에 퍼져 운영 부담이

@@ -74,6 +74,30 @@ main .mermaid svg {
   }
 }
 
+.mermaid-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin: 24px 0 32px;
+}
+
+.mermaid-stack figure {
+  margin: 0;
+  min-width: 0;
+}
+
+.mermaid-stack figcaption {
+  text-align: center;
+  font-size: 0.9em;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.mermaid-stack pre.mermaid {
+  margin: 0;
+  padding: 8px 0;
+}
+
 main {
   min-width: 0;
 }
