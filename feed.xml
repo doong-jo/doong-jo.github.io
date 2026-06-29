@@ -6,9 +6,18 @@
     <link>https://doong-jo.github.io/</link>
     <atom:link href="https://doong-jo.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <language>ko-KR</language>
-    <lastBuildDate>Fri, 26 Jun 2026 00:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Sun, 28 Jun 2026 00:00:00 +0900</lastBuildDate>
     <managingEditor>doong-jo@github.io (Sungdong Cho)</managingEditor>
     <webMaster>doong-jo@github.io (Sungdong Cho)</webMaster>
+
+    <item>
+      <title>Next.js + CDN으로 성능과 비용 모두 개선하기</title>
+      <link>https://doong-jo.github.io/posts/nextjs-cdn-self-hosted-performance-and-cost.html</link>
+      <description>Self-hosted Next.js origin에서 정적 asset을 object storage + CDN으로 분리하기. assetPrefix, egress 절감</description>
+      <pubDate>Sun, 28 Jun 2026 00:00:00 +0900</pubDate>
+      <guid isPermaLink="true">https://doong-jo.github.io/posts/nextjs-cdn-self-hosted-performance-and-cost.html</guid>
+      <author>doong-jo@github.io (Sungdong Cho)</author>
+    </item>
 
     <item>
       <title>프론트엔드 에러 핸들링, 단순히 throw와 captureException만이 다가 아닙니다</title>
@@ -16,15 +25,6 @@
       <description>Sentry Tag·Context, beforeSend 정규화, 커스텀 Error 클래스, React Query mutationCache throwOnError와 Error Boundary까지. throw + captureException만으로는 부족한 이유와 실무 패턴.</description>
       <pubDate>Sat, 13 Jun 2026 00:00:00 +0900</pubDate>
       <guid isPermaLink="true">https://doong-jo.github.io/posts/frontend-error-handling-beyond-throw-and-capture.html</guid>
-      <author>doong-jo@github.io (Sungdong Cho)</author>
-    </item>
-
-    <item>
-      <title>Next.js + CDN으로 성능과 비용 모두 개선하기</title>
-      <link>https://doong-jo.github.io/posts/nextjs-cdn-self-hosted-performance-and-cost.html</link>
-      <description>Self-hosted Next.js origin에서 정적 asset을 object storage + CDN으로 분리하기. assetPrefix, egress 절감</description>
-      <pubDate>Sat, 29 Jun 2026 00:00:00 +0900</pubDate>
-      <guid isPermaLink="true">https://doong-jo.github.io/posts/nextjs-cdn-self-hosted-performance-and-cost.html</guid>
       <author>doong-jo@github.io (Sungdong Cho)</author>
     </item>
 
