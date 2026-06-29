@@ -16,7 +16,7 @@
     <title>Next.js + CDN으로 성능과 비용 모두 개선하기 | doong-jo</title>
     <meta
       name="description"
-      content="Self-hosted Next.js origin에서 정적 asset을 object storage + CDN으로 분리하기. assetPrefix, egress 절감, preprod/prod 분기, Web Worker 함정까지."
+      content="Self-hosted Next.js origin에서 정적 asset을 object storage + CDN으로 분리하기. assetPrefix, egress 절감"
     />
     <meta name="author" content="doong-jo" />
     <meta
@@ -51,7 +51,7 @@
     <meta property="og:locale" content="ko_KR" />
     <meta
       property="og:image"
-      content="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png?transform=w:1200,format:webp,dpr:2"
+      content="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-Nextjs--CDN-%E1%84%80%E1%85%AE%E1%84%89%E1%85%A5%E1%86%BC%E1%84%8B%E1%85%B3%E1%84%85%E1%85%A9-%E1%84%89%E1%85%A5%E1%86%BC%E1%84%82%E1%85%B3%E1%86%BC%E1%84%80%E1%85%AA-%E1%84%87%E1%85%B5%E1%84%8B%E1%85%AD%E1%86%BC-%E1%84%86%E1%85%A9%E1%84%83%E1%85%AE-%E1%84%80%E1%85%A2%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5.png"
     />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -67,7 +67,7 @@
     />
     <meta
       name="twitter:image"
-      content="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png?transform=w:1200,format:webp,dpr:2"
+      content="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-Nextjs--CDN-%E1%84%80%E1%85%AE%E1%84%89%E1%85%A5%E1%86%BC%E1%84%8B%E1%85%B3%E1%84%85%E1%85%A9-%E1%84%89%E1%85%A5%E1%86%BC%E1%84%82%E1%85%B3%E1%86%BC%E1%84%80%E1%85%AA-%E1%84%87%E1%85%B5%E1%84%8B%E1%85%AD%E1%86%BC-%E1%84%86%E1%85%A9%E1%84%83%E1%85%AE-%E1%84%80%E1%85%A2%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5.png"
     />
 
     <!-- JSON-LD: BlogPosting Schema -->
@@ -147,38 +147,59 @@
         <h1>Next.js + CDN으로 성능과 비용 모두 개선하기</h1>
         <img
           class="post-thumbnail"
-          src="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png?transform=w:680,format:webp,dpr:2"
+          src="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-Nextjs--CDN-%E1%84%80%E1%85%AE%E1%84%89%E1%85%A5%E1%86%BC%E1%84%8B%E1%85%B3%E1%84%85%E1%85%A9-%E1%84%89%E1%85%A5%E1%86%BC%E1%84%82%E1%85%B3%E1%86%BC%E1%84%80%E1%85%AA-%E1%84%87%E1%85%B5%E1%84%8B%E1%85%AD%E1%86%BC-%E1%84%86%E1%85%A9%E1%84%83%E1%85%AE-%E1%84%80%E1%85%A2%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5.png"
           alt=""
         />
-
+        <h2>많은 프론트엔드팀이 놓치는 Next.js에서의 정적 파일 서빙</h2>
         <p>
-          Next.js 앱을 <strong>self-hosted</strong> 환경에서 origin으로 운영할 때 많이 간과하는 부분이 정적 파일을
-          어떻게 전달할 것인가? 입니다. 브라우저가 Next.js 앱을 요청하면 Next.js 서버는 페이지 HTML, JS 번들, CSS 파일을
-          전부 '직접' 제공합니다. 물론 Vercel 플랫폼으로 배포한다면 그들의 CDN으로 알아서 처리되지만 self-hosted 환경은
-          모든 요청을 origin(Next.js 서버)에서 직접 처리합니다. 이 점이 서버와 네트워크 비용, 성능에 영향을 줍니다.
+          Next.js 앱을 Vercel이 아닌 <strong>self-hosted</strong> 배포 환경에서 운영할 때 많은 팀이 놓치는 부분 중
+          하나가 정적 파일을 어떻게 전달할 것인가? 에 관한 것입니다. 브라우저가 웹페이지에 접근하면 Next.js 서버는
+          페이지 HTML, JS 번들, CSS 파일을 전부 '직접' 제공합니다. 물론 Vercel 플랫폼으로 배포한다면 그들의 CDN으로
+          최적화하여 전달되지만 많은 개발 팀은 self-hosted 환경을 이용하며 이 환경에서는 모든 요청을 origin(Next.js
+          서버)에서 직접 처리합니다. 이 점이 서버와 네트워크 비용, 성능에 영향을 줍니다.
         </p>
         <p>
-          페이지 한 번 열 때 HTML 뿐만 아니라 <strong>수십~백여 개의 JS/CSS chunk</strong>가 전부 Next.js origin을
-          경유합니다. origin은 SSR·API 처리용 compute인데, 정적 파일까지 같은 경로로 내려주면
-          <strong>CPU·메모리·네트워크 egress</strong>가 함께 소모됩니다. k8s라면 pod autoscale까지 연쇄적으로
-          늘어납니다. 사용자에게는 멀리 있는 origin에서 chunk를 받는 지연, 운영 측면에서는 같은 트래픽을 성능과 비용
-          양쪽에서 두 번 내는 구조였습니다.
+          최근에 제가 속한 팀에서는 self-hosted Next.js 서버 환경을 운영하고 있습니다. 결제 방식이 서버를 계속 가동하는
+          '인스턴스 기반'이 아닌 '요청 기반'을 사용하는 경우가 있고, 요청을 처리할 때만 청구되는 방식이기에 정적 파일을
+          제공할 때도 Next.js 서버의 리소스를 소모하게 됩니다. 그래서 요청을 최대한 줄이는 것이 비용 절감과 성능에
+          중요했습니다.
         </p>
+        <img
+          src="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/cloud-run-billing.png"
+          alt="요청 기반 서버 결제 방식 참고 이미지"
+        />
         <p>
-          이를 해결하기 위해 CDN을 도입한 것은 "모든 것을 CDN을 이용하자" 아니라,
+          이를 해결하기 위해 CDN을 도입하여
           <strong
             >서버에서 연산이 필요 없는 정적 리소스들은 object storage + CDN으로 빼고 HTML·API는 origin에 남기자</strong
-          >는 결정이었습니다. Next.js의
+          >는 의사결정을 내렸습니다. Next.js의
           <a href="https://nextjs-ko.org/docs/pages/api-reference/next-config-js/assetPrefix">assetPrefix</a>를 이용하면
           정적 리소스들에 대해 다른 origin을 요청하도록 분리할 수 있습니다. 아래 내용은 특정 클라우드에 한정되지 않으며,
           S3·R2 + CloudFront·Cloudflare CDN 등 어떤 조합에도 같은 원리가 적용됩니다.
         </p>
-
-        <h2>AS-IS vs TO-BE</h2>
-        <p>CDN 도입 전후 인프라 구조를 나란히 비교하면 아래와 같습니다.</p>
+        <h2>CDN 도입 시 고려할 점과 요구사항 정의</h2>
+        <p>
+          CDN은 정적 파일을 '캐싱'으로 빠르게 전달할 수 있는 장점이 있지만, 반대로 가장 조심히 다루어야 할 부분도
+          '캐싱'입니다. 예기치 못한 상황을 최대한 방지하기 위해 아래와 같은 요구사항을 정의하고 구현을 진행했습니다.
+        </p>
+        <ol>
+          <li>
+            새로운 배포가 트리거될 시 이전 캐시를 사용하지 않고 새로운 정적 파일이 캐싱되야하며 롤백 시에도 이전 버전의
+            정적 파일이 캐싱을 사용해야 한다.
+          </li>
+          <li>same-origin 정책을 유지해야만 하는 정적 파일들은 origin에 유지해야한다.</li>
+          <li>JS가 아닌 CSS에서 <code>url('/...')</code>로 참조하는 정적 파일이 있다면 origin에 유지해야한다.</li>
+          <li>이미지나 폰트는 최적화된 포맷 또는 사용자에게 보여지는 만큼의 크기로 제공해야한다.</li>
+          <li>캐싱 정책은 안정적으로 유지하면서 가능한 최대한 길게 설정하여 성능을 최적화해야한다.</li>
+        </ol>
+        <h2>CDN 도입 전후 인프라 구조 비교</h2>
+        <p>
+          CDN 도입 전후 예상되는 인프라 구조를 나란히 비교하면 아래와 같습니다. 연산과 same-origin 정책을 유지해야만
+          하는 정적 파일은 origin에 유지하고 나머지 정적 파일은 CDN을 통해 전달됩니다.
+        </p>
         <div class="mermaid-compare">
           <figure>
-            <figcaption><strong>As-Is</strong> — origin만</figcaption>
+            <figcaption><strong>AS-IS:</strong>origin만</figcaption>
             <pre class="mermaid">
 flowchart TB
   Browser["Browser"]
@@ -192,7 +213,7 @@ flowchart TB
             >
           </figure>
           <figure>
-            <figcaption><strong>To-Be</strong> — storage + CDN + origin</figcaption>
+            <figcaption><strong>TO-BE:</strong>storage + CDN + origin</figcaption>
             <pre class="mermaid">
 flowchart TB
   Browser["Browser"]
@@ -209,51 +230,18 @@ flowchart TB
           </figure>
         </div>
 
-        <div class="table-wrap">
-          <table class="post-table">
-            <thead>
-              <tr>
-                <th>트래픽</th>
-                <th>경로</th>
-                <th>이유</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>/_next/static/*</code></td>
-                <td>storage → CDN</td>
-                <td>content hash + commit SHA, edge 캐시</td>
-              </tr>
-              <tr>
-                <td><code>public/</code> (CDN 업로드 대상)</td>
-                <td>storage → CDN</td>
-                <td><code>&lt;script&gt;</code>·<code>assetPrefix</code>로 참조되는 파일</td>
-              </tr>
-              <tr>
-                <td>Web Worker 등</td>
-                <td>origin</td>
-                <td>same-origin 정책</td>
-              </tr>
-              <tr>
-                <td>HTML, SSR, API, RSC</td>
-                <td>origin</td>
-                <td><code>assetPrefix</code> 범위 밖</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
+        <h2>Step 1. 배포마다 새 정적 파일이 캐싱된다</h2>
+        <h3>왜 필요한가</h3>
         <p>
-          pre-production과 production은 <strong>같은 storage 버킷</strong>을 쓰더라도
-          <code>{env}/{commitSha}/</code> prefix로 논리적으로 격리합니다. 이 분기는 아래 트러블슈팅에서 다시 다룹니다.
+          CDN의 핵심 위험은 <strong>구버전 asset이 남아 있는 것</strong>입니다. 배포 후에도 edge에 이전 JS·CSS가 남아
+          있으면 chunk mismatch, hydration 오류, 기능 장애로 이어집니다. 캐시가 가장 조심스러운 지점이므로, 가장 먼저
+          <strong>배포 단위 격리</strong>를 설계했습니다.
         </p>
-
-        <h2>구현: assetPrefix와 배포 파이프라인</h2>
-
-        <h3>next.config — 환경·commit SHA 기반 assetPrefix</h3>
+        <h3>구현</h3>
+        <p><code>assetPrefix</code>에 <code>{env}/{commitSha}</code>를 붙여 URL 자체가 배포마다 달라지게 합니다.</p>
         <pre><code class="language-javascript">// next.config.js
 const commitSha = process.env.COMMIT_SHA; // CI: git rev-parse --short HEAD
-const env = process.env.APP_ENV; // "prod" | "preprod"
+const env = process.env.APP_ENV;
 
 const assetPrefix =
   commitSha && env
@@ -265,12 +253,8 @@ module.exports = {
   // 로컬 dev: COMMIT_SHA / APP_ENV 미설정 → same-origin
 };</code></pre>
         <p>
-          로컬 개발에서는 prefix를 쓰지 않고, preprod·prod에서는 반드시
-          <strong>서로 다른 env prefix</strong> (<code>/prod/</code> vs <code>/preprod/</code>)를 씁니다.
+          CI/CD 순서도 중요합니다. HTML이 새 asset URL을 참조하기 <strong>전에</strong> storage에 파일이 있어야 합니다.
         </p>
-
-        <h3>CI/CD — build → storage upload → origin deploy</h3>
-        <p>순서가 중요합니다. HTML이 새 asset URL을 참조하기 <strong>전에</strong> storage에 파일이 있어야 합니다.</p>
         <pre><code class="language-yaml">steps:
   - name: build
     run: |
@@ -280,7 +264,7 @@ module.exports = {
 
   - name: upload-static
     run: |
-      # object storage CLI — 환경에 맞게 사용
+      # object storage CLI: 환경에 맞게 사용
       aws s3 sync .next/static \
         s3://my-assets-bucket/${APP_ENV}/${COMMIT_SHA}/_next/static \
         --cache-control "public,max-age=31536000,immutable"
@@ -291,31 +275,175 @@ module.exports = {
       kubectl set env deployment/my-app \
         COMMIT_SHA=$COMMIT_SHA APP_ENV=prod
       kubectl rollout status deployment/my-app</code></pre>
+        <img
+          src="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/gcs-commit-sha-uploads.png"
+          alt="GCS 버킷 내 폴더 구조"
+        />
         <p>
-          롤백 시 origin 배포만 되돌리면 HTML이 <strong>이전 commit SHA prefix</strong>를 참조합니다. storage에 구버전
-          prefix를 lifecycle rule로 일정 기간 유지해야 broken asset을 막을 수 있습니다.
+          "배포마다 새 prefix = 새 URL"이 안전한 캐싱을 위한 핵심 내용입니다. 롤백 시 origin 배포만 되돌리면 HTML이
+          <strong>이전 commit SHA prefix</strong>를 참조합니다. 따라서 storage에 구버전 asset도 새 배포에 맞춰 배로
+          제거하는게 아닌 일정 기간 유지해야 broken asset을 막을 수 있습니다. env prefix 없이 commit SHA만 경로에 두면,
+          개발 환경의 배포가 운영 환경의 asset을 덮어서 잘못된 chunk를 로드할 수 있기 때문에 env prefix를 추가하여 개발
+          환경과 운영 환경을 명확히 구분해야 합니다.
         </p>
-
-        <h3>storage + CDN 설정</h3>
+        <h3>검증</h3>
         <ul>
-          <li>object storage 버킷을 CDN origin으로 연결, <code>cdn.example.com</code> DNS·TLS 설정</li>
-          <li>font/script cross-origin 로드 시 storage CORS 설정</li>
-          <li><code>public/</code> 중 Worker 파일은 CDN 업로드에서 제외</li>
-          <li>CSS <code>url('/...')</code>로 참조하는 <code>public/</code> 파일도 origin에서 서빙 (아래 트러블슈팅)</li>
+          <li>배포 후 HTML의 <code>&lt;script src&gt;</code>에 <code>/{env}/{sha}/</code>가 포함되는지 확인</li>
+          <li>
+            origin deploy가 storage upload보다 먼저 실행되면 chunk load failure가 납니다. upload 실패 시 deploy step을
+            skip하도록 CI를 구성합니다.
+          </li>
         </ul>
+
+        <h2>Step 2. same-origin 필수 파일은 origin에 유지</h2>
+        <h3>왜 필요한가</h3>
+        <p>
+          <code>assetPrefix</code> 적용 후 Web Worker를 사용하는 기능들이 동작하지 않을 수 있습니다. Worker 스크립트
+          URL이 document origin과 <strong>same-origin이 아니면</strong>Worker 생성이 거부됩니다.
+        </p>
+        <pre><code>Failed to construct 'Worker': Script at 'https://cdn.example.com/.../worker.js'
+cannot be accessed from origin 'https://app.example.com'.</code></pre>
+        <p>Service Worker(<code>sw.js</code>)도 same-origin이 필요합니다.</p>
+        <h3>구현</h3>
+        <p>
+          <code>/_next/static</code>은 CDN에 두되, <code>public/</code> 중 Worker·SW 파일은 CDN 업로드에서
+          <strong>제외</strong>하고 origin에서 서빙하는 <strong>하이브리드</strong> 패턴을 씁니다. 기존에 aliased 파일
+          경로를 사용하고 있다면 이를 assetPrefix에 적용되므로 `/`로 시작하는 경로로 수정이 필요합니다.
+        </p>
+        <img
+          src="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/worker.png"
+          alt="하이브리드 서빙 구조도: /_next/static은 CDN, Web Worker·SW는 origin"
+        />
+        <pre><code class="language-javascript">new Worker('/workers/timer.worker.js')
+// → https://app.example.com/workers/image-worker.js (CDN이 아님)</code></pre>
+
+        <h3>검증</h3>
+        <ul>
+          <li>DevTools Network에서 Worker 요청이 <code>app.example.com</code> origin인지 확인</li>
+          <li>CI upload 단계에서 <code>public/*worker*</code>, <code>sw.js</code> 등이 제외되는지 확인</li>
+        </ul>
+
+        <h2>Step 3. CSS <code>url('/...')</code> 참조 파일은 origin에 유지</h2>
+        <h3>왜 필요한가</h3>
+        <p>
+          <code>assetPrefix</code>는 <code>/_next/static</code>의 JS·CSS chunk URL에 붙습니다. CSS 파일 자체는 CDN에서
+          내려와도, 그 안의 <code>background-image: url('/images/pattern.svg')</code>처럼
+          <strong>루트 절대 경로</strong>로 적힌 <code>public/</code> 참조는 브라우저가
+          <strong>HTML document origin</strong> 기준으로 해석합니다.
+        </p>
+        <pre><code class="language-css">/* globals.css 빌드 후 /_next/static/.../*.css 는 CDN에서 로드 */
+.hero {
+  background-image: url("/images/hero-bg.png");
+  /* 브라우저 요청: https://app.example.com/images/hero-bg.png ← origin */
+  /* CDN URL이 아님: https://cdn.example.com/.../images/hero-bg.png */
+}</code></pre>
+        <p>
+          CSS 명세상 <code>url(/path)</code>는 CSS 파일이 호스트된 CDN origin이 아니라 <strong>문서 origin</strong>의
+          absolute path입니다. <code>public/</code>을 storage에만 올리고 origin 서빙을 끊으면 배경·아이콘 이미지가 404가
+          됩니다.
+        </p>
+        <h3>구현</h3>
+        <p>해결은 두 가지 경로가 있습니다.</p>
+        <ol>
+          <li>
+            CSS <code>url('/...')</code>로 쓰는 <code>public/</code> 파일은 <strong>origin에 그대로 두고</strong> CDN
+            upload에서 제외 (Step 2 Worker와 같은 하이브리드)
+          </li>
+          <li>
+            CDN에 올릴 거라면 CSS Module에서 <code>import</code>해 webpack이 <code>/_next/static/media/</code>로
+            번들링하게 함 → <code>assetPrefix</code> 경로를 탐
+          </li>
+        </ol>
+        <pre><code class="language-css">/* CSS Module import 시 webpack이 /_next/static/media/ 로 번들링 */
+.hero {
+  background-image: url("./hero-bg.png");
+  /* 빌드 후: url(https://cdn.example.com/prod/sha/_next/static/media/hero-bg.xxx.png) */
+}</code></pre>
+        <p>
+          <code>next/image</code>·inline style의 <code>url()</code>도 동일하게 <code>assetPrefix</code>가 자동으로 붙지
+          않습니다. Step 4에서 이미지 전략을 다룹니다.
+        </p>
+        <h3>검증</h3>
+        <ul>
+          <li>
+            DevTools Network에서 CSS는 <code>cdn.example.com</code>인데, <code>url()</code> 리소스는
+            <code>app.example.com</code>으로 요청되는지 확인
+          </li>
+          <li>CDN offload 대상 <code>public/</code> 파일과 origin 전용 파일 목록을 팀 문서로 분리해 둡니다</li>
+        </ul>
+
+        <h2>Step 4. 이미지·폰트를 최적화된 포맷·크기로 제공</h2>
+        <h3>왜 필요한가</h3>
+        <p>
+          CDN으로 경로만 분리해도 원본 PNG 4MB·미사용 글리프가 포함된 woff는 그대로 전송됩니다. edge cache hit이 나와도
+          <strong>다운로드 바이트</strong>가 크면 LCP·비용 모두 손해입니다. “보여지는 만큼만, 최적 포맷으로”가
+          요구사항입니다.
+        </p>
+        <h3>이미지 최적화</h3>
+        <p>
+          <code>/_next/image</code>는 <code>assetPrefix</code>와 별개입니다. 이미지 CDN을 쓰고 있다면 custom loader로
+          연결합니다.
+        </p>
+        <pre><code class="language-javascript">// next.config.js
+module.exports = {
+  images: {
+    loader: "custom",
+    loaderFile: "./lib/image-loader.js",
+  },
+};</code></pre>
+        <pre><code class="language-javascript">// lib/image-loader.js
+export default function imageLoader({ src, width, quality }) {
+  const params = new URLSearchParams({
+    transform: `w=${width}&quality=${quality}`,
+  });
+  return `https://cdn.example.com/${src}?${params}`;
+  // 예: .../hero.png?transform=w=680&quality=80
+}</code></pre>
+        <p>
+          Vercel로 배포 시 별도의 custom loader를 사용하지 않고 기본적으로 이미지 최적화가 적용됩니다. 하지만
+          self-hosted 환경에서는 위와 같이 별도로 custom loader가 필요하며 Load Balancer 설정에서 이미지 최적화 서버에서
+          변환 후 CDN으로 반환되도록 추가적인 인프라 설정이 필요합니다.
+        </p>
+        <img
+          src="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/image-optimization.png"
+          alt="이미지 최적화"
+        />
+        <h3>폰트 최적화</h3>
+        <p>
+          <code>next/font</code>로 self-host하면 woff2가 <code>/_next/static/media/*.woff2</code>로 번들링되어 CDN
+          경로를 탑니다. subsetting으로 사용 글리프만 포함하고, 포맷은 woff2만 씁니다.
+        </p>
+        <p>
+          CDN에서 cross-origin으로 폰트를 로드할 때는 CORS 검사가 적용됩니다. object storage에 아래와 같이 CORS를
+          설정합니다.
+        </p>
+        <pre><code>Access to font at 'https://cdn.example.com/.../font.woff2' from origin
+'https://app.example.com' has been blocked by CORS policy.</code></pre>
         <pre><code class="language-json">[
   {
-    "AllowedOrigins": ["https://app.example.com", "https://preprod.example.com"],
+    "AllowedOrigins": ["https://app.example.com"],
     "AllowedMethods": ["GET", "HEAD"],
     "AllowedHeaders": ["*"],
-    "MaxAgeSeconds": 3600
   }
 ]</code></pre>
         <p>storage·CDN마다 CORS 설정 문법은 다르지만, CDN origin이 cross-origin font를 서빙할 수 있게 해야 합니다.</p>
-
-        <h2>캐싱·HTTP/3·압축</h2>
-
-        <h3>파일 종류별 Cache-Control</h3>
+        <img
+          src="GCS 버킷 CORS 설정 화면 (AllowedOrigins에 app/preprod 도메인)"
+          alt="GCS 버킷 CORS 설정 화면 (AllowedOrigins에 app/preprod 도메인)"
+        />
+        <h3>검증</h3>
+        <ul>
+          <li>모바일 viewport에서 실제 다운로드 width가 layout보다 크지 않은지 Network 탭으로 확인</li>
+          <li>폰트 요청에 CORS 오류가 없고, woff2만 로드되는지 확인</li>
+        </ul>
+        <h2>Step 5. 안정적인 장기 캐싱으로 성능 최적화</h2>
+        <h3>왜 필요한가</h3>
+        <p>
+          Step 1에서 배포 단위 격리를 마쳤으니, 이제 “안전하게 오래 캐싱”할 수 있습니다. HTML은 짧게, hash가 붙은 정적
+          파일은 최대한 길게 설정하여 성능과 안정성을 동시에 만족시킵니다.
+        </p>
+        <h3>구현</h3>
+        <p>먼저 object storage 버킷을 CDN origin으로 연결하고 <code>cdn.example.com</code> DNS·TLS를 설정합니다.</p>
         <div class="table-wrap">
           <table class="post-table">
             <thead>
@@ -329,62 +457,66 @@ module.exports = {
               <tr>
                 <td><code>/_next/static/*</code></td>
                 <td><code>max-age=31536000, immutable</code></td>
-                <td>commit SHA prefix + content hash</td>
+                <td>commit SHA prefix + content hash (Step 1)</td>
               </tr>
               <tr>
                 <td>HTML (origin)</td>
                 <td><code>no-cache</code> 또는 짧은 max-age</td>
                 <td>매 배포마다 새 document</td>
               </tr>
-              <tr>
-                <td>Web Worker (<code>public/</code>)</td>
-                <td>origin, 짧은 캐시</td>
-                <td>same-origin 필수</td>
-              </tr>
             </tbody>
           </table>
         </div>
-
         <p>
-          Next.js 파일명의 <code>[contenthash]</code>는 <strong>파일 단위</strong> 변경을, commit SHA prefix는
-          <strong>배포 단위</strong> 격리를 담당합니다. 구버전 HTML이 구버전 asset URL을 참조할 때 신규 배포 asset과
-          섞이지 않게 하고, 롤백 시 broken asset도 막을 수 있습니다.
+          <code>[contenthash]</code> + commit SHA prefix가 있으면 URL이 바뀌므로 1년 <code>immutable</code> 캐시가
+          안전합니다. 구버전 HTML이 구버전 asset URL을 참조할 때 신규 배포 asset과 섞이지 않고, 롤백 시에도 broken
+          asset을 막을 수 있습니다.
         </p>
-
         <p>
           HTTP/3(QUIC)과 Brotli/gzip 압축은 CDN·로드밸런서 설정 영역입니다. 앱 코드 변경 없이 클라이언트↔edge 구간에서
           이득이 납니다. 다만 이 이득은 <strong>정적 asset 다운로드 구간</strong>에 해당합니다. HTML TTFB는 여전히
           origin SSR·DB 조회 시간에 좌우됩니다.
         </p>
+        <img
+          src="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/cdn-cache-policy.png"
+          alt="GCP Cloud CDN 백엔드 버킷 및 캐시 모드 설정 화면"
+        />
+        <h3>검증</h3>
+        <ul>
+          <li>
+            CDN edge에서 정적 파일 응답 헤더에 <code>cache-control: public, max-age=31536000, immutable</code> 확인
+            (31536000: 1년)
+          </li>
+        </ul>
 
         <h2>비용이 왜 줄어드는가</h2>
         <p>
-          Cloud Run bill을 처음 보면 <strong>Requests</strong>, <strong>CPU/Memory</strong>,
+          Next.js 서버 청구서를 처음 보면 <strong>Requests</strong>, <strong>CPU/Memory</strong>,
           <strong>Networking egress</strong> 같은 항목이 섞여 있습니다. CDN 도입 효과를 이해하려면 이 세 가지가
           무엇인지부터 짚는 편이 낫습니다.
         </p>
 
-        <h3>Cloud Run에서 나가는 돈 세 가지</h3>
+        <h3>Next.js 서버에서 나가는 돈 세 가지</h3>
         <ol>
           <li>
-            <strong>요청(Request)</strong> — HTTP 1번 = 과금 1번. JS 파일 하나를 내려줘도 요청 1건입니다. Next.js 페이지
+            <strong>요청(Request):</strong> HTTP 1번 = 과금 1번. JS 파일 하나를 내려줘도 요청 1건입니다. Next.js 페이지
             1회 로드는 대략 <strong>요청 100회</strong>에 가깝습니다.
           </li>
           <li>
-            <strong>CPU·메모리</strong> — 요청을 처리하는 동안 컨테이너가 켜져 있는 시간만큼 과금됩니다. 파일을 전송하는
+            <strong>CPU·메모리:</strong> 요청을 처리하는 동안 컨테이너가 켜져 있는 시간만큼 과금됩니다. 파일을 전송하는
             동안에도 CPU·메모리가 소모됩니다.
           </li>
           <li>
-            <strong>egress(이그레스)</strong> — 서버(Cloud Run)에서
+            <strong>egress(이그레스):</strong> Next.js 서버에서
             <strong>인터넷 밖, 즉 사용자 브라우저 쪽으로</strong> 데이터를 보낼 때 드는
             <strong>출구 통행료</strong>입니다. GB 단위로 청구됩니다. ingress(들어오는 트래픽)와 달리 egress는 대개
             유료입니다.
           </li>
         </ol>
         <p>
-          CDN 도입 전에는 JS·CSS·font를 Cloud Run이 직접 사용자에게 보냈습니다. 그래서
-          <strong>요청 100번 + egress 수 MB</strong>가 페이지 조회 1번마다 반복됐습니다. Cloud Run은 SSR·API용
-          <strong>앱 서버</strong>이지, 대용량 정적 파일 배달용 CDN이 아닙니다. 같은 일을 시키면 단가가 맞지 않습니다.
+          CDN 도입 전에는 JS·CSS·font를 Next.js 서버가 직접 사용자에게 보냈습니다. 그래서
+          <strong>요청 100번 + egress 수 MB</strong>가 페이지 조회 1번마다 반복됐습니다. Next.js 서버는 SSR·API
+          처리용이지, 대용량 정적 파일 배달용 CDN이 아닙니다. 같은 일을 시키면 단가가 맞지 않습니다.
         </p>
 
         <h3>CDN은 왜 더 싼가</h3>
@@ -402,17 +534,17 @@ module.exports = {
               <tr>
                 <td>파일 보관</td>
                 <td>Cloud Storage (object storage)</td>
-                <td>창고 — GB당 저장료가 cheap</td>
+                <td>창고: GB당 저장료가 cheap</td>
               </tr>
               <tr>
                 <td>사용자에게 배달</td>
                 <td>Cloud CDN</td>
-                <td>택배 hub — edge에서 가까이 전달, egress 단가 낮음</td>
+                <td>택배 hub: edge에서 가까이 전달, egress 단가 낮음</td>
               </tr>
               <tr>
                 <td>HTML·API 처리</td>
-                <td>Cloud Run</td>
-                <td>주방 — 요리(SSR)만 담당</td>
+                <td>Next.js 서버</td>
+                <td>주방: 요리(SSR)만 담당</td>
               </tr>
             </tbody>
           </table>
@@ -420,280 +552,53 @@ module.exports = {
         <p>같은 1GB를 1,000명에게 보낸다고 가정해 보겠습니다. (실제론 cache hit으로 origin fetch는 훨씬 적습니다.)</p>
         <ul>
           <li>
-            <strong>As-Is (Cloud Run만)</strong> — Cloud Run이 1,000GB를 직접 전송. egress 약 $0.12/GB × 1,000GB ≈
+            <strong>AS-IS (Next.js 서버만):</strong> Next.js 서버가 1,000GB를 직접 전송. egress 약 $0.12/GB × 1,000GB ≈
             <strong>$120</strong> (리전·할인에 따라 다름)
           </li>
           <li>
-            <strong>To-Be (CDN)</strong> — 대부분 CDN edge cache hit. 사용자에게 나가는 트래픽은 CDN egress(약 $0.05/GB
-            × 1,000GB ≈ <strong>$50</strong>), storage → CDN 최초 fetch는 소량만 발생
+            <strong>TO-BE (CDN):</strong> 대부분 CDN edge cache hit. 사용자에게 나가는 트래픽은 CDN egress(약 $0.05/GB ×
+            1,000GB ≈ <strong>$50</strong>), storage → CDN 최초 fetch는 소량만 발생
           </li>
         </ul>
         <p>
-          CDN egress 단가가 Cloud Run egress보다 <strong>대략 2~3배 저렴</strong>한 경우가 많고, 더 중요한 건 Cloud
-          Run이 애초에 그 GB를 보내지 않는다는 점입니다. 정적 파일 800GB를 Cloud Run이 내보내던 구조가 CDN으로 옮겨지면,
-          Cloud Run egress는 HTML·API분(120GB)만 남습니다.
+          CDN egress 단가가 Next.js 서버 egress보다 <strong>대략 2~3배 저렴</strong>한 경우가 많고, 더 중요한 건 Next.js
+          서버가 애초에 그 GB를 보내지 않는다는 점입니다. 정적 파일 800GB를 Next.js 서버가 내보내던 구조가 CDN으로
+          옮겨지면, Next.js 서버 egress는 HTML·API분(120GB)만 남습니다.
         </p>
         <p>
-          CDN·storage 비용($42/월)이 새로 생기지만, Cloud Run에서 빠지는 요청·egress·CPU($290/월 절감)가 더 커서
+          CDN·storage 비용($42/월)이 새로 생기지만, Next.js 서버에서 빠지는 요청·egress·CPU($290/월 절감)가 더 커서
           <strong>합계는 줄어듭니다</strong>. 트래픽이 아주 적으면 반대일 수 있으니, 본인 환경에서 한 번 계산해 보는
           것이 좋습니다.
         </p>
-
         <h2>적용 결과</h2>
+        <img
+          src="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/billing.png"
+          alt="비용 비교"
+        />
         <p>
-          아래는 실제 측정 환경 기준 비교입니다.<br />
-          <strong>As-Is</strong>: GCP Cloud Run만 (정적·동적 모두 origin)<br />
-          <strong>To-Be</strong>: GCP Cloud Run + GCS + Cloud CDN (<code>assetPrefix</code>로 정적 offload)
+          아직 모든 개선을 적용하지 못한 부분들도 있습니다. 하지만 위와 같은 기본적인 설정과 점진적인 개선 노력 끝에
+          비용을 38% 정도를 절감시킬 수 있었습니다.
         </p>
-        <p>
-          As-Is: 페이지 로드의 대부분 요청이 Cloud Run을 경유해 <strong>지연·요청 과금·egress(데이터 전송료)</strong>가
-          함께 발생했습니다.<br />
-          To-Be: 정적 asset은 Cloud CDN edge에서 cache hit, Cloud Run은 <strong>HTML/API만</strong> 처리합니다.
-        </p>
-        <p>
-          성능·트래픽 수치는 CDN 도입 전후 2주간 프로덕션 median입니다. 비용은 GCP Billing Reports에서 동일 기간 SKU별로
-          집계했습니다.
-        </p>
-
-        <h3>성능·트래픽</h3>
-        <div class="table-wrap">
-          <table class="post-table">
-            <thead>
-              <tr>
-                <th>구분</th>
-                <th>As-Is (Cloud Run only)</th>
-                <th>To-Be (Cloud Run + CDN)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>정적 asset 경로</td>
-                <td>Browser → Cloud Run</td>
-                <td>Browser → Cloud CDN → GCS</td>
-              </tr>
-              <tr>
-                <td>페이지 1회 로드 시 Cloud Run 요청</td>
-                <td>HTML 1 + static 80~120건</td>
-                <td>HTML 1 + API 1~5건</td>
-              </tr>
-              <tr>
-                <td>정적 파일 TTFB</td>
-                <td>origin RTT 200~400ms</td>
-                <td>edge cache hit 20~50ms</td>
-              </tr>
-              <tr>
-                <td>LCP (Lighthouse median)</td>
-                <td>3.2s</td>
-                <td>1.8s</td>
-              </tr>
-              <tr>
-                <td>Cloud CDN cache hit ratio</td>
-                <td>—</td>
-                <td>94%</td>
-              </tr>
-              <tr>
-                <td>Cloud Run 월간 requests</td>
-                <td>12M</td>
-                <td>2M (−83%)</td>
-              </tr>
-              <tr>
-                <td>Cloud Run → 사용자 데이터 전송 (egress)</td>
-                <td>800 GB</td>
-                <td>120 GB (−85%)</td>
-              </tr>
-              <tr>
-                <td>preprod / prod asset 격리</td>
-                <td>prefix 미분리 → 분기 코드 오염 위험</td>
-                <td><code>{env}/{sha}/</code> prefix로 격리</td>
-              </tr>
-              <tr>
-                <td>배포 파이프라인</td>
-                <td>build → Cloud Run deploy</td>
-                <td>build → GCS upload → Cloud Run deploy</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h3>비용 — Before / After (GCP Billing, 월간)</h3>
-        <p>
-          아래는 위에서 설명한 구조가 bill에 어떻게 찍혔는지입니다. 핵심만 보면
-          <strong>Cloud Run에서 빠진 $290</strong> vs <strong>CDN·storage 신규 $42</strong>입니다.
-        </p>
-        <div class="table-wrap">
-          <table class="post-table">
-            <thead>
-              <tr>
-                <th>무엇이 줄었/늘었나</th>
-                <th>As-Is (Cloud Run only)</th>
-                <th>To-Be (Cloud Run + CDN)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Cloud Run 요청 (페이지 1회 ≈ 100건)</td>
-                <td>1,200만 건 / $186</td>
-                <td>200만 건 / $31</td>
-              </tr>
-              <tr>
-                <td>Cloud Run CPU·메모리</td>
-                <td>$142</td>
-                <td>$89</td>
-              </tr>
-              <tr>
-                <td>
-                  Cloud Run egress<br />
-                  <small>(서버 → 사용자 데이터 전송료)</small>
-                </td>
-                <td>800 GB / $96</td>
-                <td>120 GB / $14</td>
-              </tr>
-              <tr>
-                <td><strong>Cloud Run 합계</strong></td>
-                <td><strong>$424</strong></td>
-                <td><strong>$134</strong></td>
-              </tr>
-              <tr>
-                <td>CDN + storage <small>(정적 파일 배달)</small></td>
-                <td>—</td>
-                <td>$42</td>
-              </tr>
-              <tr>
-                <td><strong>전체 합계</strong></td>
-                <td><strong>$424</strong></td>
-                <td><strong>$176</strong></td>
-              </tr>
-              <tr>
-                <td><strong>페이지 1,000회당</strong> <small>(동일 트래픽)</small></td>
-                <td><strong>≈ $3.53</strong></td>
-                <td><strong>≈ $1.47</strong></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p>
-          CDN은 "추가 비용"이 아니라
-          <strong>Cloud Run이 비싸게 하던 일(정적 파일 배달)을 더 싼 전문가에게 넘긴 것</strong>에 가깝습니다.
-          egress·요청·CPU가 함께 줄어든 이유도 같습니다. JS chunk 100개를 Cloud Run이 보내지 않으니까요.
-        </p>
-
-        <p>
-          <strong>성능·비용·운영 안정성</strong> 세 축이 같은 아키텍처 변경에서 동시에 개선됐습니다. HTML/SSR 구간은
-          Cloud Run에 그대로 남아 있으므로, “전체가 빨라졌다”가 아니라
-          <strong>“정적 구간과 Cloud Run 요청·부하·비용이 줄었다”</strong>고 말하는 것이 정확합니다.
-        </p>
-
         <h3>변하지 않은 것</h3>
         <ul>
           <li>HTML TTFB, SSR latency, API Route 응답 시간</li>
-          <li>Cloud Run cold start</li>
-          <li>Web Worker·CSS <code>url()</code> 등 origin 필수 파일은 여전히 Cloud Run 서빙</li>
+          <li>Web Worker·CSS <code>url()</code> 등 origin 필수 파일은 여전히 origin에서 서빙</li>
         </ul>
 
-        <h2>트러블슈팅</h2>
-
-        <h3>Web Worker — CDN으로 옮기면 깨진다</h3>
-        <p><code>assetPrefix</code> 적용 후 Worker 기반 기능만 동작하지 않을 수 있습니다.</p>
-        <pre><code>Failed to construct 'Worker': Script at 'https://cdn.example.com/.../worker.js'
-cannot be accessed from origin 'https://app.example.com'.</code></pre>
-        <p>
-          Worker 스크립트 URL이 document origin과 <strong>same-origin이 아니면</strong> classic Worker 생성이
-          거부됩니다. Worker만 origin에서 서빙하고, <code>/_next/static</code>은 CDN을 유지하는
-          <strong>하이브리드</strong>가 정상 패턴입니다.
-        </p>
-        <pre><code class="language-javascript">const worker = new Worker("/image-worker.js");
-// → https://app.example.com/image-worker.js</code></pre>
-        <p>Service Worker(<code>sw.js</code>)도 same-origin이 필요합니다.</p>
-
-        <h3>CSS <code>url()</code> — <code>public/</code> 파일은 CDN이 아니라 origin을 본다</h3>
-        <p>
-          <code>assetPrefix</code>는 <code>/_next/static</code>의 JS·CSS chunk URL에 붙습니다. CSS 파일 자체는 CDN에서
-          내려와도, 그 안의 <code>background-image: url('/images/pattern.svg')</code>처럼
-          <strong>루트 절대 경로</strong>로 적힌 <code>public/</code> 참조는 브라우저가
-          <strong>HTML document origin</strong> 기준으로 해석합니다.
-        </p>
-        <pre><code class="language-css">/* globals.css — 빌드 후 /_next/static/.../*.css 는 CDN에서 로드 */
-.hero {
-  background-image: url("/images/hero-bg.png");
-  /* 브라우저 요청: https://app.example.com/images/hero-bg.png ← origin */
-  /* CDN URL이 아님: https://cdn.example.com/.../images/hero-bg.png */
-}</code></pre>
-        <p><strong>증상</strong></p>
-        <ul>
-          <li><code>public/</code>을 storage에만 올리고 origin 서빙을 끊으면 배경·아이콘 이미지가 404</li>
-          <li>
-            DevTools Network에서 CSS는 <code>cdn.example.com</code>인데, <code>url()</code> 리소스는
-            <code>app.example.com</code>으로 요청됨
-          </li>
-        </ul>
-        <p><strong>원인</strong></p>
-        <p>
-          CSS 명세상 <code>url(/path)</code>는 CSS 파일이 호스트된 CDN origin이 아니라 <strong>문서 origin</strong>의
-          absolute path입니다. Worker와 다른 규칙이지만, 결과적으로 <code>public/</code> 중 상당수가 CDN offload 대상이
-          아닙니다.
-        </p>
-        <p><strong>해결</strong></p>
-        <ul>
-          <li>
-            CSS <code>url('/...')</code>로 쓰는 <code>public/</code> 파일은 <strong>origin에 그대로 두고</strong>
-            CDN upload에서 제외 (Worker와 같은 하이브리드)
-          </li>
-          <li>
-            CDN에 올릴 거라면 절대 경로 대신 CDN 전체 URL을 쓰거나, CSS Module에서
-            <code>import</code>해 webpack이 <code>/_next/static/media/</code>로 번들링하게 함 →
-            <code>assetPrefix</code> 경로를 탐
-          </li>
-          <li>
-            <code>next/image</code>·inline style의 <code>url()</code>도 동일 — <code>assetPrefix</code>가 자동으로 붙지
-            않음
-          </li>
-        </ul>
-        <pre><code class="language-css">/* CSS Module — import 시 webpack이 /_next/static/media/ 로 번들링 */
-.hero {
-  background-image: url("./hero-bg.png");
-  /* 빌드 후: url(https://cdn.example.com/prod/sha/_next/static/media/hero-bg.xxx.png) */
-}</code></pre>
-
-        <h3>preprod / prod CDN prefix 공유 — 분기 코드 오염</h3>
-        <p>
-          env prefix 없이 commit SHA만 경로에 두면, prod 배포가 preprod가 올린 asset을 덮어쓰거나 preprod HTML이 prod
-          chunk를 로드할 수 있습니다. preprod 전용 feature flag UI가 production에서 보이는 식의
-          <strong>환경 간 불일치</strong>로 이어집니다.
-        </p>
-        <pre><code>https://cdn.example.com/prod/abc1234/_next/static/...
-https://cdn.example.com/preprod/def5678/_next/static/...</code></pre>
-        <p>
-          이 문제는 “캐시”가 아니라 <strong>환경 간 코드 일관성</strong> 문제입니다. preprod HTML의 script src에
-          <code>/preprod/</code>, prod에 <code>/prod/</code>가 포함되는지 배포 후 검증합니다.
-        </p>
-
-        <h3>CORS — font cross-origin</h3>
-        <pre><code>Access to font at 'https://cdn.example.com/.../font.woff2' from origin
-'https://app.example.com' has been blocked by CORS policy.</code></pre>
-        <p><code>@font-face</code> woff2는 CORS 검사 대상입니다. object storage CORS를 설정하면 해결됩니다.</p>
-
-        <h3>배포 순서 — storage upload 전 deploy 시 404</h3>
-        <p>
-          origin deploy가 storage upload보다 먼저 실행되면, 새 HTML이 아직 없는 asset URL을 참조해 chunk load failure가
-          납니다. upload 실패 시 deploy step을 skip하도록 CI를 구성합니다.
-        </p>
-        <h3>next/image</h3>
-        <p>
-          <code>/_next/image</code> 경로는 <code>assetPrefix</code>와 별개입니다. 별도 이미지 CDN을 쓰고 있다면 custom
-          loader로 연결하거나, 별도 전략을 설계해야 합니다.
-        </p>
-        <h2>마무리</h2>
+        <h2>TL;DR</h2>
         <ol>
+          <li>commit SHA + env prefix <code>assetPrefix</code>로 배포마다 새 정적 URL을 만들어 캐시 격리를 달성</li>
+          <li>Web Worker·Service Worker는 same-origin 제약으로 origin 하이브리드 서빙을 유지</li>
           <li>
-            <code>assetPrefix</code>로 <code>/_next/static</code>만 storage + CDN에 두고, HTML·API는 origin에 남긴다.
+            CSS <code>url('/...')</code> 참조는 origin에 두거나, CSS Module import로
+            <code>/_next/static/media/</code> 번들링해 CDN 경로를 참조하도록 함
           </li>
-          <li>commit SHA + env prefix로 캐시 버스팅과 preprod/prod 격리를 동시에 달성한다.</li>
+          <li>이미지는 custom loader + WebP transform, 폰트는 woff2 subset + CORS로 최적화된 바이트만 전송</li>
+          <li>hash + <code>immutable</code> 장기 캐시와 CDN edge(HTTP/3, Brotli)로 정적 구간 TTFB를 줄임</li>
           <li>
-            CDN은 Cloud Run이 비싸게 하던 정적 배달을 storage+CDN($42)으로 넘겨, 전체 bill $424→$176(페이지 1,000회당
-            $3.53→$1.47)으로 줄었다.
+            CDN은 서버가 직접 비싸게 하던 정적 서빙을 storage+CDN($42)으로 넘겨, 전체 bill $424→$176(페이지 1,000회당
+            $3.53→$1.47)으로 줄임. HTML/SSR은 origin에서 유지
           </li>
-          <li>Web Worker·CSS <code>url('/...')</code>·font CORS 등 origin 필수 경로는 함께 설계한다.</li>
-          <li>HTML/SSR은 Cloud Run에 그대로 — “정적 구간과 Cloud Run 부하·비용” 관점에서 결과를 해석한다.</li>
         </ol>
 
         <div class="back-to-list">
