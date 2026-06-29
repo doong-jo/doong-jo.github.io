@@ -579,12 +579,6 @@ export default function imageLoader({ src, width, quality }) {
           아직 모든 개선을 적용하지 못한 부분들도 있습니다. 하지만 위와 같은 기본적인 설정과 점진적인 개선 노력 끝에
           비용을 38% 정도를 절감시킬 수 있었습니다.
         </p>
-        <h3>변하지 않은 것</h3>
-        <ul>
-          <li>HTML TTFB, SSR latency, API Route 응답 시간</li>
-          <li>Web Worker·CSS <code>url()</code> 등 origin 필수 파일은 여전히 origin에서 서빙</li>
-        </ul>
-
         <h2>TL;DR</h2>
         <ol>
           <li>commit SHA + env prefix <code>assetPrefix</code>로 배포마다 새 정적 URL을 만들어 캐시 격리를 달성</li>
