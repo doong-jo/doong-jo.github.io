@@ -22,7 +22,7 @@
     <item>
       <title>프론트엔드 에러 핸들링, Sentry 설치가 전부가 아닙니다</title>
       <link>https://doong-jo.github.io/posts/frontend-error-handling-beyond-throw-and-capture.html</link>
-      <description>분류·전파·표현·기록·운영 5단계. 커스텀 Error, Sentry beforeSend, Ownership Rules, Dashboard error rate, fatal/error Slack 알림.</description>
+      <description>분류·전파·표현·기록·운영 5단계 패턴. 커스텀 Error, React Query throwOnError, Sentry beforeSend, Ownership Rules, Dashboard, fatal/error 알림.</description>
       <pubDate>Sat, 13 Jun 2026 00:00:00 +0900</pubDate>
       <guid isPermaLink="true">https://doong-jo.github.io/posts/frontend-error-handling-beyond-throw-and-capture.html</guid>
       <author>doong-jo@github.io (Sungdong Cho)</author>
