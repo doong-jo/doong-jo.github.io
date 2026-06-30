@@ -175,14 +175,14 @@
         </p>
         <div class="mermaid-compare">
           <figure>
-            <figcaption><strong>1프레임</strong> — static HTML 기본값(라이트)</figcaption>
+            <figcaption><strong>1프레임</strong>: static HTML 기본값(라이트)</figcaption>
             <img
               src="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/fouc-first.png"
               alt="FOUC 첫 프레임: 앱은 다크모드인데 웹뷰가 라이트로 렌더링된 화면"
             />
           </figure>
           <figure>
-            <figcaption><strong>2프레임</strong> — JS 테마 적용 후 다크로 전환</figcaption>
+            <figcaption><strong>2프레임</strong>: JS 테마 적용 후 다크로 전환</figcaption>
             <img
               src="https://cdn.snapkit.studio/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/fouc-last.png"
               alt="FOUC 두 번째 프레임: JavaScript 테마 적용 후 다크모드로 바뀐 화면"
@@ -299,7 +299,7 @@ body {
 
         <h3>네이티브: WebView color scheme 강제</h3>
         <p>
-          <strong>iOS (WKWebView)</strong> — 앱 테마에 맞게 <code>overrideUserInterfaceStyle</code>을 설정하면 WebView의
+          <strong>iOS (WKWebView)</strong>: 앱 테마에 맞게 <code>overrideUserInterfaceStyle</code>을 설정하면 WebView의
           <code>prefers-color-scheme</code>이 따라갑니다.
         </p>
         <pre><code class="language-swift">// 앱 테마가 dark일 때
@@ -315,7 +315,7 @@ webView.overrideUserInterfaceStyle = .unspecified</code></pre>
         </p>
 
         <p>
-          <strong>Android (WebView)</strong> — Activity·Application의 UI mode를 앱 테마와 일치시킵니다. API 29+ 에서는
+          <strong>Android (WebView)</strong>: Activity·Application의 UI mode를 앱 테마와 일치시킵니다. API 29+ 에서는
           WebView가 이 설정을 <code>prefers-color-scheme</code>에 반영합니다.
         </p>
         <pre><code class="language-kotlin">// 앱 테마가 dark일 때 (AppCompat)
@@ -444,20 +444,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <h2>트레이드오프·주의사항</h2>
         <ul>
           <li>
-            <strong>blocking script</strong> — 의도적 trade-off입니다. semver 비교 수 ms 이내로 끝나도록 inline만
+            <strong>blocking script</strong>: 의도적 trade-off입니다. semver 비교 수 ms 이내로 끝나도록 inline만
             유지하고, 외부 리소스 로드를 넣지 않습니다.
           </li>
           <li>
-            <strong>일반 브라우저</strong> — <code>window.__APP_VERSION__</code>이 없으면 attribute가 설정되지 않아
+            <strong>일반 브라우저</strong>: <code>window.__APP_VERSION__</code>이 없으면 attribute가 설정되지 않아
             라이트-only로 동작합니다. 마케팅 페이지를 브라우저에서도 다크로 보여줘야 한다면 별도 분기(예: WebView UA
             감지 없이 시스템 <code>prefers-color-scheme</code>만 따르는 CSS)를 검토합니다.
           </li>
           <li>
-            <strong>JS 테마 class와 병행 금지</strong> — <code>useEffect</code>로 <code>dark</code> class를 붙이는 기존
+            <strong>JS 테마 class와 병행 금지</strong>: <code>useEffect</code>로 <code>dark</code> class를 붙이는 기존
             패턴과 섞으면 다시 FOUC·네이티브 불일치가 발생합니다. CSS 변수 + 미디어 쿼리로 통일합니다.
           </li>
           <li>
-            <strong>네이티브 테마 변경</strong> — iOS <code>overrideUserInterfaceStyle</code>, Android
+            <strong>네이티브 테마 변경</strong>: iOS <code>overrideUserInterfaceStyle</code>, Android
             <code>AppCompatDelegate</code> 변경 시 WebView를 reload하지 않아도 color scheme 미디어 쿼리가 재평가됩니다.
             웹 쪽 추가 작업은 없습니다.
           </li>
