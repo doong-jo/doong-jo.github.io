@@ -267,7 +267,7 @@ module.exports = {
       # object storage CLI: 환경에 맞게 사용
       aws s3 sync .next/static \
         s3://my-assets-bucket/${APP_ENV}/${COMMIT_SHA}/_next/static \
-        --cache-control "public,max-age=31536000,immutable"
+        --cache-control "public,max-age=31536000"
 
   - name: deploy-origin
     run: |
@@ -456,7 +456,7 @@ export default function imageLoader({ src, width, quality }) {
             <tbody>
               <tr>
                 <td><code>/_next/static/*</code></td>
-                <td><code>max-age=31536000, immutable</code></td>
+                <td><code>max-age=31536000</code></td>
                 <td>commit SHA prefix + content hash (Step 1)</td>
               </tr>
               <tr>
@@ -468,8 +468,7 @@ export default function imageLoader({ src, width, quality }) {
           </table>
         </div>
         <p>
-          <code>[contenthash]</code> + commit SHA prefix가 있으면 URL이 바뀌므로 1년 <code>immutable</code> 캐시가
-          안전합니다. 구버전 HTML이 구버전 asset URL을 참조할 때 신규 배포 asset과 섞이지 않고, 롤백 시에도 broken
+          <code>[contenthash]</code> + commit SHA prefix가 있으면 URL이 바뀌므로 1년 캐시도 안전합니다. 구버전 HTML이 구버전 asset URL을 참조할 때 신규 배포 asset과 섞이지 않고, 롤백 시에도 broken
           asset을 막을 수 있습니다.
         </p>
         <p>
@@ -484,7 +483,7 @@ export default function imageLoader({ src, width, quality }) {
         <h3>검증</h3>
         <ul>
           <li>
-            CDN edge에서 정적 파일 응답 헤더에 <code>cache-control: public, max-age=31536000, immutable</code> 확인
+            CDN edge에서 정적 파일 응답 헤더에 <code>cache-control: public, max-age=31536000</code> 확인
             (31536000: 1년)
           </li>
         </ul>
@@ -588,7 +587,7 @@ export default function imageLoader({ src, width, quality }) {
             <code>/_next/static/media/</code> 번들링해 CDN 경로를 참조하도록 함
           </li>
           <li>이미지는 custom loader + WebP transform, 폰트는 woff2 subset + CORS로 최적화된 바이트만 전송</li>
-          <li>hash + <code>immutable</code> 장기 캐시와 CDN edge(HTTP/3, Brotli)로 정적 구간 TTFB를 줄임</li>
+          <li>content hash 기반 장기 캐시와 CDN edge(HTTP/3, Brotli)로 정적 구간 TTFB를 줄임</li>
           <li>
             CDN은 서버가 직접 비싸게 하던 정적 서빙을 storage+CDN($42)으로 넘겨, 전체 bill $424→$176(페이지 1,000회당
             $3.53→$1.47)으로 줄임. HTML/SSR은 origin에서 유지
