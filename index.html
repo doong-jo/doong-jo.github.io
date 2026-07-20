@@ -79,34 +79,31 @@
     </script>
 
     <!-- Stylesheets -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    />
     <link rel="stylesheet" href="./common/common.css" />
     <link rel="stylesheet" href="./nav/nav.css" />
     <link rel="stylesheet" href="./post/post.css" />
     <style>
       main {
-        width: 100%;
-        max-width: 1024px;
-      }
-
-      @media screen and (max-width: 680px) {
-        main {
-          max-width: 100%;
-        }
-
-        ul {
-          padding-inline-start: 0px;
-        }
+        max-width: var(--list-width);
       }
     </style>
   </head>
   <body>
-    <nav>
-      <h1><a href="/">doong-jo</a></h1>
-      <ul id="nav-list">
-        <li><a href="/index.html" id="nav-post" class="current">Post</a></li>
-        <li><a href="/about.html" id="nav-about">About</a></li>
-      </ul>
-    </nav>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a href="/" class="site-logo">doong-jo</a>
+        <nav aria-label="사이트 메뉴">
+          <ul id="nav-list">
+            <li><a href="/index.html" id="nav-post" class="current">Post</a></li>
+            <li><a href="/about.html" id="nav-about">About</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
     <main>
       <h1>Post</h1>
       <nav class="tag-filter-bar" aria-label="포스트 태그 필터"></nav>
@@ -115,7 +112,9 @@
           <li>
             <a href="posts/nextjs-cdn-self-hosted-performance-and-cost.html" class="post-card">
               <img
-                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-Nextjs--CDN-%E1%84%80%E1%85%AE%E1%84%89%E1%85%A5%E1%86%BC%E1%84%8B%E1%85%B3%E1%84%85%E1%85%A9-%E1%84%89%E1%85%A5%E1%86%BC%E1%84%82%E1%85%B3%E1%86%BC%E1%84%80%E1%85%AA-%E1%84%87%E1%85%B5%E1%84%8B%E1%85%AD%E1%86%BC-%E1%84%86%E1%85%A9%E1%84%83%E1%85%AE-%E1%84%80%E1%85%A2%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5.png/public"
+                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-Nextjs--CDN-%E1%84%80%E1%85%AE%E1%84%89%E1%85%A5%E1%86%BC%E1%84%8B%E1%85%B3%E1%84%85%E1%85%A9-%E1%84%89%E1%85%A5%E1%86%BC%E1%84%82%E1%85%B3%E1%86%BC%E1%84%80%E1%85%AA-%E1%84%87%E1%85%B5%E1%84%8B%E1%85%AD%E1%86%BC-%E1%84%86%E1%85%A9%E1%84%83%E1%85%AE-%E1%84%80%E1%85%A2%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5.png/w=240"
+                srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-Nextjs--CDN-%E1%84%80%E1%85%AE%E1%84%89%E1%85%A5%E1%86%BC%E1%84%8B%E1%85%B3%E1%84%85%E1%85%A9-%E1%84%89%E1%85%A5%E1%86%BC%E1%84%82%E1%85%B3%E1%86%BC%E1%84%80%E1%85%AA-%E1%84%87%E1%85%B5%E1%84%8B%E1%85%AD%E1%86%BC-%E1%84%86%E1%85%A9%E1%84%83%E1%85%AE-%E1%84%80%E1%85%A2%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5.png/w=120 120w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-Nextjs--CDN-%E1%84%80%E1%85%AE%E1%84%89%E1%85%A5%E1%86%BC%E1%84%8B%E1%85%B3%E1%84%85%E1%85%A9-%E1%84%89%E1%85%A5%E1%86%BC%E1%84%82%E1%85%B3%E1%86%BC%E1%84%80%E1%85%AA-%E1%84%87%E1%85%B5%E1%84%8B%E1%85%AD%E1%86%BC-%E1%84%86%E1%85%A9%E1%84%83%E1%85%AE-%E1%84%80%E1%85%A2%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5.png/w=240 240w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-Nextjs--CDN-%E1%84%80%E1%85%AE%E1%84%89%E1%85%A5%E1%86%BC%E1%84%8B%E1%85%B3%E1%84%85%E1%85%A9-%E1%84%89%E1%85%A5%E1%86%BC%E1%84%82%E1%85%B3%E1%86%BC%E1%84%80%E1%85%AA-%E1%84%87%E1%85%B5%E1%84%8B%E1%85%AD%E1%86%BC-%E1%84%86%E1%85%A9%E1%84%83%E1%85%AE-%E1%84%80%E1%85%A2%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5.png/w=360 360w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-Nextjs--CDN-%E1%84%80%E1%85%AE%E1%84%89%E1%85%A5%E1%86%BC%E1%84%8B%E1%85%B3%E1%84%85%E1%85%A9-%E1%84%89%E1%85%A5%E1%86%BC%E1%84%82%E1%85%B3%E1%86%BC%E1%84%80%E1%85%AA-%E1%84%87%E1%85%B5%E1%84%8B%E1%85%AD%E1%86%BC-%E1%84%86%E1%85%A9%E1%84%83%E1%85%AE-%E1%84%80%E1%85%A2%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5.png/w=540 540w"
+                sizes="(max-width: 600px) 96px, 180px"
                 alt=""
                 class="post-thumb"
                 loading="lazy"
@@ -136,7 +135,9 @@
           <li>
             <a href="posts/nextjs-webview-jwt-cookie-auth.html" class="post-card">
               <img
-                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-Nextjs-%E1%84%8B%E1%85%B0%E1%86%B8%E1%84%87%E1%85%B2%E1%84%8B%E1%85%A6%E1%84%89%E1%85%A5-JWT-%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%8C%E1%85%B3%E1%86%BC-Authorization-%E1%84%92%E1%85%A6%E1%84%83%E1%85%A5%E1%84%80%E1%85%A1-%E1%84%8B%E1%85%A1%E1%84%82%E1%85%B5%E1%86%AB-Cookie%E1%84%85%E1%85%A9-%E1%84%87%E1%85%A1%E1%84%81%E1%85%AE%E1%86%AB-%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%B2.png/public"
+                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-Nextjs-%E1%84%8B%E1%85%B0%E1%86%B8%E1%84%87%E1%85%B2%E1%84%8B%E1%85%A6%E1%84%89%E1%85%A5-JWT-%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%8C%E1%85%B3%E1%86%BC-Authorization-%E1%84%92%E1%85%A6%E1%84%83%E1%85%A5%E1%84%80%E1%85%A1-%E1%84%8B%E1%85%A1%E1%84%82%E1%85%B5%E1%86%AB-Cookie%E1%84%85%E1%85%A9-%E1%84%87%E1%85%A1%E1%84%81%E1%85%AE%E1%86%AB-%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%B2.png/w=240"
+                srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-Nextjs-%E1%84%8B%E1%85%B0%E1%86%B8%E1%84%87%E1%85%B2%E1%84%8B%E1%85%A6%E1%84%89%E1%85%A5-JWT-%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%8C%E1%85%B3%E1%86%BC-Authorization-%E1%84%92%E1%85%A6%E1%84%83%E1%85%A5%E1%84%80%E1%85%A1-%E1%84%8B%E1%85%A1%E1%84%82%E1%85%B5%E1%86%AB-Cookie%E1%84%85%E1%85%A9-%E1%84%87%E1%85%A1%E1%84%81%E1%85%AE%E1%86%AB-%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%B2.png/w=120 120w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-Nextjs-%E1%84%8B%E1%85%B0%E1%86%B8%E1%84%87%E1%85%B2%E1%84%8B%E1%85%A6%E1%84%89%E1%85%A5-JWT-%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%8C%E1%85%B3%E1%86%BC-Authorization-%E1%84%92%E1%85%A6%E1%84%83%E1%85%A5%E1%84%80%E1%85%A1-%E1%84%8B%E1%85%A1%E1%84%82%E1%85%B5%E1%86%AB-Cookie%E1%84%85%E1%85%A9-%E1%84%87%E1%85%A1%E1%84%81%E1%85%AE%E1%86%AB-%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%B2.png/w=240 240w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-Nextjs-%E1%84%8B%E1%85%B0%E1%86%B8%E1%84%87%E1%85%B2%E1%84%8B%E1%85%A6%E1%84%89%E1%85%A5-JWT-%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%8C%E1%85%B3%E1%86%BC-Authorization-%E1%84%92%E1%85%A6%E1%84%83%E1%85%A5%E1%84%80%E1%85%A1-%E1%84%8B%E1%85%A1%E1%84%82%E1%85%B5%E1%86%AB-Cookie%E1%84%85%E1%85%A9-%E1%84%87%E1%85%A1%E1%84%81%E1%85%AE%E1%86%AB-%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%B2.png/w=360 360w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-Nextjs-%E1%84%8B%E1%85%B0%E1%86%B8%E1%84%87%E1%85%B2%E1%84%8B%E1%85%A6%E1%84%89%E1%85%A5-JWT-%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%8C%E1%85%B3%E1%86%BC-Authorization-%E1%84%92%E1%85%A6%E1%84%83%E1%85%A5%E1%84%80%E1%85%A1-%E1%84%8B%E1%85%A1%E1%84%82%E1%85%B5%E1%86%AB-Cookie%E1%84%85%E1%85%A9-%E1%84%87%E1%85%A1%E1%84%81%E1%85%AE%E1%86%AB-%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%B2.png/w=540 540w"
+                sizes="(max-width: 600px) 96px, 180px"
                 alt=""
                 class="post-thumb"
                 loading="lazy"
@@ -162,7 +163,9 @@
           <li>
             <a href="posts/webview-dark-mode-prefer-color-scheme.html" class="post-card">
               <img
-                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-%E1%84%8B%E1%85%B0%E1%86%B8%E1%84%87%E1%85%B2-%E1%84%83%E1%85%A1%E1%84%8F%E1%85%B3%E1%84%86%E1%85%A9%E1%84%83%E1%85%B3-%E1%84%83%E1%85%A2%E1%84%8B%E1%85%B3%E1%86%BC%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5-FOUC-%E1%84%92%E1%85%A7%E1%86%AB%E1%84%89%E1%85%A1%E1%86%BC%E1%84%80%E1%85%AA-SSR%E1%84%8B%E1%85%B4-%E1%84%92%E1%85%A1%E1%86%AB%E1%84%80%E1%85%A8%E1%84%85%E1%85%B3%E1%86%AF-%E1%84%82%E1%85%A5%E1%86%B7%E1%84%8B%E1%85%A5%E1%84%89%E1%85%A5%E1%84%80%E1%85%B5.png/public"
+                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-%E1%84%8B%E1%85%B0%E1%86%B8%E1%84%87%E1%85%B2-%E1%84%83%E1%85%A1%E1%84%8F%E1%85%B3%E1%84%86%E1%85%A9%E1%84%83%E1%85%B3-%E1%84%83%E1%85%A2%E1%84%8B%E1%85%B3%E1%86%BC%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5-FOUC-%E1%84%92%E1%85%A7%E1%86%AB%E1%84%89%E1%85%A1%E1%86%BC%E1%84%80%E1%85%AA-SSR%E1%84%8B%E1%85%B4-%E1%84%92%E1%85%A1%E1%86%AB%E1%84%80%E1%85%A8%E1%84%85%E1%85%B3%E1%86%AF-%E1%84%82%E1%85%A5%E1%86%B7%E1%84%8B%E1%85%A5%E1%84%89%E1%85%A5%E1%84%80%E1%85%B5.png/w=240"
+                srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-%E1%84%8B%E1%85%B0%E1%86%B8%E1%84%87%E1%85%B2-%E1%84%83%E1%85%A1%E1%84%8F%E1%85%B3%E1%84%86%E1%85%A9%E1%84%83%E1%85%B3-%E1%84%83%E1%85%A2%E1%84%8B%E1%85%B3%E1%86%BC%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5-FOUC-%E1%84%92%E1%85%A7%E1%86%AB%E1%84%89%E1%85%A1%E1%86%BC%E1%84%80%E1%85%AA-SSR%E1%84%8B%E1%85%B4-%E1%84%92%E1%85%A1%E1%86%AB%E1%84%80%E1%85%A8%E1%84%85%E1%85%B3%E1%86%AF-%E1%84%82%E1%85%A5%E1%86%B7%E1%84%8B%E1%85%A5%E1%84%89%E1%85%A5%E1%84%80%E1%85%B5.png/w=120 120w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-%E1%84%8B%E1%85%B0%E1%86%B8%E1%84%87%E1%85%B2-%E1%84%83%E1%85%A1%E1%84%8F%E1%85%B3%E1%84%86%E1%85%A9%E1%84%83%E1%85%B3-%E1%84%83%E1%85%A2%E1%84%8B%E1%85%B3%E1%86%BC%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5-FOUC-%E1%84%92%E1%85%A7%E1%86%AB%E1%84%89%E1%85%A1%E1%86%BC%E1%84%80%E1%85%AA-SSR%E1%84%8B%E1%85%B4-%E1%84%92%E1%85%A1%E1%86%AB%E1%84%80%E1%85%A8%E1%84%85%E1%85%B3%E1%86%AF-%E1%84%82%E1%85%A5%E1%86%B7%E1%84%8B%E1%85%A5%E1%84%89%E1%85%A5%E1%84%80%E1%85%B5.png/w=240 240w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-%E1%84%8B%E1%85%B0%E1%86%B8%E1%84%87%E1%85%B2-%E1%84%83%E1%85%A1%E1%84%8F%E1%85%B3%E1%84%86%E1%85%A9%E1%84%83%E1%85%B3-%E1%84%83%E1%85%A2%E1%84%8B%E1%85%B3%E1%86%BC%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5-FOUC-%E1%84%92%E1%85%A7%E1%86%AB%E1%84%89%E1%85%A1%E1%86%BC%E1%84%80%E1%85%AA-SSR%E1%84%8B%E1%85%B4-%E1%84%92%E1%85%A1%E1%86%AB%E1%84%80%E1%85%A8%E1%84%85%E1%85%B3%E1%86%AF-%E1%84%82%E1%85%A5%E1%86%B7%E1%84%8B%E1%85%A5%E1%84%89%E1%85%A5%E1%84%80%E1%85%B5.png/w=360 360w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-%E1%84%8B%E1%85%B0%E1%86%B8%E1%84%87%E1%85%B2-%E1%84%83%E1%85%A1%E1%84%8F%E1%85%B3%E1%84%86%E1%85%A9%E1%84%83%E1%85%B3-%E1%84%83%E1%85%A2%E1%84%8B%E1%85%B3%E1%86%BC%E1%84%92%E1%85%A1%E1%84%80%E1%85%B5-FOUC-%E1%84%92%E1%85%A7%E1%86%AB%E1%84%89%E1%85%A1%E1%86%BC%E1%84%80%E1%85%AA-SSR%E1%84%8B%E1%85%B4-%E1%84%92%E1%85%A1%E1%86%AB%E1%84%80%E1%85%A8%E1%84%85%E1%85%B3%E1%86%AF-%E1%84%82%E1%85%A5%E1%86%B7%E1%84%8B%E1%85%A5%E1%84%89%E1%85%A5%E1%84%80%E1%85%B5.png/w=540 540w"
+                sizes="(max-width: 600px) 96px, 180px"
                 alt=""
                 class="post-thumb"
                 loading="lazy"
@@ -187,7 +190,9 @@
           <li>
             <a href="posts/frontend-error-handling-beyond-throw-and-capture.html" class="post-card">
               <img
-                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%86%AB%E1%84%90%E1%85%B3%E1%84%8B%E1%85%A6%E1%86%AB%E1%84%83%E1%85%B3-%E1%84%8B%E1%85%A6%E1%84%85%E1%85%A5-%E1%84%92%E1%85%A2%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF%E1%84%85%E1%85%B5%E1%86%BC-Sentry-%E1%84%89%E1%85%A5%E1%86%AF%E1%84%8E%E1%85%B5%E1%84%80%E1%85%A1-%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%87%E1%85%AE%E1%84%80%E1%85%A1-%E1%84%8B%E1%85%A1%E1%84%82%E1%85%B5%E1%86%B8%E1%84%82%E1%85%B5%E1%84%83%E1%85%A1.png/public"
+                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%86%AB%E1%84%90%E1%85%B3%E1%84%8B%E1%85%A6%E1%86%AB%E1%84%83%E1%85%B3-%E1%84%8B%E1%85%A6%E1%84%85%E1%85%A5-%E1%84%92%E1%85%A2%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF%E1%84%85%E1%85%B5%E1%86%BC-Sentry-%E1%84%89%E1%85%A5%E1%86%AF%E1%84%8E%E1%85%B5%E1%84%80%E1%85%A1-%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%87%E1%85%AE%E1%84%80%E1%85%A1-%E1%84%8B%E1%85%A1%E1%84%82%E1%85%B5%E1%86%B8%E1%84%82%E1%85%B5%E1%84%83%E1%85%A1.png/w=240"
+                srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%86%AB%E1%84%90%E1%85%B3%E1%84%8B%E1%85%A6%E1%86%AB%E1%84%83%E1%85%B3-%E1%84%8B%E1%85%A6%E1%84%85%E1%85%A5-%E1%84%92%E1%85%A2%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF%E1%84%85%E1%85%B5%E1%86%BC-Sentry-%E1%84%89%E1%85%A5%E1%86%AF%E1%84%8E%E1%85%B5%E1%84%80%E1%85%A1-%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%87%E1%85%AE%E1%84%80%E1%85%A1-%E1%84%8B%E1%85%A1%E1%84%82%E1%85%B5%E1%86%B8%E1%84%82%E1%85%B5%E1%84%83%E1%85%A1.png/w=120 120w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%86%AB%E1%84%90%E1%85%B3%E1%84%8B%E1%85%A6%E1%86%AB%E1%84%83%E1%85%B3-%E1%84%8B%E1%85%A6%E1%84%85%E1%85%A5-%E1%84%92%E1%85%A2%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF%E1%84%85%E1%85%B5%E1%86%BC-Sentry-%E1%84%89%E1%85%A5%E1%86%AF%E1%84%8E%E1%85%B5%E1%84%80%E1%85%A1-%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%87%E1%85%AE%E1%84%80%E1%85%A1-%E1%84%8B%E1%85%A1%E1%84%82%E1%85%B5%E1%86%B8%E1%84%82%E1%85%B5%E1%84%83%E1%85%A1.png/w=240 240w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%86%AB%E1%84%90%E1%85%B3%E1%84%8B%E1%85%A6%E1%86%AB%E1%84%83%E1%85%B3-%E1%84%8B%E1%85%A6%E1%84%85%E1%85%A5-%E1%84%92%E1%85%A2%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF%E1%84%85%E1%85%B5%E1%86%BC-Sentry-%E1%84%89%E1%85%A5%E1%86%AF%E1%84%8E%E1%85%B5%E1%84%80%E1%85%A1-%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%87%E1%85%AE%E1%84%80%E1%85%A1-%E1%84%8B%E1%85%A1%E1%84%82%E1%85%B5%E1%86%B8%E1%84%82%E1%85%B5%E1%84%83%E1%85%A1.png/w=360 360w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%86%AB%E1%84%90%E1%85%B3%E1%84%8B%E1%85%A6%E1%86%AB%E1%84%83%E1%85%B3-%E1%84%8B%E1%85%A6%E1%84%85%E1%85%A5-%E1%84%92%E1%85%A2%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF%E1%84%85%E1%85%B5%E1%86%BC-Sentry-%E1%84%89%E1%85%A5%E1%86%AF%E1%84%8E%E1%85%B5%E1%84%80%E1%85%A1-%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%87%E1%85%AE%E1%84%80%E1%85%A1-%E1%84%8B%E1%85%A1%E1%84%82%E1%85%B5%E1%86%B8%E1%84%82%E1%85%B5%E1%84%83%E1%85%A1.png/w=540 540w"
+                sizes="(max-width: 600px) 96px, 180px"
                 alt=""
                 class="post-thumb"
                 loading="lazy"
@@ -214,7 +219,9 @@
           <li>
             <a href="posts/developers-cannot-explain-their-code.html" class="post-card">
               <img
-                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/public"
+                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=240"
+                srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=120 120w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=240 240w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=360 360w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=540 540w"
+                sizes="(max-width: 600px) 96px, 180px"
                 alt=""
                 class="post-thumb"
                 loading="lazy"
@@ -238,7 +245,9 @@
           <li>
             <a href="posts/ai-era-code-without-thinking-is-poison.html" class="post-card">
               <img
-                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/public"
+                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=240"
+                srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=120 120w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=240 240w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=360 360w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=540 540w"
+                sizes="(max-width: 600px) 96px, 180px"
                 alt=""
                 class="post-thumb"
                 loading="lazy"
@@ -262,7 +271,9 @@
           <li>
             <a href="posts/you-are-not-senior-if-you-say-dev-is-hard-and-slow.html" class="post-card">
               <img
-                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-개발하기-어렵다-라고-말하는-당신은-시니어가-아닙니다.png/public"
+                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-개발하기-어렵다-라고-말하는-당신은-시니어가-아닙니다.png/w=240"
+                srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-개발하기-어렵다-라고-말하는-당신은-시니어가-아닙니다.png/w=120 120w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-개발하기-어렵다-라고-말하는-당신은-시니어가-아닙니다.png/w=240 240w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-개발하기-어렵다-라고-말하는-당신은-시니어가-아닙니다.png/w=360 360w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-개발하기-어렵다-라고-말하는-당신은-시니어가-아닙니다.png/w=540 540w"
+                sizes="(max-width: 600px) 96px, 180px"
                 alt=""
                 class="post-thumb"
                 loading="lazy"
@@ -288,7 +299,9 @@
           <li>
             <a href="posts/why-dev-team-priority-must-be-business-first.html" class="post-card">
               <img
-                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/why-dev-team-priority-must-be-business-first.png/public"
+                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/why-dev-team-priority-must-be-business-first.png/w=240"
+                srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/why-dev-team-priority-must-be-business-first.png/w=120 120w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/why-dev-team-priority-must-be-business-first.png/w=240 240w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/why-dev-team-priority-must-be-business-first.png/w=360 360w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/why-dev-team-priority-must-be-business-first.png/w=540 540w"
+                sizes="(max-width: 600px) 96px, 180px"
                 alt=""
                 class="post-thumb"
                 loading="lazy"
@@ -312,7 +325,9 @@
           <li>
             <a href="posts/estimating-development-schedule.html" class="post-card">
               <img
-                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/moritz-kindler-YlSIQrITq1k-unsplash.jpg/public"
+                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/moritz-kindler-YlSIQrITq1k-unsplash.jpg/w=240"
+                srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/moritz-kindler-YlSIQrITq1k-unsplash.jpg/w=120 120w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/moritz-kindler-YlSIQrITq1k-unsplash.jpg/w=240 240w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/moritz-kindler-YlSIQrITq1k-unsplash.jpg/w=360 360w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/moritz-kindler-YlSIQrITq1k-unsplash.jpg/w=540 540w"
+                sizes="(max-width: 600px) 96px, 180px"
                 alt=""
                 class="post-thumb"
                 loading="lazy"
@@ -333,7 +348,9 @@
           <li>
             <a href="posts/are-you-senior-engineer-no-you-are-domain-export.html" class="post-card">
               <img
-                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/jaime-spaniol-l4JygnDCbMg-unsplash.jpg/public"
+                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/jaime-spaniol-l4JygnDCbMg-unsplash.jpg/w=240"
+                srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/jaime-spaniol-l4JygnDCbMg-unsplash.jpg/w=120 120w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/jaime-spaniol-l4JygnDCbMg-unsplash.jpg/w=240 240w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/jaime-spaniol-l4JygnDCbMg-unsplash.jpg/w=360 360w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/jaime-spaniol-l4JygnDCbMg-unsplash.jpg/w=540 540w"
+                sizes="(max-width: 600px) 96px, 180px"
                 alt=""
                 class="post-thumb"
                 loading="lazy"
@@ -357,7 +374,9 @@
           <li>
             <a href="posts/clean-code-but-you-are-fired.html" class="post-card">
               <img
-                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/balance.jpg/public"
+                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/balance.jpg/w=240"
+                srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/balance.jpg/w=120 120w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/balance.jpg/w=240 240w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/balance.jpg/w=360 360w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/balance.jpg/w=540 540w"
+                sizes="(max-width: 600px) 96px, 180px"
                 alt=""
                 class="post-thumb"
                 loading="lazy"
@@ -381,7 +400,9 @@
           <li>
             <a href="posts/when-design-system-becomes-legacy.html" class="post-card">
               <img
-                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/design-system.jpg/public"
+                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/design-system.jpg/w=240"
+                srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/design-system.jpg/w=120 120w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/design-system.jpg/w=240 240w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/design-system.jpg/w=360 360w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/design-system.jpg/w=540 540w"
+                sizes="(max-width: 600px) 96px, 180px"
                 alt=""
                 class="post-thumb"
                 loading="lazy"
@@ -405,7 +426,9 @@
           <li>
             <a href="posts/quit-startup-and-back-to-job.html" class="post-card">
               <img
-                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/snapkit-desk.jpeg/public"
+                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/snapkit-desk.jpeg/w=240"
+                srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/snapkit-desk.jpeg/w=120 120w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/snapkit-desk.jpeg/w=240 240w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/snapkit-desk.jpeg/w=360 360w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/snapkit-desk.jpeg/w=540 540w"
+                sizes="(max-width: 600px) 96px, 180px"
                 alt=""
                 class="post-thumb"
                 loading="lazy"
@@ -429,7 +452,9 @@
           <li>
             <a href="posts/tech-lead-1year-retrospective.html" class="post-card">
               <img
-                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/public"
+                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=240"
+                srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=120 120w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=240 240w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=360 360w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=540 540w"
+                sizes="(max-width: 600px) 96px, 180px"
                 alt=""
                 class="post-thumb"
                 loading="lazy"
@@ -453,7 +478,9 @@
           <li>
             <a href="posts/blog-with-vanilla.html" class="post-card">
               <img
-                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/public"
+                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=240"
+                srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=120 120w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=240 240w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=360 360w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=540 540w"
+                sizes="(max-width: 600px) 96px, 180px"
                 alt=""
                 class="post-thumb"
                 loading="lazy"
@@ -481,7 +508,9 @@
               class="post-card"
             >
               <img
-                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/public"
+                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=240"
+                srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=120 120w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=240 240w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=360 360w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=540 540w"
+                sizes="(max-width: 600px) 96px, 180px"
                 alt=""
                 class="post-thumb"
                 loading="lazy"
@@ -506,7 +535,9 @@
               class="post-card"
             >
               <img
-                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/public"
+                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=240"
+                srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=120 120w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=240 240w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=360 360w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=540 540w"
+                sizes="(max-width: 600px) 96px, 180px"
                 alt=""
                 class="post-thumb"
                 loading="lazy"
@@ -531,7 +562,9 @@
               class="post-card"
             >
               <img
-                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/public"
+                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=240"
+                srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=120 120w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=240 240w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=360 360w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=540 540w"
+                sizes="(max-width: 600px) 96px, 180px"
                 alt=""
                 class="post-thumb"
                 loading="lazy"
@@ -558,7 +591,9 @@
               class="post-card"
             >
               <img
-                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/public"
+                src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=240"
+                srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=120 120w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=240 240w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=360 360w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=540 540w"
+                sizes="(max-width: 600px) 96px, 180px"
                 alt=""
                 class="post-thumb"
                 loading="lazy"
