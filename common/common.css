@@ -8,6 +8,7 @@
   --gray700: #4e5968;
   --gray600: #6b7684;
   --gray500: #8b95a1;
+  --gray400: #b0b8c1;
   --gray200: #e5e8eb;
   --gray100: #f2f4f6;
   --gray50: #f9fafb;
@@ -203,6 +204,17 @@ ul > li {
   gap: 6px;
 }
 
+/* 전체 아티클 섹션 */
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 8px 0 4px;
+}
+
+.posts {
+  scroll-margin-top: calc(var(--header-height) + 16px);
+}
+
 /* 포스트 카드 레이아웃 */
 .posts ul {
   list-style: none;
@@ -268,8 +280,19 @@ ul > li {
 .post-meta {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
   flex-wrap: wrap;
+}
+
+.post-category {
+  font-size: 0.8125rem;
+  color: var(--gray500);
+}
+
+.post-category::after {
+  content: "·";
+  margin-left: 6px;
+  color: var(--gray400);
 }
 
 .post-meta time {
@@ -277,8 +300,48 @@ ul > li {
   color: var(--gray500);
 }
 
+/* 카드에서는 태그 칩을 숨기고 카테고리 텍스트만 표시 (DOM은 필터용으로 유지) */
 .post-meta .tags {
-  margin-left: 0;
+  display: none;
+}
+
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin-top: 32px;
+}
+
+.pagination button {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 8px;
+  border: none;
+  border-radius: var(--radius-s);
+  background: transparent;
+  color: var(--gray600);
+  font-size: 0.9375rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: var(--gray100);
+}
+
+.pagination button[aria-current="page"] {
+  background: var(--gray100);
+  color: var(--gray900);
+  font-weight: 700;
+}
+
+.pagination button:disabled {
+  color: var(--gray200);
+  cursor: default;
+  background: transparent;
 }
 
 @media screen and (max-width: 600px) {

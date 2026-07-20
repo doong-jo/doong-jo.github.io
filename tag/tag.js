@@ -2,6 +2,7 @@
   'use strict';
 
   var PRIORITY_TAGS = ['전체', '구현'];
+  var PAGE_SIZE = 10;
 
   function initTagFilter() {
     var postList = document.querySelector('.posts ul');
@@ -10,6 +11,11 @@
 
     var posts = postList.querySelectorAll('li');
     var cardTags = postList.querySelectorAll('.tags > .tag');
+    var postsSection = document.querySelector('.posts');
+    var paginationNav = document.querySelector('.pagination');
+
+    var matchedPosts = Array.from(posts);
+    var currentPage = 1;
 
     function collectTags() {
       var tagSet = new Set();
@@ -62,20 +68,72 @@
       return null;
     }
 
+    function renderPage(page, shouldScroll) {
+      var totalPages = Math.max(1, Math.ceil(matchedPosts.length / PAGE_SIZE));
+      currentPage = Math.min(Math.max(1, page), totalPages);
+
+      var start = (currentPage - 1) * PAGE_SIZE;
+      var end = start + PAGE_SIZE;
+      var visible = new Set(matchedPosts.slice(start, end));
+
+      posts.forEach(function(post) {
+        post.style.display = visible.has(post) ? '' : 'none';
+      });
+
+      renderPagination(totalPages);
+
+      if (shouldScroll && postsSection) {
+        postsSection.scrollIntoView({ block: 'start' });
+      }
+    }
+
+    function renderPagination(totalPages) {
+      if (!paginationNav) return;
+      paginationNav.innerHTML = '';
+      if (totalPages <= 1) return;
+
+      function makeButton(label, page, options) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = label;
+        if (options && options.ariaLabel) {
+          btn.setAttribute('aria-label', options.ariaLabel);
+        }
+        if (options && options.current) {
+          btn.setAttribute('aria-current', 'page');
+        }
+        if (options && options.disabled) {
+          btn.disabled = true;
+        } else {
+          btn.addEventListener('click', function() {
+            renderPage(page, true);
+          });
+        }
+        paginationNav.appendChild(btn);
+      }
+
+      makeButton('‹', currentPage - 1, {
+        ariaLabel: '이전 페이지',
+        disabled: currentPage === 1
+      });
+      for (var i = 1; i <= totalPages; i++) {
+        makeButton(String(i), i, { current: i === currentPage });
+      }
+      makeButton('›', currentPage + 1, {
+        ariaLabel: '다음 페이지',
+        disabled: currentPage === totalPages
+      });
+    }
+
     function filterByTag(tag) {
       var activeTag = tag === '전체' ? null : tag;
 
-      posts.forEach(function(post) {
+      matchedPosts = Array.from(posts).filter(function(post) {
+        if (activeTag === null) return true;
         var postTagEls = post.querySelectorAll('.tags > .tag');
-        var tagTexts = Array.from(postTagEls).map(function(t) {
-          return t.textContent.trim();
+        return Array.from(postTagEls).some(function(t) {
+          return t.textContent.trim() === activeTag;
         });
-
-        if (activeTag === null || tagTexts.includes(activeTag)) {
-          post.style.display = '';
-        } else {
-          post.style.display = 'none';
-        }
       });
 
       filterBar.querySelectorAll('.tag').forEach(function(t) {
@@ -93,6 +151,8 @@
           t.classList.remove('active');
         }
       });
+
+      renderPage(1, false);
     }
 
     function selectTag(tagName) {
