@@ -1,12 +1,1 @@
-async function showOctoCat() {
-  const svgData = await fetch("../resources/images/octo-cat.svg");
-
-  const octoCatElement = document.createElement("a");
-  octoCatElement.href = "https://github.com/doong-jo";
-  octoCatElement.innerHTML = await svgData.text();
-  octoCatElement.className = "github-corner";
-
-  document.body.appendChild(octoCatElement);
-}
-
-showOctoCat();
+// 옥토캣 코너는 토스 스타일 리디자인에서 제거되었습니다.
