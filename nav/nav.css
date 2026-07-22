@@ -54,3 +54,14 @@
   color: var(--primary-dark);
   font-weight: 700;
 }
+
+/* 헤더 액션 그룹 (네비게이션 + 구독 버튼) */
+.site-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.site-header .subscribe-cta {
+  flex-shrink: 0;
+}
