@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <!-- Google AdSense -->
+    <meta name="google-adsense-account" content="ca-pub-9401013749529244" />
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9401013749529244"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Basic SEO -->
+    <title>선언만 하고 안 쓴 폰트가 Safari 브라우저를 멈추게 한 사연 | doong-jo</title>
+    <meta
+      name="description"
+      content="CSS에 선언만 하고 쓰지 않은 폰트 때문에 iOS 웹뷰가 최대 19초간 백지를 보여줬습니다. WebKit 레이어 트리 동결이 원인이었습니다."
+    />
+    <meta name="author" content="doong-jo" />
+    <meta name="keywords" content="iOS, WebView, 성능 최적화, 폰트, @font-face, WebKit, Next.js, 첫 화면 지연, FCP" />
+    <meta name="post-tags" content="구현, iOS, WebView, Next.js, 성능 최적화" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://doong-jo.github.io/posts/ios-webview-first-paint-delay.html" />
+
+    <!-- RSS Feed -->
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="doong-jo RSS Feed"
+      href="https://doong-jo.github.io/feed.xml"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="선언만 하고 안 쓴 폰트가 Safari 브라우저를 멈추게 한 사연" />
+    <meta
+      property="og:description"
+      content="CSS에 선언만 하고 쓰지 않은 폰트 때문에 iOS 웹뷰가 최대 19초간 백지를 보여줬습니다. WebKit 레이어 트리 동결이 원인이었습니다."
+    />
+    <meta property="og:url" content="https://doong-jo.github.io/posts/ios-webview-first-paint-delay.html" />
+    <meta property="og:site_name" content="doong-jo" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta
+      property="og:image"
+      content="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=1200"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="article:author" content="Sungdong Cho" />
+    <meta property="article:published_time" content="2026-08-04" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="선언만 하고 안 쓴 폰트가 Safari 브라우저를 멈추게 한 사연" />
+    <meta
+      name="twitter:description"
+      content="CSS에 선언만 하고 쓰지 않은 폰트 때문에 iOS 웹뷰가 최대 19초간 백지를 보여줬습니다. WebKit 레이어 트리 동결이 원인이었습니다."
+    />
+    <meta
+      name="twitter:image"
+      content="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=1200"
+    />
+
+    <!-- JSON-LD: BlogPosting Schema -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "iOS 웹뷰 첫 화면 지연, 미사용 폰트 선언이 원인이었다",
+        "description": "iOS 웹뷰에서 첫 화면이 최대 19초까지 지연된 원인 분석. 미사용 @font-face 선언이 WebKit 레이어 트리 동결을 유발한 사례와 해결 과정.",
+        "image": "https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=1200",
+        "author": {
+          "@type": "Person",
+          "name": "doong-jo",
+          "url": "https://doong-jo.github.io/about.html"
+        },
+        "publisher": {
+          "@type": "Person",
+          "name": "doong-jo"
+        },
+        "datePublished": "2026-08-04",
+        "dateModified": "2026-08-04",
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "https://doong-jo.github.io/posts/ios-webview-first-paint-delay.html"
+        },
+        "inLanguage": "ko-KR"
+      }
+    </script>
+
+    <!-- Stylesheets -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    />
+    <link rel="stylesheet" href="../common/common.css" />
+    <link rel="stylesheet" href="../nav/nav.css" />
+    <link rel="stylesheet" href="../post/post.css" />
+    <link rel="stylesheet" href="../post/prism.css" />
+    <link rel="stylesheet" href="../subscribe/subscribe.css" />
+    <style></style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a href="/" class="site-logo">doong-jo</a>
+        <nav aria-label="사이트 메뉴">
+          <ul id="nav-list">
+            <li><a href="/index.html" id="nav-post" class="current">Post</a></li>
+            <li><a href="/about.html" id="nav-about">About</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <div class="content">
+      <main>
+        <time>2026-08-04</time>
+        <div class="post-tags">
+          <span class="tag">구현</span>
+          <span class="tag">iOS</span>
+          <span class="tag">WebView</span>
+          <span class="tag">Next.js</span>
+          <span class="tag">성능 최적화</span>
+        </div>
+        <h1>선언만 하고 안 쓴 폰트가 Safari 브라우저를 멈추게 한 사연</h1>
+
+        <h2>문제: iOS에서만 화면이 한참 뒤에 나타난다</h2>
+        <p>
+          최근 우리 팀의 Next.js 기반 웹앱을 iOS 웹뷰에서 열었을 때 첫 화면이 유독 늦게 떴습니다. 같은
+          페이지를 Android 웹뷰에서 열면 0.4초 만에 화면이 나오는데, iOS에서는 7.7초가 걸렸습니다. 네트워크 환경이
+          불안정할 때는 최대 19초까지 지연되기도 했습니다.
+        </p>
+        <p>
+          처음에는 서버 응답 속도나 번들 크기를 의심했습니다. Network 탭을 보면 HTML, JS, CSS 모두 빠르게 내려오고
+          있었습니다. 리소스는 다 받았는데 화면에 아무것도 안 그려지는 구간이 문제였습니다.
+        </p>
+        <p>
+          로딩 중의 화면을 캡처해보면 완전한 백지였습니다. 데이터도, 글자도, 뼈대조차 없었습니다. 자바스크립트는 정상
+          실행되고 있었고, DOM 조작도 되고 있었습니다. 화면에는 아무것도 그려지지 않았습니다. first paint 자체가
+          일어나지 않고 있었습니다.
+        </p>
+
+        <h2>원인 추적: 어떻게 폰트를 의심하게 됐나</h2>
+        <p>
+          먼저 초기에 로드되는 리소스를 하나씩 점검했습니다. HTML, CSS, JS 모두 정상적으로 빠르게 내려오고 있었습니다.
+        </p>
+        <p>
+          그러다 Clarity 스크립트의 응답이 비정상적으로 느린 것을 발견했습니다. 응답이 끝나는 시점에 first paint가
+          발생하는 것도 확인했습니다. 그런데 Android에서는 같은 상황에서도 화면이 정상적으로 떴습니다.
+        </p>
+        <p>
+          브라우저 차이에서 오는 이슈로 좁혀졌습니다. 그런데 iOS에서도 어떤 페이지는 잘 되고 어떤 페이지는 안 됐습니다.
+          브라우저와 페이지, 두 가지 조건이 맞물려야 문제가 발생한다는 걸 알게 됐습니다.
+        </p>
+        <p>
+          이 시점에서 AI의 도움을 받았습니다. WebKit 저장소와 Next.js 저장소 링크를 전달하고, first paint의 조건을
+          면밀히 살펴보도록 지시했습니다. 그 결과 WebKit의 레이어 트리 동결 조건과 <code>@font-face</code> 선언의 관계를
+          파악할 수 있었습니다.
+        </p>
+
+        <h2>원인 분석: 도미노처럼 이어진 지연</h2>
+        <p>
+          Safari 개발자 도구의 Timeline을 열어보니 흥미로운 패턴이 보였습니다. 페이지의 <code>load</code> 이벤트가
+          발생하기 전까지 WebKit이 화면 갱신을 미루고 있었습니다. (<code>load</code> 이벤트는 HTML, CSS, JS, 이미지 등
+          페이지의 모든 리소스가 다 받아졌을 때 발생합니다.) <code>load</code> 이벤트를 늦추는 주범은 외부 분석
+          도구(Microsoft Clarity)의 스크립트였습니다.
+        </p>
+        <p>
+          Clarity는 사용자 행동 분석을 위해 세션 녹화와 히트맵 데이터를 수집하는 도구입니다. 스크립트 자체가 무겁지는
+          않지만, 외부 CDN에서 로드되기 때문에 네트워크 상황에 따라 2초에서 최대 19초까지 로딩 시간 편차가 컸습니다. 이
+          스크립트가 <code>load</code> 이벤트 발생을 그만큼 늦추고 있었습니다.
+        </p>
+        <p>
+          여기서 의문이 생겼습니다. 분석 스크립트가 늦게 로드되는 건 Android에서도 마찬가지인데, 왜 iOS만 화면이 안 뜨는
+          걸까요?
+        </p>
+        <p>
+          CSS에 선언된 <code>@font-face</code> 중 실제로 사용하지 않는 폰트가 있었습니다. 폰트 파일들이 문제의
+          핵심이었습니다. 미사용 폰트 선언은 평소에도 존재했지만, Clarity가 <code>load</code> 이벤트를 크게 지연시키면서
+          문제가 드러났습니다. WebKit은 폰트가 준비될 때까지 화면 그리기를 미루는데(레이어 트리 동결), 이 대기 시간이
+          눈에 띄게 길어진 것입니다. Clarity가 없었다면 1초 미만의 미세한 지연으로 묻혔을 가능성이 높습니다.
+        </p>
+
+        <h3>1년 7개월간 잠복해 있던 조건</h3>
+        <p>
+          폰트 선언은 2024년 12월에 Pretendard를 도입하면서 추가된 것이었습니다. 당시 적용을 시도했다가 쓰지
+          않기로 결정됐는데, 선언만 남아 있었습니다. 그 후 1년 7개월 동안 아무 문제 없이 운영됐습니다.
+          <code>load</code>를 크게 늦출 리소스가 없었기 때문입니다.
+        </p>
+        <p>
+          2026년 4월에 Clarity를 적용했지만, 당시에는 서버 응답이 빨라서 문제가 드러나지 않았습니다. 7월에 Clarity
+          스크립트를 서빙하는 서버의 응답이 현저히 느려지면서 방아쇠가 당겨졌습니다. 잠복해 있던 조건과 외부 서버 장애가
+          만나 문제가 수면 위로 올라왔습니다.
+        </p>
+
+        <h3>지연이 발생하는 흐름</h3>
+        <pre class="mermaid">flowchart TD
+    A["CSS에 @font-face 선언<br>(미사용 폰트 포함)"] --> B["WebKit: 폰트 완료 신호 대기<br>(미사용이라 신호가 안 옴)"]
+    B --> C["레이어 트리 동결<br>(화면 그리기 중단)"]
+    D["Clarity 스크립트 로딩 지연"] --> E["load 이벤트 지연"]
+    C --> F["동결 해제 대기"]
+    E --> F
+    F --> G["첫 화면 렌더링 지연<br>(최대 19초)"]
+</pre>
+
+        <h2>레이어 트리 동결이란</h2>
+        <p>
+          "레이어 트리 동결"이라는 용어가 생소할 수 있습니다.
+          이해하려면 브라우저가 화면을 그리는 과정을 간략히 알아야 합니다.
+        </p>
+        <p>브라우저는 HTML을 받아서 화면에 그리기까지 여러 단계를 거칩니다.</p>
+
+        <!-- 렌더링 파이프라인 시각화 -->
+        <div class="render-pipeline" role="img" aria-label="브라우저 렌더링 파이프라인: HTML/CSS → 파싱 → 렌더 트리 → 레이아웃 → 페인트 → 합성(동결 발생 지점)">
+          <div class="render-step">
+            <div class="render-step-box input">
+              <span class="render-step-icon">📄</span>
+              <span class="render-step-name">HTML + CSS</span>
+            </div>
+            <span class="render-step-number">입력</span>
+          </div>
+          <div class="render-step">
+            <div class="render-step-box">
+              <span class="render-step-icon">🌳</span>
+              <span class="render-step-name">DOM + CSSOM</span>
+              <span class="render-step-desc">구조화</span>
+            </div>
+            <span class="render-step-number">1. 파싱</span>
+          </div>
+          <div class="render-step">
+            <div class="render-step-box">
+              <span class="render-step-icon">🎯</span>
+              <span class="render-step-name">렌더 트리</span>
+              <span class="render-step-desc">보일 요소</span>
+            </div>
+            <span class="render-step-number">2. 트리 생성</span>
+          </div>
+          <div class="render-step">
+            <div class="render-step-box">
+              <span class="render-step-icon">📐</span>
+              <span class="render-step-name">레이아웃</span>
+              <span class="render-step-desc">위치·크기</span>
+            </div>
+            <span class="render-step-number">3. 배치</span>
+          </div>
+          <div class="render-step">
+            <div class="render-step-box">
+              <span class="render-step-icon">🎨</span>
+              <span class="render-step-name">페인트</span>
+              <span class="render-step-desc">픽셀 그리기</span>
+            </div>
+            <span class="render-step-number">4. 그리기</span>
+          </div>
+          <div class="render-step">
+            <div class="render-step-box freeze">
+              <span class="render-step-icon">🧩</span>
+              <span class="render-step-name">합성</span>
+              <span class="render-step-desc">레이어 병합</span>
+            </div>
+            <span class="render-step-number">5. 완성</span>
+          </div>
+        </div>
+        <p>
+          여기서 "레이어"는 포토샵의 레이어와 비슷합니다.
+          브라우저는 페이지를 여러 레이어로 나눠서 따로 그린 뒤, 마지막에 합칩니다.
+          스크롤이나 애니메이션이 있을 때 전체를 다시 그리지 않고 해당 레이어만 움직이면 되니까 효율적입니다.
+        </p>
+        <p>
+          <strong>"레이어 트리 동결"은 이 합성 단계를 멈추는 것입니다.</strong>
+          레이어를 합치는 작업을 안 하니, 사용자 눈에는 아무것도 바뀌지 않습니다.
+        </p>
+        <p>
+          우리 상황에서는 WebKit이 "CSS에 폰트가 선언되어 있으니 폰트가 준비될 때까지 기다리자"라고 판단해서 동결 상태를 유지했습니다.
+          문제는 그 폰트가 실제로 사용되지 않아서 다운로드 자체가 시작되지 않았다는 것입니다.
+          <code>load</code> 이벤트가 발생할 때까지 동결이 풀리지 않았습니다.
+        </p>
+
+        <h2>WebKit과 Blink의 최적화 전략 차이</h2>
+        <p>
+          문제를 이해하려면 브라우저 엔진의 최적화 전략 차이를 알아야 합니다. WebKit(Safari, iOS 웹뷰)과
+          Blink(Chrome, Android 웹뷰)는 같은 웹 표준을 구현하지만, 내부 동작 방식이 다릅니다.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>영역</th>
+              <th>WebKit (Safari, iOS)</th>
+              <th>Blink (Chrome, Android)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>렌더링 타이밍</td>
+              <td>리소스 준비될 때까지 대기</td>
+              <td>준비된 것부터 먼저 표시</td>
+            </tr>
+            <tr>
+              <td>폰트 대기</td>
+              <td>무기한 (load 이벤트까지)</td>
+              <td>~3초 후 fallback 표시</td>
+            </tr>
+            <tr>
+              <td>철학</td>
+              <td>"완성된 상태만 보여주자"</td>
+              <td>"일단 보여주고 완성하자"</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Apple의 철학: 불완전한 화면은 보여주지 않는다</h3>
+        <p>
+          차이는 단순한 구현 방식의 차이가 아니라, 브라우저 벤더의 철학 차이에서 비롯됩니다.
+          2020년 Wikimedia 재단이 WebKit에 Paint Timing API를 기여할 때, Apple은 이런 입장을 밝혔습니다<sup><a href="#ref-1">[1]</a></sup>.
+        </p>
+        <blockquote>
+          <p>
+            "Apple's main argument was that web developers might optimize for first-paint if it's available,
+            and it's less desirable because pages would appear quickly but with missing content."
+          </p>
+          <p>
+            (Apple의 주요 주장은, first-paint 지표가 제공되면 웹 개발자들이 이를 최적화하려 할 것이고,
+            그 결과 콘텐츠가 빠진 불완전한 페이지가 빠르게 나타나는 바람직하지 않은 상황이 생길 수 있다는 것이었다.)
+          </p>
+        </blockquote>
+        <p>
+          WebKit은 철학을 "Visually Non-Empty" 휴리스틱으로 구현했습니다.
+          의미 있는 콘텐츠가 준비될 때까지 화면 그리기를 지연시키는 것입니다.
+        </p>
+        <blockquote>
+          <p>
+            "The WebKit implementation delays the first paint if there are pending styles and fonts
+            unless a meaningful amount of content is ready to be rendered
+            (Equivalent to 1024 pixels of images, or 200 characters of text)."
+          </p>
+          <p>
+            (WebKit 구현은 스타일과 폰트가 아직 로딩 중이면 first paint를 지연시킨다.
+            단, 의미 있는 양의 콘텐츠가 렌더링될 준비가 되면 예외다.
+            여기서 "의미 있는 양"이란 1024픽셀 이상의 이미지, 또는 200자 이상의 텍스트를 말한다.)
+          </p>
+        </blockquote>
+        <p>
+          Chrome(Blink)은 다른 접근을 취합니다. 뭐라도 그릴 수 있으면 일단 그리고, 나머지는 나중에 채웁니다.
+          사용자가 빈 화면을 보는 시간을 줄이는 게 더 중요하다고 보는 것입니다.
+          어느 쪽이 맞다고 할 수는 없지만, 철학 차이가 같은 코드에서 다른 결과를 만들어냈습니다.
+        </p>
+
+        <h3>렌더링 타이밍 차이</h3>
+        <p>이번 문제는 렌더링 타이밍 차이에서 비롯됐습니다.</p>
+        <p>
+          WebKit의
+          <a
+            href="https://github.com/WebKit/WebKit/blob/0f25453ee003c74b1042030c0bb1b2fcfe5fb4b5/Source/WebCore/page/LocalFrameView.cpp#L6120"
+            target="_blank"
+            rel="noopener"
+            >LocalFrameView.cpp</a
+          >에는 <code>qualifiesAsVisuallyNonEmpty()</code>라는 함수가 있습니다. "화면에 뭔가 보여줄 준비가
+          됐나?"를 판단합니다. 준비가 안 됐다고 판단되면 레이어 트리를 동결해서 화면을 그리지 않습니다.
+        </p>
+        <p>
+          <strong>함수가 @font-face 선언을 어떻게 해석하느냐가 핵심입니다.</strong>
+          CSS에 <code>@font-face</code>가 선언되어 있으면, WebKit은 "이 폰트가 로딩 완료되어야 준비된 상태"라고
+          판단합니다. 문제는 WebKit이 해당 폰트가 실제로 사용되는지까지는 확인하지 않는다는 점입니다. 선언만 있어도
+          "폰트 로딩 중"으로 간주합니다.
+        </p>
+        <p>사용하는 폰트와 미사용 폰트의 운명이 여기서 갈립니다.</p>
+        <ul>
+          <li>
+            <strong>사용하는 폰트</strong>: 브라우저가 폰트 파일을 다운로드 → 완료 → "준비됨"으로 전환 → 동결 해제
+          </li>
+          <li>
+            <strong>미사용 폰트</strong>: 브라우저가 다운로드를 시작하지 않음 → 완료가 영원히 오지 않음 → "준비 안 됨"
+            상태 유지
+          </li>
+        </ul>
+        <p>
+          미사용 폰트는 완료 신호가 없으니, WebKit은 <code>load</code> 이벤트가 발생할 때까지 "아직 준비 중"이라고
+          판단합니다. 그 사이 화면은 계속 동결된 상태로 백지를 보여줍니다.
+        </p>
+        <p>
+          Blink는 이 동작이 없습니다. 폰트 로딩과 관계없이 준비된 콘텐츠부터 화면에 그립니다. 같은 조건에서 Android가
+          빠르게 화면을 보여주는 이유입니다.
+        </p>
+
+        <h3>WebKit에서는 초기 로딩 최적화가 더 중요하다</h3>
+        <p>
+          렌더링 타이밍이 다르니, WebKit 기반 브라우저에서는 초기 로딩 최적화에 더 신경 써야 합니다. Blink에서는
+          문제없던 코드가 WebKit에서는 화면 멈춤으로 이어질 수 있습니다.
+        </p>
+        <p>아래는 WebKit을 고려한 초기 로딩 체크리스트입니다.</p>
+        <ul>
+          <li>사용하지 않는 <code>@font-face</code> 선언 제거</li>
+          <li>분석 도구, 광고 스크립트 등 비필수 리소스는 <code>load</code> 이벤트 이후로 지연</li>
+          <li>SSR HTML에 충분한 텍스트 콘텐츠 포함 (200자 임계값 고려)</li>
+          <li><code>async</code>/<code>defer</code> 속성으로 스크립트 로딩 최적화</li>
+        </ul>
+
+        <h2>왜 iOS에서만 체감이 심했나</h2>
+        <p>
+          정확히 말하면 iOS만의 문제가 아닙니다. WebKit 엔진을 사용하는 모든 브라우저에서 발생합니다. iOS 웹뷰뿐 아니라
+          macOS의 데스크탑 Safari에서도 같은 현상이 재현됐습니다. 다만 모바일 환경에서 네트워크 지연이 더 크기 때문에
+          iOS 웹뷰에서 체감이 심했습니다.
+        </p>
+
+        <h3>Next.js 하이드레이션과의 연결</h3>
+        <p>
+          여기에 Next.js의 특성이 더해집니다. Next.js 클라이언트 코드에는
+          <a
+            href="https://github.com/vercel/next.js/blob/canary/packages/next/src/client/dev/fouc.ts#L19"
+            target="_blank"
+            rel="noopener"
+            ><code>displayContent()</code></a
+          >라는 함수가 있습니다. 이 함수는 FOUC(Flash of Unstyled Content)를 방지하기 위해 내부적으로
+          <code>requestAnimationFrame</code> 콜백 안에서만 완료 처리됩니다. 프레임워크는 화면 그리기(하이드레이션)를
+          시작하기 전에 함수의 완료를 기다립니다.
+        </p>
+        <p>
+          WebKit이 레이어 트리를 동결하면 <code>requestAnimationFrame</code> 콜백이 실행되지 않습니다.
+          <code>requestAnimationFrame</code>은 "다음 화면을 그리기 직전에 실행해줘"라는 요청인데, 화면 그리기 자체가
+          멈춰있으니 "다음 화면"이 오지 않는 것입니다. Next.js의 하이드레이션도 시작조차 못 하고, 사용자는 백지를 보게
+          됩니다.
+        </p>
+
+        <h3>같은 앱인데 왜 어떤 페이지는 괜찮을까</h3>
+        <p>
+          흥미로운 점이 있었습니다. 같은 CSS를 사용하는데 어떤 페이지는 멈추고 어떤 페이지는 정상이었습니다. 예를 들어
+          피드 페이지는 멈췄지만 프로모션 페이지는 괜찮았습니다.
+        </p>
+        <p>
+          원인은 WebKit의 <strong>200자 임계값</strong>이었습니다. WebKit은 "Visually Non-Empty" 휴리스틱을 사용해서
+          의미 있는 콘텐츠가 준비될 때까지 페인팅을 지연시킵니다<sup><a href="#ref-1">[1]</a></sup>. WebKit 소스 코드(<a
+            href="https://github.com/WebKit/WebKit/blob/0f25453ee003c74b1042030c0bb1b2fcfe5fb4b5/Source/WebCore/page/LocalFrameView.h#L1089"
+            target="_blank"
+            rel="noopener"
+            >LocalFrameView.h#L1089</a
+          >)를 보면 <code>visualCharacterThreshold</code>라는 상수가 200으로 설정되어 있습니다. SSR로 내려오는 HTML에
+          보이는 텍스트가 200자를 넘으면 "이미 보여줄 콘텐츠가 충분하다"고 판단해서 동결을 풀어버립니다.
+        </p>
+        <p>
+          피드 페이지는 로그인 사용자 화면이라 SSR HTML에 텍스트가 거의 없었습니다. 반면 프로모션 페이지는 정적 콘텐츠가
+          많아서 임계값을 넘겼습니다. 같은 폰트 CSS를 쓰는데 결과가 달랐던 이유가 여기 있었습니다.
+        </p>
+
+        <h2>검증: 정말 폰트 선언이 원인인가</h2>
+        <p>
+          추측으로 끝내지 않고 직접 검증했습니다. 실제 앱의 CSS 응답을 가로채서 <code>@font-face</code> 블록만 제거하고
+          나머지는 그대로 둔 상태로 측정했습니다.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>조건</th>
+              <th>firstRaf</th>
+              <th>load</th>
+              <th>판정</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>원본 CSS</td>
+              <td>5,263ms</td>
+              <td>5,263ms</td>
+              <td>화면 멈춤</td>
+            </tr>
+            <tr>
+              <td>@font-face 제거</td>
+              <td>119ms</td>
+              <td>5,122ms</td>
+              <td>정상</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          <code>load</code> 이벤트는 여전히 5초 넘게 걸렸지만, 폰트 선언을 빼니 <code>requestAnimationFrame</code>이
+          119ms에 실행됐습니다. 화면 그리기가 <code>load</code>와 분리됐습니다.
+        </p>
+        <p>
+          Clarity를 완전히 제거하고 대신 5초짜리 느린 이미지를 넣어봤습니다. 결과는 같았습니다.
+          <code>firstRaf</code>가 <code>load</code>(5,160ms)까지 밀렸습니다. Clarity가 아니라 "load를 늦추는 무엇이든"이
+          조건이었습니다.
+        </p>
+
+        <h2>해결: 미사용 폰트 제거와 스크립트 지연 로딩</h2>
+        <p>원인을 알았으니 해결책은 명확했습니다.</p>
+
+        <h3>1. 미사용 폰트 선언 제거</h3>
+        <p>
+          CSS를 점검해보니 과거에 추가했다가 더 이상 쓰지 않는 폰트 선언이 남아 있었습니다. 선언들을 모두
+          제거했습니다.
+        </p>
+        <pre><code class="language-css">/* 제거 전: 실제로 쓰지 않는 폰트가 선언되어 있음 */
+@font-face {
+  font-family: 'LegacyFont';
+  src: url('/fonts/legacy.woff2') format('woff2');
+}
+
+/* 제거 후: 실제로 사용하는 폰트만 남김 */
+@font-face {
+  font-family: 'Pretendard';
+  src: url('/fonts/pretendard.woff2') format('woff2');
+}</code></pre>
+
+        <h4>만약 폰트가 실제 사용 중이었다면?</h4>
+        <p>역설적이게도, 폰트가 실제로 본문에 사용되고 있었다면 문제는 덜 심각했을 것입니다.</p>
+        <p>
+          브라우저는 CSS에 <code>@font-face</code>가 선언되어 있어도, 해당 폰트를 실제로 사용하는 요소가 없으면 폰트
+          파일을 다운로드하지 않습니다. 선언만 있고 다운로드는 안 하니, 폰트 로딩이 "완료"될 일 자체가 없습니다.
+          WebKit은 존재하지 않는 완료를 기다리며 <code>load</code> 이벤트까지 화면을 동결한 것입니다.
+        </p>
+        <p>
+          만약 폰트가 실제로 사용 중이었다면 브라우저가 폰트 파일을 다운로드했을 것이고, 네트워크 상황이 좋으면 수백
+          밀리초 내에 로딩이 끝났을 것입니다. 폰트 로딩이 완료되면 WebKit은 "시각적으로 준비됐다"고 판단해 동결을
+          해제합니다. 실제로 쓰이는 폰트는 로딩 완료라는 출구가 있지만, 미사용 폰트는 출구 없이 <code>load</code>까지
+          갇혀버린 셈입니다.
+        </p>
+        <p>가설을 검증하기 위해 폰트 선언 상태별로 측정했습니다.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>폰트 선언</th>
+              <th>본문 사용</th>
+              <th>폰트 응답</th>
+              <th>firstRaf</th>
+              <th>판정</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>없음</td>
+              <td>–</td>
+              <td>–</td>
+              <td>31ms</td>
+              <td>정상</td>
+            </tr>
+            <tr>
+              <td>있음</td>
+              <td>안 씀</td>
+              <td>요청 안 됨</td>
+              <td>5,036ms</td>
+              <td>멈춤</td>
+            </tr>
+            <tr>
+              <td>있음</td>
+              <td>씀</td>
+              <td>즉시 성공</td>
+              <td>34ms</td>
+              <td>정상</td>
+            </tr>
+            <tr>
+              <td>있음</td>
+              <td>씀</td>
+              <td>즉시 실패(404)</td>
+              <td>16ms</td>
+              <td>정상</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          성공이든 실패든 결론이 나면 동결이 풀립니다. 미사용 폰트는 요청 자체가 시작되지 않아
+          결론이 없고, 그래서 <code>load</code>가 유일한 탈출구가 됩니다.
+        </p>
+        <p>
+          참고로 <code>font-display: swap</code> 같은 속성을 추가해도 소용없었습니다. <code>swap</code>,
+          <code>optional</code>, <code>fallback</code>, <code>block</code> 모두 5,021~5,048ms로 차이가 없었습니다.
+          <code>font-display</code>는 폰트가 실제로 사용될 때 텍스트를 어떻게 보여줄지 제어하는 속성이기 때문입니다.
+          폰트가 사용되지 않으면 속성 자체가 적용될 일이 없습니다.
+        </p>
+
+        <h3>2. 분석 도구 지연 초기화</h3>
+        <p>
+          Clarity 같은 분석 스크립트는 사용자 경험에 직접적인 영향을 주지 않습니다. 이런 스크립트는
+          <code>load</code> 이벤트 이후에 로드하도록 변경했습니다.
+        </p>
+        <p>
+          <code>async</code> 속성을 붙이면 해결될 것 같지만, 이 경우에는 소용없었습니다. <code>async</code>는 화면을
+          막지 않는 방식으로 스크립트를 불러오지만, "전부 다 받았다"는 신호(<code>load</code> 이벤트)는 이 파일까지
+          기다립니다. 스크립트 파일이 다 받아져야 <code>load</code>가 발생하므로, 느린 외부 스크립트가 있으면 여전히
+          <code>load</code>가 지연됩니다.
+        </p>
+        <pre><code class="language-tsx">// 변경 전: Next.js Script로 즉시 로딩
+&lt;Script src="https://www.clarity.ms/tag/xxx" strategy="afterInteractive" /&gt;
+
+// 변경 후: 첫 페인트 이후 로딩 (이벤트 큐잉은 별도 구현)
+useEffect(() =&gt; {
+  requestAnimationFrame(() =&gt; {
+    const script = document.createElement('script');
+    script.src = 'https://www.clarity.ms/tag/xxx';
+    script.onload = () =&gt; flushQueuedEvents();
+    document.head.appendChild(script);
+  });
+}, []);</code></pre>
+        <p>
+          SDK 초기화 전에 들어온 이벤트가 유실되지 않도록, 큐에 저장했다가 로드 완료 시 일괄 처리하는 로직을
+          추가했습니다.
+        </p>
+
+        <h3>개선 결과</h3>
+        <p>p50은 중앙값, p95는 하위 5% 느린 케이스를 의미합니다.</p>
+        <p>
+          네트워크가 빠른 상황(Clarity 서버 응답 약 2.3초)에서도 개선 전에는 첫 화면이 3.3초나 걸렸습니다. 서버가
+          느려지면서 p50, p95 수치는 더 악화됐습니다.
+        </p>
+
+        <!-- 개선 결과 그래프 (Canvas) -->
+        <div class="perf-chart-container">
+          <canvas id="perf-chart" aria-label="iOS 웹뷰 첫 화면 로딩 시간 개선 결과 그래프"></canvas>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>지표</th>
+              <th>개선 전</th>
+              <th>개선 후</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>iOS 웹뷰 첫 화면 (p50)</td>
+              <td>6.5초</td>
+              <td>1.7초</td>
+            </tr>
+            <tr>
+              <td>iOS 웹뷰 첫 화면 (p95)</td>
+              <td>19초</td>
+              <td>3.2초</td>
+            </tr>
+            <tr>
+              <td>iOS 웹뷰 첫 화면 (빠른 네트워크)</td>
+              <td>3.3초</td>
+              <td>0.3초</td>
+            </tr>
+            <tr>
+              <td>Android 웹뷰 첫 화면</td>
+              <td>0.4초</td>
+              <td>0.4초 (변화 없음)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>배운 점</h2>
+        <p>이번 경험에서 몇 가지 교훈을 얻었습니다.</p>
+        <p>
+          <strong>선언만 하고 쓰지 않는 코드도 부작용을 일으킵니다.</strong>
+          <code>@font-face</code>는 CSS에 적어두기만 해도 브라우저의 동작에 영향을 줍니다. "언젠가 쓸 것 같아서" 남겨둔
+          코드가 실제로 문제를 일으킬 수 있습니다.
+        </p>
+        <p>
+          <strong>플랫폼별 렌더링 차이를 인지해야 합니다.</strong>
+          WebKit과 Blink는 같은 웹 표준을 구현하지만, 최적화 전략은 다릅니다. iOS에서 잘 동작한다고 Android에서도 괜찮을
+          거라는 보장은 없습니다. 반대도 마찬가지입니다.
+        </p>
+        <p>
+          <strong>브라우저 엔진의 최적화 전략을 알아두면 좋습니다.</strong>
+          이번 문제는 WebKit의 레이어 트리 동결이라는 최적화 전략 때문에 발생했습니다. 전략의 존재를 미리 알았다면
+          원인을 더 빨리 찾았을 것입니다. 브라우저가 "왜" 그렇게 동작하는지 이해하면, 문제가 생겼을 때 어디를 봐야 할지
+          감이 옵니다.
+        </p>
+        <p>
+          <strong>측정 조건을 명확히 해야 합니다.</strong>
+          "웹페이지가 느리다"는 피드백만으로는 원인을 찾기 어렵습니다. 어떤 기기에서, 어떤 네트워크에서, 어떤 페이지가
+          느린지 구체적으로 측정해야 진짜 원인에 접근할 수 있습니다.
+        </p>
+        <p>
+          <strong>초기 로딩 성능을 지속적으로 모니터링해야 합니다.</strong>
+          이번 문제는 서서히 악화됐습니다.
+          Clarity 서버가 점점 느려지면서 로딩 시간도 조금씩 길어졌는데, 팀은 "원래 이 정도였나?"라며 익숙해져 버렸습니다.
+          기준선을 정해두고 주기적으로 측정했다면 변화를 더 빨리 감지했을 것입니다.
+        </p>
+
+        <h2>참고자료</h2>
+        <ol class="references">
+          <li id="ref-1">
+            Wikimedia Foundation, "How We Contributed Paint Timing API to WebKit," 2020.
+            <a href="https://diff.wikimedia.org/2020/06/24/how-we-contributed-paint-timing-api-to-webkit/" target="_blank" rel="noopener">
+              diff.wikimedia.org
+            </a>
+          </li>
+        </ol>
+
+        <!-- 구독 섹션 -->
+        <section class="subscribe-inline">
+          <h3>새 글 알림 받기</h3>
+          <p>새로운 글이 발행되면 이메일로 알려드립니다.</p>
+          <form data-subscribe-form class="subscribe-inline-form">
+            <input
+              type="email"
+              name="email"
+              class="subscribe-input"
+              placeholder="이메일 주소"
+              required
+              autocomplete="email"
+            />
+            <button type="submit" class="subscribe-submit">구독</button>
+          </form>
+          <div data-subscribe-message class="subscribe-message" style="display: none"></div>
+        </section>
+
+        <div class="back-to-list">
+          <a href="/index.html" class="back-button">← 글 목록으로 돌아가기</a>
+        </div>
+      </main>
+      <script
+        src="https://utteranc.es/client.js"
+        repo="doong-jo/doong-jo.github.io"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async
+      ></script>
+    </div>
+    <script src="../common/common.js"></script>
+    <script src="../nav/nav.js"></script>
+    <script src="../post/prism.js"></script>
+    <script src="../post/mermaid.min.js"></script>
+    <script src="../post/mermaid.js"></script>
+    <script src="../subscribe/subscribe.js"></script>
+    <script src="../post/perf-chart.js"></script>
+  </body>
+</html>
