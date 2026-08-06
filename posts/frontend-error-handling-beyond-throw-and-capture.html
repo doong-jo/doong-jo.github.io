@@ -142,18 +142,18 @@
         />
 
         <p>
-          프론트엔드에서 에러 처리를 처음 정비할 때 흔한 패턴은 두 가지입니다. API 호출이 실패하면
+          프론트엔드에서 에러 처리를 처음 정비할 때 흔히 쓰는 패턴은 두 가지입니다. API 호출이 실패하면
           <code>throw</code>하고, catch 블록에서 <code>Sentry.captureException(error)</code>를 호출합니다. Sentry를
-          붙였으니 "에러 핸들링은 끝"이라고 생각하기 쉽습니다.
+          붙였으니 "에러 핸들링 끝"이라고 생각하기 쉽습니다.
         </p>
         <p>
           운영해 보면 이 방식만으로는 부족합니다. axios/fetch 실패마다 captureException을 호출하면 Sentry Issues에
           <strong>같은 API 500이 수백 건</strong> 쌓이고, stack trace와 message만 조금씩 달라 triage가 불가능해집니다.
-          사용자 측면에서도 "재고 부족"은 toast로 충분한데 결제 실패는 페이지 fallback UI가 필요한 상황에서, 모든 에러를
-          같은 방식으로 처리하기 어렵습니다.
+          사용자 입장에서도 "재고 부족"은 toast로 충분한데 결제 실패는 페이지 fallback UI가 필요합니다. 모든 에러를
+          똑같이 처리하기 어렵습니다.
         </p>
         <p>
-          에러는 한 번에 처리할 대상이 아니라 <strong>분류 → 전파 → 표현 → 기록 → 운영</strong>의 5단계로 나눠 설계해야
+          에러는 한 번에 처리할 대상이 아닙니다. <strong>분류 → 전파 → 표현 → 기록 → 운영</strong>, 이 5단계로 나눠 설계해야
           합니다. 이 글에서는 커스텀 Error 클래스, React Query mutationCache, Error Boundary, Sentry Tag/beforeSend,
           Ownership Rules, Dashboard, fatal/error 알림까지 순서대로 쌓는 패턴을 공유합니다. 코드 예시는 익명 API를
           사용한 일반화된 TypeScript/React 패턴입니다.
@@ -188,9 +188,9 @@ flowchart LR
         <h2>1. 분류: 이 에러는 무엇인가</h2>
         <p>
           axios raw error나 <code>Error('something went wrong')</code>는 message와 stack이 제각각이라 이후
-          전파·표현·기록·운영 어디에서도 일관되게 분기할 수 없습니다. 먼저 <strong>에러 타입을 정의</strong>해
+          전파·표현·기록·운영 어디서도 일관되게 분기할 수 없습니다. 먼저 <strong>에러 타입을 정의</strong>해
           operational error(재고 부족, 권한 없음)와 programmer bug(예상 밖 예외)를 구분합니다.
-          <code>instanceof</code> 결과가 이후 4단계 정책의 입력이 됩니다.
+          <code>instanceof</code> 결과가 이후 4단계 정책의 입력값이 됩니다.
         </p>
         <p>
           비즈니스 규칙 위반은 버그가 아니라 <strong>의도된 operational error</strong>입니다. 베이스 클래스와 도메인별
@@ -229,7 +229,7 @@ export class OutOfStockError extends AppError {
 }</code></pre>
 
         <p>
-          HTTP 응답 에러는 별도의 <code>ApiError</code>로 wrap합니다. axios의 raw error는 message와 stack이 제각각이라
+          HTTP 응답 에러는 별도 <code>ApiError</code>로 wrap합니다. axios raw error는 message와 stack이 제각각이라
           Sentry에서 그룹핑하기 어렵습니다. API 클라이언트 한곳에서 변환해 두면 이후 레이어가 일관된 형태를 받습니다.
         </p>
         <pre><code class="language-typescript">// errors/api-error.ts
@@ -292,16 +292,16 @@ export async function submitOrder(cartId: string) {
 }</code></pre>
 
         <p>
-          programmer error는 5장 운영에서 <code>level: fatal</code> 후보가 되고, operational error는 Sentry·알림 모두
+          programmer error는 5장 운영에서 <code>level: fatal</code> 후보가 됩니다. operational error는 Sentry·알림 모두
           생략합니다. Error message에 PII(이메일, 토큰, 카드번호)를 넣지 마세요. <code>orderId</code>처럼 디버깅에
           필요한 식별자만 이후 context에 담습니다.
         </p>
 
         <h2>2. 전파: 에러를 어디까지 올릴 것인가</h2>
         <p>
-          타입이 정해지면 <strong>앱 내부에서 에러를 어디까지 전달할지</strong> 결정합니다. mutation 에러를 전부 toast로
-          처리하면 결제 실패처럼 페이지 fallback이 필요한 케이스를 놓치고, 전부 Error Boundary로 올리면 “닉네임 변경
-          실패”에 전체 화면 에러 UI가 뜹니다.
+          타입이 정해지면 <strong>앱 안에서 에러를 어디까지 전달할지</strong> 결정합니다. mutation 에러를 전부 toast로
+          처리하면 결제 실패처럼 페이지 fallback이 필요한 케이스를 놓치고, 전부 Error Boundary로 올리면 "닉네임 변경
+          실패"에 전체 화면 에러 UI가 뜹니다.
         </p>
         <p>
           React Query v5의 <code>MutationCache.onError</code>에서 mutation <code>meta</code>로 전파 정책을 분리합니다.
@@ -366,14 +366,14 @@ const checkout = useMutation({
           </li>
           <li>
             mutationCache에서 <code>throw error</code>는 microtask에서 실행됩니다. React 18+에서 boundary가 catch하지만,
-            테스트 시 async flush가 필요할 수 있습니다.
+            테스트할 때 async flush가 필요할 수 있습니다.
           </li>
         </ul>
 
         <h2>3. 표현: 사용자에게 어떻게 보여줄 것인가</h2>
         <p>
-          전파 정책이 정해진 뒤, <strong>throw하지 않은 경우 toast</strong>,
-          <strong>throw한 경우 Error Boundary fallback</strong>이 사용자 경험을 담당합니다. operational error는
+          전파 정책이 정해진 뒤, <strong>throw하지 않으면 toast</strong>,
+          <strong>throw하면 Error Boundary fallback</strong>이 사용자 경험을 담당합니다. operational error는
           boundary까지 올리지 않습니다.
         </p>
 
@@ -451,7 +451,7 @@ export function reportError(error: unknown) {
 }</code></pre>
 
         <h3>Tag vs Context</h3>
-        <p>Tag는 Issues 필터·Ownership Rules·Dashboard group by에 쓰이고, Context는 이벤트 상세 패널 디버깅용입니다.</p>
+        <p>Tag는 Issues 필터·Ownership Rules·Dashboard group by에 쓰고, Context는 이벤트 상세 패널 디버깅용입니다.</p>
 
         <div class="table-wrap">
           <table class="post-table">
@@ -616,7 +616,7 @@ export function normalizeEndpoint(raw: string): string {
           사용합니다.
         </p>
         <p>
-          4장 <code>feature.*</code> Tag naming을 Ownership Rules와 1:1로 맞춘 이유가 여기 있습니다. Tag가 없으면 Rule이
+          4장에서 <code>feature.*</code> Tag naming을 Ownership Rules와 1:1로 맞춘 이유가 여기 있습니다. Tag가 없으면 Rule이
           매칭되지 않고 Issue가 <code>Unassigned</code>로 쌓입니다.
         </p>
         <pre><code class="language-plaintext"># .sentry/ownership · Tag 기반 (프론트엔드 권장)
@@ -744,7 +744,7 @@ Owner: #checkout-team
         </ol>
         <p>
           <code>throw</code> + <code>captureException</code>은 시작점일 뿐입니다. 에러 타입을 정의하고, 앱 내부 전파·UX
-          표현을 분리하고, Sentry에 정규화해 기록한 뒤, Ownership Rules와 Dashboard로 운영까지 챙겨야 지속적으로 에러를
+          표현을 분리하고, Sentry에 정규화해 기록한 뒤, Ownership Rules와 Dashboard로 운영까지 챙겨야 에러를 지속적으로
           예방하고 줄일 수 있습니다.
         </p>
 

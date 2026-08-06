@@ -160,8 +160,8 @@
 
         <h2>진짜 현실에서의 디자인 시스템</h2>
         <p>
-          몇 달이 지났습니다. 처음엔 5개였던 Modal의 props가 어느새 20개를 넘어가고 있습니다. 새로운 요구사항이 들어올
-          때마다 props가 하나씩 추가되고, 컴포넌트 내부는 조건문으로 가득 차게 됩니다. (실제로 제가 겪었던 경험입니다.)
+          몇 달이 지났습니다. 처음엔 5개였던 Modal의 props가 어느새 20개를 넘어갑니다. 새로운 요구사항이 들어올
+          때마다 props가 하나씩 추가되고, 컴포넌트 내부는 조건문으로 가득 찹니다. (실제로 제가 겪은 경험입니다.)
         </p>
         <pre><code class="language-typescript">// 처음엔 이랬는데...
 interface ModalProps {
@@ -190,9 +190,9 @@ interface ModalProps {
           <strong>Props 지옥에 오신 것을 환영합니다.</strong>
         </p>
         <p>
-          물론 이건 디자이너의 잘못이 아닙니다. 그들은 그들의 일을 할 뿐입니다. 세부적인 디자인은 비즈니스 요구사항에
-          따라 얼마든지 바뀔 수 있고, 바뀌어야만 합니다. 화면 위에 떠있는 형태와 모달이 열리고 닫히는 것과 같은 핵심
-          기능이 바뀌는 게 아니라면, 디자인은 자연스러운 변화를 겪을 수 있습니다. UI 구조의 변화는 자연스러운 일입니다.
+          물론 디자이너 잘못이 아닙니다. 그들은 자기 일을 할 뿐입니다. 세부 디자인은 비즈니스 요구사항에
+          따라 얼마든지 바뀔 수 있고, 바뀌어야 합니다. 화면 위에 떠있는 형태나 모달이 열리고 닫히는 핵심
+          기능이 바뀌는 게 아니라면, 디자인은 자연스럽게 변합니다. UI 구조의 변화는 자연스러운 일입니다.
           문제는 그 변화를 수용하지 못하는 컴포넌트 설계에 있습니다.
         </p>
         <p>앞으로 다가올 문제는 아래와 같습니다.</p>
@@ -203,8 +203,8 @@ interface ModalProps {
           <li>결국 "이 컴포넌트 너무 복잡해서 새로 만들자"라는 결론에 도달</li>
         </ul>
         <p>
-          어떻게 확신하냐고요? 2개의 팀에서 겪었고 주변에서도 겪는 모습들 그리고 유명한 오픈소스들이 (현재는 그렇지
-          않지만)실제로 그러했기 때문입니다.
+          어떻게 확신하냐고요? 2개의 팀에서 겪었고, 주변에서도 겪는 모습을 봤습니다. 유명한 오픈소스들도 (현재는 그렇지
+          않지만) 실제로 그랬습니다.
         </p>
         <h2>Compound Pattern이 확장성 문제를 어떻게 해결하는가</h2>
         <p>
@@ -219,7 +219,7 @@ interface ModalProps {
         <p>
           <code>&lt;select&gt;</code>는 <code>option1</code>, <code>option2</code>, <code>option3</code> 같은 props를
           받지 않습니다. 대신 자식으로 <code>&lt;option&gt;</code>들을 받고, 그것들과 암묵적으로 상태를 공유합니다.
-          이것이 Compound Pattern의 핵심입니다.
+          이게 Compound Pattern의 핵심입니다.
         </p>
         <p>이제 Modal을 Compound Pattern으로 리팩토링해봅시다.</p>
         <pre><code class="language-tsx">// Context로 상태 공유
@@ -260,10 +260,10 @@ Modal.CloseButton = ({ children }) =&gt; {
 &lt;/Modal&gt;</code></pre>
         <p>
           Props 지옥 Modal에서는 "Footer에 버튼 3개, 가운데는 아이콘"이라는 요구사항에 새로운 props를 추가해야 했습니다.
-          하지만 Compound Pattern에서는 그냥 사용하는 쪽에서 원하는 대로 조합하면 됩니다.
+          Compound Pattern에서는 그냥 사용하는 쪽에서 원하는 대로 조합하면 됩니다.
           <strong>새로운 props 없이요.</strong>
         </p>
-        <p>이것이 Compound Pattern의 힘입니다:</p>
+        <p>Compound Pattern의 힘은 여기 있습니다:</p>
         <ul>
           <li><strong>구조의 자유도</strong>: 사용처마다 다른 구조가 필요해도 컴포넌트 수정 불필요</li>
           <li><strong>Props 최소화</strong>: Root 컴포넌트는 핵심 상태(isOpen, onClose)만 관리</li>
@@ -273,13 +273,12 @@ Modal.CloseButton = ({ children }) =&gt; {
 
         <h2>닭 잡는데 소 잡는 칼을 쓰지 마세요</h2>
         <p>
-          Compound Pattern이 만능은 아닙니다. 모든 컴포넌트에 적용하면 오히려 복잡해집니다. 어떤 경우에 사용하면 효용이
-          커지는 지 정리해보겠습니다.
+          Compound Pattern이 만능은 아닙니다. 모든 컴포넌트에 적용하면 오히려 복잡해집니다. 언제 사용하면 효용이 큰지 정리해보겠습니다.
         </p>
         <p>
           <strong>Compound Pattern이 적합한 경우</strong>
         </p>
-        <p>대개 단일 마크업이 단일 태그가 아닌 여러 조합으로 구성된 경우에 해당합니다.</p>
+        <p>대개 단일 마크업이 단일 태그가 아닌 여러 조합으로 구성된 경우입니다.</p>
         <ul>
           <li>복잡한 UI 구조를 가진 컴포넌트 (Modal, Accordion, Tabs, Menu, Card)</li>
           <li>자식 컴포넌트들 간에 상태 공유가 필요한 경우</li>
@@ -288,7 +287,7 @@ Modal.CloseButton = ({ children }) =&gt; {
         <p>
           <strong>Compound Pattern이 적합하지 않은 경우</strong>
         </p>
-        <p>하나의 태그로 구성되어 있거나 내부 레이아웃이 유연하지 않은 경우가 해당됩니다.</p>
+        <p>하나의 태그로 구성되어 있거나 내부 레이아웃이 유연하지 않은 경우입니다.</p>
         <ul>
           <li>단순한 컴포넌트 (Button, Input, Badge, Avatar)</li>
           <li>구조가 항상 고정된 컴포넌트</li>
@@ -299,12 +298,11 @@ Modal.CloseButton = ({ children }) =&gt; {
         <p><strong>Compound Pattern의 단점</strong></p>
         <ul>
           <li>
-            <strong>러닝 커브</strong>: 처음 접하는 개발자에게는 Context와 서브 컴포넌트 구조가 낯설 수 있습니다. 이에
-            대한 학습 비용이 듭니다.
+            <strong>러닝 커브</strong>: 처음 접하는 개발자에게는 Context와 서브 컴포넌트 구조가 낯설 수 있습니다. 학습 비용이 듭니다.
           </li>
           <li>
-            <strong>설계 시 커뮤니케이션 비용</strong>: 어떤 서브 컴포넌트를 만들지, 어떤 상태를 공유할지 팀 내 합의
-            필요합니다. 정답이 없고 상황에 따라 유연하게 대처해야하므로 코드 리뷰 과정에서 시간이 소요될 수 있습니다.
+            <strong>설계 시 커뮤니케이션 비용</strong>: 어떤 서브 컴포넌트를 만들지, 어떤 상태를 공유할지 팀 내 합의가
+            필요합니다. 정답이 없고 상황에 따라 유연하게 대처해야 하므로 코드 리뷰 과정에서 시간이 걸릴 수 있습니다.
           </li>
         </ul>
         <p>

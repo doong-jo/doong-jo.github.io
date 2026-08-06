@@ -136,11 +136,11 @@
           갱신·보안 저장소는 앱 쪽에 두고, 웹은 네이티브로부터 토큰을 받아 사용합니다.
         </p>
         <p>
-          여기서 자주 마주치는 상황이 있습니다. <strong>웹에서 JWT를 API 서버에 어떻게 전달할 것인가?</strong>입니다.
-          처음에는 (브라우저가 아니기에 쿠키를 사용하지 않는)네이티브 앱에서 하는 방식대로
-          <code>Authorization: Bearer</code> 헤더 + 네이티브 브릿지로 토큰을 받아 썼습니다. 시간이 지나며 SSR·RSC·API
-          호출 전반에 걸친 <strong>stateful 인증 레이어</strong>가 운영 부담이 되었고, stateless하게 저장하고 전달하는
-          Cookie 주입 방식을 고려하게 되었습니다.
+          자주 마주치는 질문이 있습니다. <strong>웹에서 JWT를 API 서버에 어떻게 전달할 것인가?</strong>
+          처음에는 네이티브 앱 방식대로(브라우저가 아니니 쿠키 대신)
+          <code>Authorization: Bearer</code> 헤더와 네이티브 브릿지로 토큰을 받아 썼습니다. 시간이 지나며 SSR·RSC·API
+          호출 전반에 걸친 <strong>stateful 인증 레이어</strong>가 운영 부담이 됐고, stateless하게 저장·전달하는
+          Cookie 주입 방식을 검토하게 됐습니다.
         </p>
         <p>
           아래는 그 전환 과정입니다. JWT 서명 알고리즘이나 OAuth 플로우 전체가 아니라,
@@ -174,42 +174,42 @@ sequenceDiagram
   WebView-&gt;&gt;API: Authorization Bearer (클라이언트 fetch만)</pre
         >
 
-        <p>겉보기엔 일반적인 SPA 인증과 같지만, WebView + Next.js 조합에서는 다섯 가지 문제가 커집니다.</p>
+        <p>일반적인 SPA 인증과 비슷해 보이지만, WebView + Next.js 조합에서는 다섯 가지 문제가 커집니다.</p>
 
         <h3>1. 서버 사이드 fetch 불가: 첫 렌더링 시점에 토큰을 알 수 없음</h3>
         <p>
           토큰은 브릿지를 통해 <strong>클라이언트 JS</strong>에만 도달합니다. Server Component, Route Handler,
-          <code>getServerSideProps</code> 등 서버에서 실행되는 fetch에는 토큰을 넣을 방법이 없습니다. SSR 페이지에서
-          사용자 정보를 미리 가져오거나, RSC에서 API를 호출하는 패턴이 막힙니다.
+          <code>getServerSideProps</code> 등 서버에서 실행하는 fetch에는 토큰을 넣을 방법이 없습니다. SSR 페이지에서
+          사용자 정보를 미리 가져오거나 RSC에서 API를 호출하는 패턴이 막힙니다.
         </p>
         <p>
-          "서버에서도 <code>Authorization</code> 헤더를 쓰면 되지 않나?"라고 우회할 수는 있습니다. 다만
+          "서버에서도 <code>Authorization</code> 헤더를 쓰면 되지 않나?"라고 우회할 수는 있습니다. 하지만
           <strong>첫 렌더</strong> 시점의 Next.js 서버는 네이티브 브릿지를 호출할 수 없습니다. 브릿지는 WebView 안의
-          JS에서만 동작하므로, HTML을 만들 때 서버는 Authorization 정보가 없습니다. 게스트 UI로 렌더한 뒤 hydration에서
-          토큰을 받아 다시 fetch하는 패턴으로 가게 되고, SSR의 이점이 줄어듭니다.
+          JS에서만 동작하므로, HTML을 만들 때 서버에는 Authorization 정보가 없습니다. 게스트 UI로 렌더한 뒤 hydration에서
+          토큰을 받아 다시 fetch하는 패턴으로 흐르고, SSR의 이점이 줄어듭니다.
         </p>
 
         <h3>2. 이중 저장 + 동기화</h3>
         <p>
-          새로고침·탭 전환·WebView 재로드마다 토큰을 다시 받아야 하고, 메모리와 브라우저 저장소를 함께 관리해야 합니다.
-          어느 한쪽만 갱신되면 “로그인은 됐는데 API는 401” 같은 불일치가 납니다.
+          새로고침, 탭 전환, WebView 재로드마다 토큰을 다시 받아야 하고, 메모리와 브라우저 저장소를 함께 관리해야 합니다.
+          한쪽만 갱신되면 "로그인은 됐는데 API는 401" 같은 불일치가 생깁니다.
         </p>
 
         <h3>3. 헤더 누락 = 전역 장애</h3>
         <p>
-          axios interceptor, fetch wrapper, 개별 fetch 호출: 인증 헤더를 붙이는 경로가 여러 개입니다. 새 API를 추가할 때
+          axios interceptor, fetch wrapper, 개별 fetch 호출 등 인증 헤더를 붙이는 경로가 여럿입니다. 새 API를 추가할 때
           wrapper를 안 쓰거나, 서드파티 라이브러리가 자체 fetch를 쓰면 헤더가 빠집니다. 한 곳의 실수가
-          <strong>서비스 전체 인증 장애</strong>로 이어질 수 있습니다.
+          <strong>서비스 전체 인증 장애</strong>로 번질 수 있습니다.
         </p>
 
         <h3>4. 웹이 토큰을 자체 발급하면 네이티브 토큰이 무효화</h3>
         <p>
           브릿지 없이 프론트엔드가 로그인·갱신 API를 직접 호출해 토큰을 발급받을 수도 있습니다. 그러면
           <strong>네이티브가 보관하던 액세스 토큰과 웹이 새로 받은 토큰이 동시에 유효하지 않게</strong> 됩니다. 한쪽에서
-          refresh·reissue가 일어나면 다른 쪽 토큰은 무효화되는 구조가 흔하기 때문입니다.
+          refresh·reissue가 일어나면 다른 쪽 토큰이 무효화되는 구조가 흔하기 때문입니다.
         </p>
         <p>
-          그 결과 웹뷰 화면을 다녀온 뒤 네이티브 화면으로 돌아올 때마다, 네이티브는 “혹시 무효화됐을지 모르니”
+          웹뷰 화면을 다녀온 뒤 네이티브 화면으로 돌아올 때마다 네이티브는 "혹시 무효화됐을지 모르니"
           <strong>토큰을 다시 갱신하는 루틴</strong>을 태워야 합니다. 웹뷰 진입·이탈마다 불필요한 refresh가 반복되고,
           네이티브·웹 어느 쪽이든 토큰 발급 주체가 분산되면 동기화 비용만 커집니다.
         </p>
@@ -229,7 +229,7 @@ await fetch("https://api.example.com/users/me", {
         <h2>TO-BE: Cookie 주입 + credentials</h2>
         <p>
           전환의 핵심은 단순합니다. 브릿지로 토큰 <strong>문자열</strong>을 웹 JS에 넘기지 않고,
-          <strong>네이티브가 WebView에 쿠키를 직접 주입</strong>합니다. 웹 코드는 토큰을 저장·전달하지 않습니다.
+          <strong>네이티브가 WebView에 쿠키를 직접 주입</strong>합니다. 웹 코드는 토큰을 저장하거나 전달하지 않습니다.
           브라우저가 알아서 Cookie를 붙입니다.
         </p>
 
@@ -248,9 +248,9 @@ sequenceDiagram
 
         <h3>쿠키 설정</h3>
         <p>
-          same-site 제약으로 인해 웹(<code>app.example.com</code>)과 API(<code>api.example.com</code>)가 같은 루트
-          도메인을 써야하므로, Cookie
-          <code>Domain</code>을 <code>.example.com</code>으로 설정합니다. 이 설정으로 서브도메인 간 쿠키 전송이
+          same-site 제약 때문에 웹(<code>app.example.com</code>)과 API(<code>api.example.com</code>)가 같은 루트
+          도메인을 써야 하므로, Cookie
+          <code>Domain</code>을 <code>.example.com</code>으로 설정합니다. 서브도메인 간 쿠키 전송이
           허용됩니다.
         </p>
 
@@ -339,7 +339,7 @@ const res = await fetch("https://api.example.com/users/me", {
 });</code></pre>
 
         <p>
-          Next.js 15+에서는 <code>cookies()</code> 헬퍼를 쓸 수도 있습니다. 어느 쪽이든 원리는 같습니다: 브라우저가
+          Next.js 15+에서는 <code>cookies()</code> 헬퍼를 쓸 수도 있습니다. 원리는 같습니다. 브라우저가
           WebView에 실은 Cookie가 SSR 요청에도 포함되고, 서버 fetch가 그걸 API로 넘깁니다.
         </p>
 
@@ -351,17 +351,17 @@ const res = await fetch("https://api.example.com/users/me", {
         </p>
         <p>네이티브에 브릿지로 갱신을 요청해야 하는 시점은 두 가지입니다.</p>
         <ul>
-          <li><strong>만료:</strong> API가 401을 반환했을 때, 액세스 토큰이 TTL을 넘긴 경우</li>
+          <li><strong>만료:</strong> API가 401을 반환했을 때. 액세스 토큰이 TTL을 넘긴 경우</li>
           <li>
-            <strong>인증 정보 없음:</strong> 요청에 쿠키가 실리지 않았을 때. WebView 최초 진입, 쿠키가 아직 주입되지
-            않았거나 브라우저가 만료 쿠키를 이미 제거한 경우
+            <strong>인증 정보 없음:</strong> 요청에 쿠키가 실리지 않았을 때. WebView 최초 진입이거나, 쿠키가 아직 주입되지
+            않았거나, 브라우저가 만료 쿠키를 이미 제거한 경우
           </li>
         </ul>
         <p>
           웹은 위 두 경우 모두 <code>nativeBridge.requestTokenRefresh()</code> 같은 단일 진입점을 호출하고,
           <strong>갱신 로직 전체는 네이티브에 위임</strong>합니다. 네이티브가 refresh 후 쿠키를 재주입하면, 웹은 토큰
           문자열을 다시 저장할 필요 없이 실패했던 요청을 재시도합니다. 토큰 발급 주체가 네이티브 하나로 모이므로,
-          AS-IS에서 겪었던 “웹이 발급 → 네이티브 토큰 무효화” 문제도 사라집니다.
+          AS-IS에서 겪었던 "웹이 발급하면 네이티브 토큰 무효화" 문제도 사라집니다.
         </p>
 
         <h2>AS-IS vs TO-BE</h2>
@@ -435,7 +435,7 @@ const res = await fetch("https://api.example.com/users/me", {
 
         <h3>로컬 개발</h3>
         <p>
-          WebView 없이 브라우저에서만 개발할 때는 네이티브 쿠키 주입이 없습니다. 개발 환경에서만 토큰을 발급할 수 있는
+          WebView 없이 브라우저에서만 개발할 때는 네이티브 쿠키 주입이 없습니다. 개발 환경에서만 토큰을 발급하는
           API를 요청하거나, 로컬 전용 mock 브릿지를 두는 방식으로 보완합니다.
         </p>
 
@@ -448,7 +448,7 @@ const res = await fetch("https://api.example.com/users/me", {
         <h3>디버깅</h3>
         <p>
           HttpOnly 쿠키는 JS <code>document.cookie</code>로 확인할 수 없습니다. DevTools Application 탭에서만 볼 수 있어
-          디버깅이 다소 불편하지만, 그만큼 XSS로 토큰이 탈취될 위험은 줄어듭니다.
+          디버깅이 다소 불편하지만, XSS로 토큰이 탈취될 위험은 줄어듭니다.
         </p>
 
         <h2>요약</h2>
@@ -506,24 +506,24 @@ sequenceDiagram
 
         <ol>
           <li>
-            Authorization Header + 브릿지는 SSR 불가, 이중 저장, 헤더 누락 리스크: 인증이 코드 전반에 퍼져 운영 부담이
-            커진다.
+            Authorization Header + 브릿지는 SSR 불가, 이중 저장, 헤더 누락 리스크가 있습니다. 인증이 코드 전반에 퍼져 운영 부담이
+            커집니다.
           </li>
           <li>
-            첫 렌더 서버는 브릿지를 호출할 수 없고, 서버에서 토큰을 재발급하면 네이티브 토큰까지 무효화될 수 있다. 웹이
-            자체 발급해도 같은 문제가 난다.
+            첫 렌더 서버는 브릿지를 호출할 수 없고, 서버에서 토큰을 재발급하면 네이티브 토큰까지 무효화될 수 있습니다. 웹이
+            자체 발급해도 같은 문제가 생깁니다.
           </li>
           <li>
-            네이티브가 <code>.example.com</code>에 HttpOnly 쿠키를 주입하면 웹은 stateless: 저장·전달·발급 주체가
-            네이티브 하나로 모인다.
+            네이티브가 <code>.example.com</code>에 HttpOnly 쿠키를 주입하면 웹은 stateless입니다. 저장·전달·발급 주체가
+            네이티브 하나로 모입니다.
           </li>
           <li>
-            <code>credentials: "include"</code> / <code>withCredentials</code>만으로 클라이언트·서버 fetch를 통일한다.
+            <code>credentials: "include"</code> / <code>withCredentials</code>만으로 클라이언트·서버 fetch를 통일합니다.
           </li>
           <li>
             쿠키 <code>Expires</code>로 브라우저가 만료 쿠키를 제거하므로, 갱신 요청은 <strong>401(만료)</strong>과
-            <strong>쿠키 없음</strong> 두 경우에 브릿지로 네이티브에 토큰 갱신(새로운 토큰 발급하여 쿠키 주입)을
-            요청한다.
+            <strong>쿠키 없음</strong> 두 경우에 브릿지로 네이티브에 토큰 갱신(새 토큰 발급 후 쿠키 주입)을
+            요청합니다.
           </li>
         </ol>
 

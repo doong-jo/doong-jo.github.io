@@ -144,12 +144,11 @@
 
         <p>
           Next.js 페이지를 iOS·Android WebView에 임베딩하면, 앱은 다크모드인데 웹 화면은 라이트로 뜨거나 잠깐 라이트가
-          보였다가 다크로 바뀌는 <strong>깜빡임(FOUC, Flash of Unstyled Content)</strong>이 자주 납니다. 동시에
-          SSG·ISR로 만든 <strong>static optimization</strong>은 그대로 유지하고 싶고, 테마는 네이티브 앱 설정(시스템
+          보였다가 다크로 바뀌는 <strong>깜빡임(FOUC, Flash of Unstyled Content)</strong>이 자주 발생합니다. SSG·ISR로 만든 <strong>static optimization</strong>은 그대로 유지하면서, 테마는 네이티브 앱 설정(시스템
           테마·앱 내 토글)을 따라가야 합니다.
         </p>
         <p>
-          이 글은 SSR 헤더 분기와 프론트 JS 테마 상태를 시도했다가 하지 않은 이유, 그리고
+          SSR 헤더 분기와 프론트 JS 테마 상태를 시도했다가 채택하지 않은 이유, 그리고
           <code>prefers-color-scheme</code> + CSS 변수 + 네이티브 color scheme 강제 + 앱 버전 분기로 깜빡임 없이 맞춘
           패턴을 정리합니다.
         </p>
@@ -228,16 +227,15 @@ sequenceDiagram
           App Router에서 <code>cookies()</code> / <code>headers()</code>를 읽으면 해당 라우트는
           <strong>dynamic rendering</strong>으로 전환됩니다. Pages Router의 <code>getServerSideProps</code>도
           마찬가지입니다. 테마 헤더마다 HTML이 달라지면 ISR로 캐시해 둔 페이지를 그대로 쓸 수 없고, CDN edge에서
-          사용자별 HTML 분기도 필요해집니다.
+          사용자별 HTML 분기도 필요합니다.
         </p>
         <p>
-          테마별로 <code>generateStaticParams</code>로 N벌 빌드하는 방법도 있지만, 조합이 늘수록 빌드·배포·캐시 비용이
-          커지고 네이티브와 웹의 테마 정의가 따로 놀면 동기화 버그가 남습니다.
+          테마별로 <code>generateStaticParams</code>로 N벌 빌드하는 방법도 있지만, 조합이 늘수록 빌드·배포·캐시 비용이 커집니다. 네이티브와 웹의 테마 정의가 따로 놀면 동기화 버그도 남습니다.
         </p>
 
         <h3>프론트 단독 테마 정의의 리스크</h3>
         <p>
-          웹에서 <code>theme: 'dark'</code>를 별도로 정의하면, 네이티브 앱 설정과 값이 어긋날 여지가 생깁니다. 앱에서
+          웹에서 <code>theme: 'dark'</code>를 별도로 정의하면, 네이티브 앱 설정과 값이 어긋날 수 있습니다. 앱에서
           다크로 바꿨는데 웹은 <code>localStorage</code>의 라이트를 유지한다든지, bridge 이벤트를 놓쳐 반영이 늦는다든지
           하는 버그가 반복됩니다. React <code>useEffect</code>로 <code>document.documentElement</code>에 class를 붙이는
           패턴도 <strong>첫 paint 이후</strong>에 실행되므로 FOUC를 근본적으로 막지 못합니다.
@@ -302,7 +300,7 @@ webView.overrideUserInterfaceStyle = .light
 // 시스템 설정을 따를 때
 webView.overrideUserInterfaceStyle = .unspecified</code></pre>
         <p>
-          사용자가 앱 설정에서 테마를 바꿀 때마다 위 값을 다시 적용하면, 웹은 bridge 없이 CSS만으로 즉시 반영됩니다.
+          사용자가 앱 설정에서 테마를 바꿀 때마다 위 값을 다시 적용하면, 웹은 bridge 없이 CSS만으로 즉시 반영합니다.
         </p>
 
         <p>
@@ -319,8 +317,7 @@ AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 val isDark = (resources.configuration.uiMode and
     Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES</code></pre>
         <p>
-          구형 WebView는 <code>prefers-color-scheme</code> 미지원일 수 있으므로, 아래 버전 분기와 함께 라이트 fallback을
-          두는 것이 안전합니다.
+          구형 WebView는 <code>prefers-color-scheme</code> 미지원일 수 있으므로, 아래 버전 분기와 함께 라이트 fallback을 두는 편이 안전합니다.
         </p>
 
         <h2>네이티브 버전 분기: 구버전 호환 + 신규 다크모드</h2>
@@ -458,19 +455,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ol>
           <li>
             네이티브 요청 헤더로 SSR 분기하면 SSG/ISR·CDN static optimization을 포기해야 하므로, static HTML 1벌을
-            유지한다.
+            유지합니다.
           </li>
-          <li>프론트에서 테마 값을 따로 정의하면 네이티브와 이중 소스가 되어 불일치·깜빡임 버그가 생긴다.</li>
+          <li>프론트에서 테마 값을 따로 정의하면 네이티브와 이중 소스가 되어 불일치·깜빡임 버그가 생깁니다.</li>
           <li>
             <code>prefers-color-scheme</code> + CSS 변수로 웹 테마를 표현하고, iOS·Android 네이티브가 WebView color
-            scheme을 앱 설정에 맞게 강제한다.
+            scheme을 앱 설정에 맞게 강제합니다.
           </li>
           <li>
             특정 앱 버전 이상에서만 다크모드를 켜려면, head blocking script로
-            <code>data-dark-mode-support</code>를 설정하고 CSS selector와 <code>prefers-color-scheme</code>을 조합한다.
+            <code>data-dark-mode-support</code>를 설정하고 CSS selector와 <code>prefers-color-scheme</code>을 조합합니다.
           </li>
           <li>
-            React hydration 이후 class 토글·<code>localStorage</code> 테마 상태는 피하고, CSS만으로 첫 paint부터 맞춘다.
+            React hydration 이후 class 토글·<code>localStorage</code> 테마 상태는 피하고, CSS만으로 첫 paint부터 맞춥니다.
           </li>
         </ol>
 

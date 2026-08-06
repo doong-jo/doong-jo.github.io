@@ -138,17 +138,15 @@
         />
         <h2>많은 프론트엔드팀이 놓치는 Next.js에서의 정적 파일 서빙</h2>
         <p>
-          Next.js 앱을 Vercel이 아닌 <strong>self-hosted</strong> 배포 환경에서 운영할 때 많은 팀이 놓치는 부분 중
-          하나가 정적 파일을 어떻게 전달할 것인가? 에 관한 것입니다. 브라우저가 웹페이지에 접근하면 Next.js 서버는
-          페이지 HTML, JS 번들, CSS 파일을 전부 '직접' 제공합니다. 물론 Vercel 플랫폼으로 배포한다면 그들의 CDN으로
-          최적화하여 전달되지만 많은 개발 팀은 self-hosted 환경을 이용하며 이 환경에서는 모든 요청을 origin(Next.js
-          서버)에서 직접 처리합니다. 이 점이 서버와 네트워크 비용, 성능에 영향을 줍니다.
+          Next.js 앱을 Vercel이 아닌 <strong>self-hosted</strong> 환경에서 운영할 때, 정적 파일 전달 방식을
+          간과하는 팀이 많습니다. 브라우저가 웹페이지에 접근하면 Next.js 서버가 HTML, JS 번들, CSS 파일을 모두 직접
+          제공합니다. Vercel 플랫폼으로 배포하면 CDN이 최적화해 전달하지만, self-hosted 환경에서는 모든 요청을
+          origin(Next.js 서버)이 직접 처리합니다. 서버와 네트워크 비용, 성능 모두 영향을 받습니다.
         </p>
         <p>
-          최근에 제가 속한 팀에서는 self-hosted Next.js 서버 환경을 운영하고 있습니다. 결제 방식이 서버를 계속 가동하는
-          '인스턴스 기반'이 아닌 '요청 기반'을 사용하는 경우가 있고, 요청을 처리할 때만 청구되는 방식이기에 정적 파일을
-          제공할 때도 Next.js 서버의 리소스를 소모하게 됩니다. 그래서 요청을 최대한 줄이는 것이 비용 절감과 성능에
-          중요했습니다.
+          저희 팀은 최근 self-hosted Next.js 서버 환경을 운영하고 있습니다. 결제 방식이 '인스턴스 기반'이 아닌
+          '요청 기반'인 경우도 있는데, 요청을 처리할 때만 비용이 청구되므로 정적 파일을 제공할 때도 서버 리소스를
+          소모합니다. 요청을 최대한 줄이는 것이 비용 절감과 성능에 중요했습니다.
         </p>
         <img
           src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/cloud-run-billing.png/w=1360,fit=scale-down"
@@ -157,18 +155,18 @@
           alt="요청 기반 서버 결제 방식 참고 이미지"
         />
         <p>
-          이를 해결하기 위해 CDN을 도입하여
+          CDN을 도입해
           <strong
-            >서버에서 연산이 필요 없는 정적 리소스들은 object storage + CDN으로 빼고 HTML·API는 origin에 남기자</strong
-          >는 의사결정을 내렸습니다. Next.js의
+            >연산이 필요 없는 정적 리소스는 object storage + CDN으로 빼고, HTML과 API는 origin에 남기기로</strong
+          > 했습니다. Next.js의
           <a href="https://nextjs-ko.org/docs/pages/api-reference/next-config-js/assetPrefix">assetPrefix</a>를 이용하면
-          정적 리소스들에 대해 다른 origin을 요청하도록 분리할 수 있습니다. 아래 내용은 특정 클라우드에 한정되지 않으며,
+          정적 리소스에 대해 다른 origin을 요청하도록 분리할 수 있습니다. 아래 내용은 특정 클라우드에 한정되지 않으며,
           S3·R2 + CloudFront·Cloudflare CDN 등 어떤 조합에도 같은 원리가 적용됩니다.
         </p>
         <h2>CDN 도입 시 고려할 점과 요구사항 정의</h2>
         <p>
-          CDN은 정적 파일을 '캐싱'으로 빠르게 전달할 수 있는 장점이 있지만, 반대로 가장 조심히 다루어야 할 부분도
-          '캐싱'입니다. 예기치 못한 상황을 최대한 방지하기 위해 아래와 같은 요구사항을 정의하고 구현을 진행했습니다.
+          CDN은 정적 파일을 캐싱으로 빠르게 전달하는 장점이 있지만, 가장 주의해야 할 부분도 캐싱입니다.
+          예기치 못한 상황을 최대한 방지하고자 아래와 같은 요구사항을 정의하고 구현을 진행했습니다.
         </p>
         <ol>
           <li>
@@ -182,8 +180,8 @@
         </ol>
         <h2>CDN 도입 전후 인프라 구조 비교</h2>
         <p>
-          CDN 도입 전후 예상되는 인프라 구조를 나란히 비교하면 아래와 같습니다. 연산과 same-origin 정책을 유지해야만
-          하는 정적 파일은 origin에 유지하고 나머지 정적 파일은 CDN을 통해 전달됩니다.
+          CDN 도입 전후 예상되는 인프라 구조를 나란히 비교하면 아래와 같습니다. 연산과 same-origin 정책을
+          유지해야 하는 정적 파일은 origin에 두고, 나머지 정적 파일은 CDN으로 전달합니다.
         </p>
         <div class="mermaid-compare">
           <figure>
@@ -221,9 +219,9 @@ flowchart TB
         <h2>Step 1. 배포마다 새 정적 파일이 캐싱된다</h2>
         <h3>왜 필요한가</h3>
         <p>
-          CDN의 핵심 위험은 <strong>구버전 asset이 남아 있는 것</strong>입니다. 배포 후에도 edge에 이전 JS·CSS가 남아
-          있으면 chunk mismatch, hydration 오류, 기능 장애로 이어집니다. 캐시가 가장 조심스러운 지점이므로, 가장 먼저
-          <strong>배포 단위 격리</strong>를 설계했습니다.
+          CDN에서 가장 위험한 상황은 <strong>구버전 asset이 남아 있는 것</strong>입니다. 배포 후에도 edge에 이전 JS·CSS가 남아
+          있으면 chunk mismatch, hydration 오류, 기능 장애가 발생합니다. 캐시가 가장 민감한 지점이므로
+          <strong>배포 단위 격리</strong>를 먼저 설계했습니다.
         </p>
         <h3>구현</h3>
         <p><code>assetPrefix</code>에 <code>{env}/{commitSha}</code>를 붙여 URL 자체가 배포마다 달라지게 합니다.</p>
@@ -270,10 +268,10 @@ module.exports = {
           alt="GCS 버킷 내 폴더 구조"
         />
         <p>
-          "배포마다 새 prefix = 새 URL"이 안전한 캐싱을 위한 핵심 내용입니다. 롤백 시 origin 배포만 되돌리면 HTML이
-          <strong>이전 commit SHA prefix</strong>를 참조합니다. 따라서 storage에 구버전 asset도 새 배포에 맞춰 배로
-          제거하는게 아닌 일정 기간 유지해야 broken asset을 막을 수 있습니다. env prefix 없이 commit SHA만 경로에 두면,
-          개발 환경의 배포가 운영 환경의 asset을 덮어서 잘못된 chunk를 로드할 수 있기 때문에 env prefix를 추가하여 개발
+          "배포마다 새 prefix = 새 URL"이 안전한 캐싱의 핵심입니다. 롤백 시 origin 배포만 되돌리면 HTML이
+          <strong>이전 commit SHA prefix</strong>를 참조합니다. 따라서 storage에서 구버전 asset을 바로 삭제하지 말고
+          일정 기간 유지해야 broken asset을 막을 수 있습니다. env prefix 없이 commit SHA만 경로에 두면
+          개발 환경 배포가 운영 환경 asset을 덮어서 잘못된 chunk를 로드할 수 있으므로, env prefix를 추가해 개발
           환경과 운영 환경을 명확히 구분해야 합니다.
         </p>
         <h3>검증</h3>
@@ -335,7 +333,7 @@ cannot be accessed from origin 'https://app.example.com'.</code></pre>
           됩니다.
         </p>
         <h3>구현</h3>
-        <p>해결은 두 가지 경로가 있습니다.</p>
+        <p>두 가지 방법이 있습니다.</p>
         <ol>
           <li>
             CSS <code>url('/...')</code>로 쓰는 <code>public/</code> 파일은 <strong>origin에 그대로 두고</strong> CDN
@@ -433,8 +431,8 @@ export default function imageLoader({ src, width, quality }) {
         <h2>Step 5. 안정적인 장기 캐싱으로 성능 최적화</h2>
         <h3>왜 필요한가</h3>
         <p>
-          Step 1에서 배포 단위 격리를 마쳤으니, 이제 “안전하게 오래 캐싱”할 수 있습니다. HTML은 짧게, hash가 붙은 정적
-          파일은 최대한 길게 설정하여 성능과 안정성을 동시에 만족시킵니다.
+          Step 1에서 배포 단위 격리를 마쳤으니, 이제 안전하게 오래 캐싱할 수 있습니다. HTML은 짧게, hash가 붙은 정적
+          파일은 최대한 길게 설정해 성능과 안정성을 동시에 만족시킵니다.
         </p>
         <h3>구현</h3>
         <p>먼저 object storage 버킷을 CDN origin으로 연결하고 <code>cdn.example.com</code> DNS·TLS를 설정합니다.</p>
@@ -488,7 +486,7 @@ export default function imageLoader({ src, width, quality }) {
         <p>
           Next.js 서버 청구서를 처음 보면 <strong>Requests</strong>, <strong>CPU/Memory</strong>,
           <strong>Networking egress</strong> 같은 항목이 섞여 있습니다. CDN 도입 효과를 이해하려면 이 세 가지가
-          무엇인지부터 짚는 편이 낫습니다.
+          무엇인지부터 짚어야 합니다.
         </p>
 
         <h3>Next.js 서버에서 나가는 돈 세 가지</h3>
@@ -562,8 +560,7 @@ export default function imageLoader({ src, width, quality }) {
         </p>
         <p>
           CDN·storage 비용($42/월)이 새로 생기지만, Next.js 서버에서 빠지는 요청·egress·CPU($290/월 절감)가 더 커서
-          <strong>합계는 줄어듭니다</strong>. 트래픽이 아주 적으면 반대일 수 있으니, 본인 환경에서 한 번 계산해 보는
-          것이 좋습니다.
+          <strong>합계는 줄어듭니다</strong>. 트래픽이 아주 적으면 반대일 수 있으니, 본인 환경에서 한 번 계산해 보시기 바랍니다.
         </p>
         <h2>적용 결과</h2>
         <img
@@ -573,8 +570,8 @@ export default function imageLoader({ src, width, quality }) {
           alt="비용 비교"
         />
         <p>
-          아직 모든 개선을 적용하지 못한 부분들도 있습니다. 하지만 위와 같은 기본적인 설정과 점진적인 개선 노력 끝에
-          비용을 38% 정도를 절감시킬 수 있었습니다.
+          아직 모든 개선을 적용하지 못한 부분도 있습니다. 하지만 위와 같은 기본적인 설정과 점진적인 개선 끝에
+          비용을 38% 정도 절감할 수 있었습니다.
         </p>
         <h2>TL;DR</h2>
         <ol>
