@@ -567,11 +567,18 @@ export default function imageLoader({ src, width, quality }) {
           src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/billing.png/w=1360,fit=scale-down"
           srcset="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/billing.png/w=680,fit=scale-down 680w, https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/billing.png/w=1360,fit=scale-down 1360w"
           sizes="(max-width: 680px) 100vw, 680px"
-          alt="비용 비교"
+          alt="Google Cloud Platform Billing 페이지 - 1월과 6월 Cloud Run 비용 비교"
         />
         <p>
-          아직 모든 개선을 적용하지 못한 부분도 있습니다. 하지만 위와 같은 기본적인 설정과 점진적인 개선 끝에
-          비용을 38% 정도 절감할 수 있었습니다.
+          GCP Billing 페이지에서 확인한 결과입니다. 6월(29일 기준) Cloud Run 비용이 1월 대비 약 38% 감소했습니다.
+          월말까지 최종 비용은 조금 더 올라가겠지만, 1월보다 낮은 수준을 유지할 겁니다.
+        </p>
+        <p>
+          재미있는 점은 순위 변화입니다. 1월에는 Cloud Run이 서비스 비용 중 3위였는데, 6월에는 가장 높은 비용을 차지하게 됐습니다.
+          Cloud Run 자체가 늘어난 게 아니라, 다른 서비스들(주로 정적 파일 서빙 쪽)의 비용이 더 크게 줄었기 때문입니다.
+        </p>
+        <p>
+          아직 모든 개선을 적용하지 못한 부분도 있습니다. 하지만 기본적인 설정과 점진적인 개선만으로도 이 정도 절감 효과를 볼 수 있었습니다.
         </p>
         <h2>TL;DR</h2>
         <ol>
