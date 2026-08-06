@@ -391,6 +391,7 @@ main table code {
   main th,
   main td {
     padding: 10px 12px;
+    white-space: normal;
   }
 
   main th:first-child,
