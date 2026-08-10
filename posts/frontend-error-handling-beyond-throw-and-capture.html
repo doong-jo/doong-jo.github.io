@@ -590,42 +590,41 @@ export function normalizeEndpoint(raw: string): string {
         <h3>Ownership Rules: 담당자 자동 지정</h3>
         <p>
           Issue가 생길 때마다 수동 assign하면 분류 작업이 밀립니다. Sentry Ownership Rules를
-          <code>.sentry/ownership</code> 또는 Project Settings → Ownership Rules에 정의해 두면, 이벤트 Tag·path·module에
+          <code>.sentry/ownership</code> 또는 Project Settings → Ownership Rules에 정의해 두면, <strong>페이지 URL</strong>·Tag·path에
           따라 Owner Team이 <strong>자동 assign</strong>됩니다. Slack 알림·Dashboard 집계 모두 이 assign 결과를
           사용합니다.
         </p>
         <p>
-          <code>feature.*</code> Tag naming을 Ownership Rules와 1:1로 맞춘 이유가 여기 있습니다. Tag가 없으면 Rule이
-          매칭되지 않고 Issue가 <code>Unassigned</code>로 쌓입니다.
+          Sentry SDK는 에러 발생 시점의 페이지 URL을 자동 수집합니다. 따라서 mutation <code>meta</code> 체인 없이도
+          URL 패턴만으로 팀을 지정할 수 있어, 프론트엔드에서는 URL 기반 Rule이 가장 실용적입니다.
         </p>
-        <pre><code class="language-plaintext"># .sentry/ownership · Tag 기반 (프론트엔드 권장)
+        <pre><code class="language-plaintext"># .sentry/ownership · URL 기반 (프론트엔드 권장)
+url:*/checkout/*   #checkout-team
+url:*/profile/*    #profile-team
+url:*/catalog/*    #catalog-team
+
+# Tag 기반 (URL로 구분이 어려운 경우)
 tags.feature.checkout:true  #checkout-team
-tags.feature.profile:true   #profile-team
-tags.feature.catalog:true   #catalog-team
 
-# path/module 기반 (코드 위치가 feature와 1:1일 때)
-path:src/features/checkout/**  #checkout-team
-path:src/features/profile/**   #profile-team
-
-# beforeSend normalize 결과 활용
+# API endpoint 기반
 tags.api.endpoint:"POST /orders/:id"  #checkout-team
-tags.http.status:502                #platform-oncall
+tags.http.status:502                  #platform-oncall
 
 # fallback: 어떤 Rule에도 매칭되지 않은 Issue
 *  #frontend-platform</code></pre>
         <p>Ownership Rules 작성 원칙:</p>
         <ul>
           <li>
-            <strong>Tag 우선:</strong> mutation <code>meta.feature</code> → <code>feature.*</code> Tag → Ownership Rule.
-            이 체인이 끊기면 Unassigned.
+            <strong>URL 우선:</strong> Sentry SDK가 페이지 URL을 자동 수집하므로, <code>url:*/checkout/*</code> 같은
+            패턴만으로 팀 지정이 가능합니다. mutation meta 체인 없이도 동작해 설정이 간단합니다.
           </li>
           <li>
             <strong>팀 단위 assign:</strong> <code>#checkout-team</code>처럼 Sentry Team을 Owner로 지정. 개인 assign은
             triage 미팅에서만.
           </li>
           <li>
-            <strong>CODEOWNERS 연동:</strong> repo에 <code>CODEOWNERS</code>가 있으면 Sentry가 import해 path Rule 초안을
-            만들 수 있습니다. Tag Rule은 별도로 유지·보완합니다.
+            <strong>Tag 보조:</strong> URL로 구분하기 어려운 경우(모달, 공통 컴포넌트 등)에만 <code>feature.*</code> Tag를
+            사용합니다.
           </li>
         </ul>
 
@@ -694,7 +693,7 @@ Owner: #checkout-team
         <ul>
           <li>모든 에러를 fatal로 올리면 알림 노이즈 → on-call이 fatal을 무시</li>
           <li>operational error(재고 부족)까지 capture·Slack 멘션 → 노이즈. 분류 단계에서 걸러야 합니다.</li>
-          <li>Tag 없이 Ownership Rules만 path 기반 → minified bundle에서 path 매칭 실패. Tag Rule을 primary로</li>
+          <li>SPA에서 URL이 실제 feature를 반영하지 않는 경우(모달, drawer 등) → URL Rule 매칭 실패. Tag 보조 필요</li>
           <li>Dashboard 없이 Issues 목록만 보면 추세·팀별 부하 파악 불가</li>
         </ul>
 
