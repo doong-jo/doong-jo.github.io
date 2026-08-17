@@ -129,9 +129,9 @@
 
         <h2>문제: iOS에서만 화면이 한참 뒤에 나타난다</h2>
         <p>
-          최근 우리 팀의 Next.js 기반 웹앱을 iOS 웹뷰에서 열었을 때 첫 화면이 유독 늦게 떴습니다. 같은
-          페이지를 Android 웹뷰에서 열면 0.4초 만에 화면이 나오는데, iOS에서는 7.7초가 걸렸습니다. 네트워크 환경이
-          불안정할 때는 최대 19초까지 지연되기도 했습니다.
+          최근 우리 팀의 Next.js 기반 웹앱을 iOS 웹뷰에서 열었을 때 첫 화면이 유독 늦게 떴습니다. 같은 페이지를 Android
+          웹뷰에서 열면 0.4초 만에 화면이 나오는데, iOS에서는 7.7초가 걸렸습니다. 네트워크 환경이 불안정할 때는 최대
+          19초까지 지연되기도 했습니다.
         </p>
         <p>
           처음에는 서버 응답 속도나 번들 크기를 의심했습니다. Network 탭을 보면 HTML, JS, CSS 모두 빠르게 내려오고
@@ -175,24 +175,26 @@
         </p>
         <p>
           여기서 의문이 생겼습니다. 분석 스크립트가 늦게 로드되는 건 Android에서도 마찬가지인데, 왜 iOS만 화면이 안 뜨는
-          걸까요?
+          걸까요? 원인은 아래와 같았습니다.
         </p>
-        <p>
-          CSS에 선언된 <code>@font-face</code> 중 실제로 사용하지 않는 폰트가 있었습니다. 폰트 파일들이 문제의
-          핵심이었습니다. 미사용 폰트 선언은 평소에도 있었지만, Clarity가 <code>load</code> 이벤트를 크게 지연시키면서
-          문제가 드러났습니다. WebKit은 폰트가 준비될 때까지 화면 그리기를 미루는데(레이어 트리 동결), 이 대기 시간이
-          눈에 띄게 길어진 것입니다. Clarity가 없었다면 1초 미만의 미세한 지연으로 묻혔을 가능성이 높습니다.
-        </p>
+        <ol>
+          <li>WebKit은 폰트가 준비될 때까지 화면 그리기를 미룬다</li>
+          <li><b>폰트 사용을 선언했지만 본문에서 실제 사용하지 않아 '폰트 준비 완료' 신호를 받지 못해 load 이벤트를 기다린다</b></li>
+          <li>
+            리소스 로드 지연(JS, CSS, 이미지 등)되면 load 이벤트 완료 시점도 함께 지연된다
+          </li>
+          <li>first paint 시점도 그 만큼 지연된다</li>
+        </ul>
 
-        <h3>1년 7개월간 잠복해 있던 조건</h3>
+        <h3>'지금' 문제가 된 이유</h3>
         <p>
-          폰트 선언은 2024년 12월에 Pretendard를 도입하면서 추가된 것이었습니다. 당시 적용을 시도했다가 쓰지
-          않기로 결정됐는데, 선언만 남아 있었습니다. 그 후 1년 7개월 동안 아무 문제 없이 운영됐습니다.
+          폰트 선언은 2024년 12월에 Pretendard를 도입하면서 추가된 것이었습니다. 당시 적용을 시도했다가 쓰지 않기로
+          결정됐는데, 선언만 남아 있었습니다. 그 후 1년 7개월 동안 아무 문제 없이 운영됐습니다.
           <code>load</code>를 크게 늦출 리소스가 없었기 때문입니다.
         </p>
         <p>
-          2026년 4월에 Clarity를 적용했지만, 당시에는 서버 응답이 빨라서 문제가 드러나지 않았습니다. 7월에 Clarity
-          스크립트를 서빙하는 서버의 응답이 현저히 느려지면서 방아쇠가 당겨졌습니다. 잠복해 있던 조건과 외부 서버 장애가
+          2026년 4월에 Clarity를 적용했지만, 당시에는 다운로드 속도가 빨라서 문제가 드러나지 않았습니다. 하지만 7월에 Clarity
+          스크립트를 서빙하는 서버의 응답이 현저히 느려졌고 잠복해 있던 조건과 외부 서버 장애가
           만나 문제가 수면 위로 올라왔습니다.
         </p>
 
@@ -208,13 +210,17 @@
 
         <h2>레이어 트리 동결이란</h2>
         <p>
-          "레이어 트리 동결"이라는 용어가 생소할 수 있습니다.
-          이해하려면 브라우저가 화면을 그리는 과정을 간략히 알아야 합니다.
+          "레이어 트리 동결"이라는 용어가 생소할 수 있습니다. 이해하려면 브라우저가 화면을 그리는 과정을 간략히 알아야
+          합니다.
         </p>
         <p>브라우저는 HTML을 받아서 화면에 그리기까지 여러 단계를 거칩니다.</p>
 
         <!-- 렌더링 파이프라인 시각화 -->
-        <div class="render-pipeline" role="img" aria-label="브라우저 렌더링 파이프라인: HTML/CSS → 파싱 → 렌더 트리 → 레이아웃 → 페인트 → 합성(동결 발생 지점)">
+        <div
+          class="render-pipeline"
+          role="img"
+          aria-label="브라우저 렌더링 파이프라인: HTML/CSS → 파싱 → 렌더 트리 → 레이아웃 → 페인트 → 합성(동결 발생 지점)"
+        >
           <div class="render-step">
             <div class="render-step-box input">
               <span class="render-step-icon">📄</span>
@@ -264,24 +270,23 @@
           </div>
         </div>
         <p>
-          여기서 "레이어"는 포토샵의 레이어와 비슷합니다.
-          브라우저는 페이지를 여러 레이어로 나눠서 따로 그린 뒤, 마지막에 합칩니다.
-          스크롤이나 애니메이션이 있을 때 전체를 다시 그리지 않고 해당 레이어만 움직이면 되니까 효율적입니다.
+          여기서 "레이어"는 포토샵의 레이어와 비슷합니다. 브라우저는 페이지를 여러 레이어로 나눠서 따로 그린 뒤,
+          마지막에 합칩니다. 스크롤이나 애니메이션이 있을 때 전체를 다시 그리지 않고 해당 레이어만 움직이면 되니까
+          효율적입니다.
         </p>
         <p>
           <strong>"레이어 트리 동결"은 이 합성 단계를 멈추는 것입니다.</strong>
           레이어를 합치는 작업을 안 하니, 사용자 눈에는 아무것도 바뀌지 않습니다.
         </p>
         <p>
-          우리 상황에서는 WebKit이 "CSS에 폰트가 선언되어 있으니 폰트가 준비될 때까지 기다리자"라고 판단해서 동결 상태를 유지했습니다.
-          문제는 그 폰트가 실제로 사용되지 않아서 다운로드 자체가 시작되지 않았다는 것입니다.
-          <code>load</code> 이벤트가 발생할 때까지 동결이 풀리지 않았습니다.
+          WebKit이 "CSS에 폰트가 선언되어 있으니 폰트가 준비될 때까지 기다리자"라고 판단해서 동결 상태를
+          유지했습니다. <strong>문제는 그 폰트가 어느 곳도 사용되지 않아 <code>load</code> 이벤트가 발생할 때까지 동결 상태를 유지하게 되었습니다.</strong>
         </p>
 
         <h2>WebKit과 Blink의 최적화 전략 차이</h2>
         <p>
-          문제를 이해하려면 브라우저 엔진의 최적화 전략 차이를 알아야 합니다. WebKit(Safari, iOS 웹뷰)과
-          Blink(Chrome, Android 웹뷰)는 같은 웹 표준을 구현하지만, 내부 동작 방식이 다릅니다.
+          문제를 이해하려면 브라우저 엔진의 최적화 전략 차이를 알아야 합니다. WebKit(Safari, iOS 웹뷰)과 Blink(Chrome,
+          Android 웹뷰)는 같은 웹 표준을 구현하지만, 내부 동작 방식이 다릅니다.
         </p>
         <table>
           <thead>
@@ -312,39 +317,39 @@
 
         <h3>Apple의 철학: 불완전한 화면은 보여주지 않는다</h3>
         <p>
-          차이는 단순한 구현 방식의 차이가 아니라, 브라우저 벤더의 철학 차이에서 비롯됩니다.
-          2020년 Wikimedia 재단이 WebKit에 Paint Timing API를 기여할 때, Apple은 이런 입장을 밝혔습니다<sup><a href="#ref-1">[1]</a></sup>.
+          차이는 단순한 구현 방식의 차이가 아니라, 브라우저 벤더의 철학 차이에서 비롯됩니다. 2020년 Wikimedia 재단이
+          WebKit에 Paint Timing API를 기여할 때, Apple은 이런 입장을 밝혔습니다<sup><a href="#ref-1">[1]</a></sup
+          >.
         </p>
         <blockquote>
           <p>
-            "Apple's main argument was that web developers might optimize for first-paint if it's available,
-            and it's less desirable because pages would appear quickly but with missing content."
+            "Apple's main argument was that web developers might optimize for first-paint if it's available, and it's
+            less desirable because pages would appear quickly but with missing content."
           </p>
           <p>
-            (Apple의 주요 주장은, first-paint 지표가 제공되면 웹 개발자들이 이를 최적화하려 할 것이고,
-            그 결과 콘텐츠가 빠진 불완전한 페이지가 빠르게 나타나는 바람직하지 않은 상황이 생길 수 있다는 것이었다.)
+            (Apple의 주요 주장은, first-paint 지표가 제공되면 웹 개발자들이 이를 최적화하려 할 것이고, 그 결과 콘텐츠가
+            빠진 불완전한 페이지가 빠르게 나타나는 바람직하지 않은 상황이 생길 수 있다는 것이었다.)
           </p>
         </blockquote>
         <p>
-          WebKit은 철학을 "Visually Non-Empty" 휴리스틱으로 구현했습니다.
-          의미 있는 콘텐츠가 준비될 때까지 화면 그리기를 지연시키는 것입니다.
+          WebKit은 철학을 "Visually Non-Empty" 휴리스틱으로 구현했습니다. 의미 있는 콘텐츠가 준비될 때까지 화면 그리기를
+          지연시키는 것입니다.
         </p>
         <blockquote>
           <p>
-            "The WebKit implementation delays the first paint if there are pending styles and fonts
-            unless a meaningful amount of content is ready to be rendered
-            (Equivalent to 1024 pixels of images, or 200 characters of text)."
+            "The WebKit implementation delays the first paint if there are pending styles and fonts unless a meaningful
+            amount of content is ready to be rendered (Equivalent to 1024 pixels of images, or 200 characters of text)."
           </p>
           <p>
-            (WebKit 구현은 스타일과 폰트가 아직 로딩 중이면 first paint를 지연시킨다.
-            단, 의미 있는 양의 콘텐츠가 렌더링될 준비가 되면 예외다.
-            여기서 "의미 있는 양"이란 1024픽셀 이상의 이미지, 또는 200자 이상의 텍스트를 말한다.)
+            (WebKit 구현은 스타일과 폰트가 아직 로딩 중이면 first paint를 지연시킨다. 단, 의미 있는 양의 콘텐츠가
+            렌더링될 준비가 되면 예외다. 여기서 "의미 있는 양"이란 1024픽셀 이상의 이미지, 또는 200자 이상의 텍스트를
+            말한다.)
           </p>
         </blockquote>
         <p>
-          Chrome(Blink)은 다른 접근을 취합니다. 뭐라도 그릴 수 있으면 일단 그리고, 나머지는 나중에 채웁니다.
-          사용자가 빈 화면을 보는 시간을 줄이는 게 더 중요하다고 보는 것입니다.
-          어느 쪽이 맞다고 할 수는 없지만, 철학 차이가 같은 코드에서 다른 결과를 만들어냈습니다.
+          Chrome(Blink)은 다른 접근을 취합니다. 뭐라도 그릴 수 있으면 일단 그리고, 나머지는 나중에 채웁니다. 사용자가 빈
+          화면을 보는 시간을 줄이는 게 더 중요하다고 보는 것입니다. 어느 쪽이 맞다고 할 수는 없지만, 철학 차이가 같은
+          코드에서 다른 결과를 만들어냈습니다.
         </p>
 
         <h3>렌더링 타이밍 차이</h3>
@@ -356,8 +361,8 @@
             target="_blank"
             rel="noopener"
             >LocalFrameView.cpp</a
-          >에는 <code>qualifiesAsVisuallyNonEmpty()</code>라는 함수가 있습니다. "화면에 뭔가 보여줄 준비가
-          됐나?"를 판단합니다. 준비가 안 됐다고 판단되면 레이어 트리를 동결해서 화면을 그리지 않습니다.
+          >에는 <code>qualifiesAsVisuallyNonEmpty()</code>라는 함수가 있습니다. "화면에 뭔가 보여줄 준비가 됐나?"를
+          판단합니다. 준비가 안 됐다고 판단되면 레이어 트리를 동결해서 화면을 그리지 않습니다.
         </p>
         <p>
           <strong>함수가 @font-face 선언을 어떻게 해석하느냐가 핵심입니다.</strong>
@@ -429,7 +434,8 @@
         </p>
         <p>
           원인은 WebKit의 <strong>200자 임계값</strong>이었습니다. WebKit은 "Visually Non-Empty" 휴리스틱을 사용해서
-          의미 있는 콘텐츠가 준비될 때까지 페인팅을 지연시킵니다<sup><a href="#ref-1">[1]</a></sup>. WebKit 소스 코드(<a
+          의미 있는 콘텐츠가 준비될 때까지 페인팅을 지연시킵니다<sup><a href="#ref-1">[1]</a></sup
+          >. WebKit 소스 코드(<a
             href="https://github.com/WebKit/WebKit/blob/0f25453ee003c74b1042030c0bb1b2fcfe5fb4b5/Source/WebCore/page/LocalFrameView.h#L1089"
             target="_blank"
             rel="noopener"
@@ -442,16 +448,16 @@
           많아서 임계값을 넘겼습니다. 같은 폰트 CSS를 쓰는데 결과가 달랐던 이유가 여기 있었습니다.
         </p>
 
-        <h2>검증: 정말 폰트 선언이 원인인가</h2>
+        <h2>정말 폰트 선언이 원인인지 검증하기</h2>
         <p>
-          추측으로 끝내지 않고 직접 검증했습니다. 실제 앱의 CSS 응답을 가로채서 <code>@font-face</code> 블록만 제거하고
+          실제 앱의 CSS 응답을 가로채서 <code>@font-face</code> 블록만 제거하고
           나머지는 그대로 둔 상태로 측정했습니다.
         </p>
         <table>
           <thead>
             <tr>
               <th>조건</th>
-              <th>firstRaf</th>
+              <th>requestAnimationFrame</th>
               <th>load</th>
               <th>판정</th>
             </tr>
@@ -477,7 +483,7 @@
         </p>
         <p>
           Clarity를 완전히 제거하고 대신 5초짜리 느린 이미지를 넣어봤습니다. 결과는 같았습니다.
-          <code>firstRaf</code>가 <code>load</code>(5,160ms)까지 밀렸습니다. Clarity가 아니라 "load를 늦추는 무엇이든"이
+          <code>requestAnimationFrame</code>가 <code>load</code>(5,160ms)까지 밀렸습니다. Clarity가 아니라 "load를 늦추는 무엇이든"이
           조건이었습니다.
         </p>
 
@@ -486,8 +492,7 @@
 
         <h3>1. 미사용 폰트 선언 제거</h3>
         <p>
-          CSS를 점검해보니 과거에 추가했다가 더 이상 쓰지 않는 폰트 선언이 남아 있었습니다. 선언들을 모두
-          제거했습니다.
+          더 이상 쓰지 않는 폰트 선언들을 모두 제거했습니다.
         </p>
         <pre><code class="language-css">/* 제거 전: 실제로 쓰지 않는 폰트가 선언되어 있음 */
 @font-face {
@@ -499,26 +504,21 @@
 /* (선언 없음) */</code></pre>
 
         <h4>만약 폰트가 실제 사용 중이었다면?</h4>
-        <p>역설적이게도, 폰트가 실제로 본문에 쓰이고 있었다면 문제는 덜 심각했을 것입니다.</p>
         <p>
-          브라우저는 CSS에 <code>@font-face</code>가 선언되어 있어도, 해당 폰트를 실제로 사용하는 요소가 없으면 폰트
-          파일을 다운로드하지 않습니다. 선언만 있고 다운로드는 안 하니, 폰트 로딩이 "완료"될 일 자체가 없습니다.
-          WebKit은 존재하지 않는 완료를 기다리며 <code>load</code> 이벤트까지 화면을 동결한 것입니다.
-        </p>
-        <p>
-          만약 폰트가 실제로 쓰이고 있었다면 브라우저가 폰트 파일을 다운로드했을 것이고, 네트워크 상황이 좋으면 수백
+          만약 폰트가 실제로 쓰이고 있었다면 브라우저가 폰트 파일을 다운로드했을 것이고, 캐싱되지 않았어도 네트워크 상황이 좋으면 수백
           밀리초 내에 로딩이 끝났을 것입니다. 폰트 로딩이 완료되면 WebKit은 "시각적으로 준비됐다"고 판단해 동결을
           해제합니다. 실제로 쓰이는 폰트는 로딩 완료라는 출구가 있지만, 미사용 폰트는 출구 없이 <code>load</code>까지
           갇혀버린 셈입니다.
         </p>
         <p>이 가설을 검증하려고 폰트 선언 상태별로 측정했습니다.</p>
+        <blockquote>raf: requestAnimationFrame</blockquote>
         <table>
           <thead>
             <tr>
               <th>폰트 선언</th>
               <th>본문 사용</th>
               <th>폰트 응답</th>
-              <th>firstRaf</th>
+              <th>raf</th>
               <th>판정</th>
             </tr>
           </thead>
@@ -554,8 +554,8 @@
           </tbody>
         </table>
         <p>
-          성공이든 실패든 결론이 나면 동결이 풀립니다. 미사용 폰트는 요청 자체가 시작되지 않아
-          결론이 없고, 그래서 <code>load</code>가 유일한 탈출구가 됩니다.
+          성공이든 실패든 결론이 나면 동결이 풀립니다. 미사용 폰트는 요청 자체가 시작되지 않아 결론이 없고, 그래서
+          <code>load</code>가 유일한 탈출구가 됩니다.
         </p>
         <p>
           참고로 <code>font-display: swap</code> 같은 속성을 추가해도 소용없었습니다. <code>swap</code>,
@@ -646,13 +646,9 @@ useEffect(() =&gt; {
         <p>
           <strong>플랫폼별 렌더링 차이를 인지해야 합니다.</strong>
           WebKit과 Blink는 같은 웹 표준을 구현하지만, 최적화 전략은 다릅니다. iOS에서 잘 돌아간다고 Android에서도 괜찮을
-          거라는 보장은 없습니다. 반대도 마찬가지입니다.
-        </p>
-        <p>
-          <strong>브라우저 엔진의 최적화 전략을 알아두면 좋습니다.</strong>
-          이번 문제는 WebKit의 레이어 트리 동결이라는 최적화 전략 때문에 생겼습니다. 이 전략을 미리 알았다면
-          원인을 더 빨리 찾았을 것입니다. 브라우저가 "왜" 그렇게 동작하는지 이해하면, 문제가 생겼을 때 어디를 봐야 할지
-          감이 옵니다.
+          거라는 보장은 없습니다. 반대도 마찬가지입니다. 이번 문제는 WebKit의 '완성된 페이지를 보여준다'라는 최적화 전략 때문에 생겼습니다. 이 전략을 미리 알았다면 원인을 더
+          빨리 찾았을 것입니다. 브라우저가 "왜" 그렇게 동작하는지 이해하면, 문제가 생겼을 때 어디를 봐야 할지 감이
+          옵니다.
         </p>
         <p>
           <strong>측정 조건을 명확히 해야 합니다.</strong>
@@ -661,16 +657,19 @@ useEffect(() =&gt; {
         </p>
         <p>
           <strong>초기 로딩 성능을 지속적으로 모니터링해야 합니다.</strong>
-          이번 문제는 서서히 악화됐습니다.
-          Clarity 서버가 점점 느려지면서 로딩 시간도 조금씩 길어졌는데, 팀은 "원래 이 정도였나?"라며 익숙해져 버렸습니다.
-          기준선을 정해두고 주기적으로 측정했다면 변화를 더 빨리 감지했을 것입니다.
+          이번 문제는 서서히 악화됐습니다. Clarity 서버가 점점 느려지면서 로딩 시간도 조금씩 길어졌는데, 팀은 "원래 이
+          정도였나?"라며 익숙해져 버렸습니다. 기준선을 정해두고 주기적으로 모니터링할 수 있는 도구를 통합했으면 변화를 더 빨리 감지했을 것 같습니다.
         </p>
 
         <h2>참고자료</h2>
         <ol class="references">
           <li id="ref-1">
             Wikimedia Foundation, "How We Contributed Paint Timing API to WebKit," 2020.
-            <a href="https://diff.wikimedia.org/2020/06/24/how-we-contributed-paint-timing-api-to-webkit/" target="_blank" rel="noopener">
+            <a
+              href="https://diff.wikimedia.org/2020/06/24/how-we-contributed-paint-timing-api-to-webkit/"
+              target="_blank"
+              rel="noopener"
+            >
               diff.wikimedia.org
             </a>
           </li>
