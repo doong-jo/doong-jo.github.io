@@ -141,9 +141,9 @@
           둘까"라는 모호함이 생기기도 했습니다.
         </p>
         <p>
-          이 글에서는 Colocation이 무엇인지, Pages Router에서 왜 온전한 Colocation이 어려운지, App Router에서
-          프레임워크 지원 덕분에 Colocation이 쉬워진 이유를 설명합니다. 마지막으로 우리 팀이 FSD 고수에서 App Router
-          Colocation 채택으로 전환한 의사결정 과정을 공유합니다.
+          이 글에서는 Colocation이 무엇인지, Pages Router에서 왜 온전한 Colocation이 어려운지, App Router에서 프레임워크
+          지원 덕분에 Colocation이 쉬워진 이유를 설명합니다. 마지막으로 팀이 FSD 고수에서 App Router Colocation 설계를
+          하나의 선택지로 채택한 과정을 공유합니다.
         </p>
 
         <h3>참고 문서</h3>
@@ -181,14 +181,14 @@
           </li>
           <li>
             <strong>최종 결론:</strong> 앱별로 동일한 설계를 적용합니다. Pages Router 앱은 FSD, 신규 App Router 앱은
-            Colocation.
+            Colocation으로 설계합니다.
           </li>
         </ul>
 
         <h2>1. Colocation이란</h2>
         <p>
-          Colocation은 <strong>관련 코드를 물리적으로 가까운 곳에 배치하는 방식</strong>입니다. 특정 기능이나 페이지 전용
-          컴포넌트, 훅, 유틸리티 함수를 해당 기능 폴더 바로 옆에 둡니다.
+          Colocation은 <strong>관련 코드를 물리적으로 가까운 곳에 배치하는 방식</strong>입니다. 특정 기능이나 페이지
+          전용 컴포넌트, 훅, 유틸리티 함수를 해당 기능 폴더 바로 옆에 둡니다.
         </p>
         <p>
           반대로 <strong>타입별로 코드를 분류</strong>하는 방식도 있습니다. 모든 컴포넌트는 <code>components/</code>에,
@@ -326,7 +326,8 @@ app/
 
         <h3>App Router의 프라이빗 폴더 규칙</h3>
         <p>
-          폴더명 앞에 언더스코어(<code>_</code>)를 붙이면 그 폴더와 하위 폴더 전체가 라우팅에서 빠집니다. <strong>프라이빗 폴더(Private Folders)</strong>라고 부릅니다.
+          폴더명 앞에 언더스코어(<code>_</code>)를 붙이면 그 폴더와 하위 폴더 전체가 라우팅에서 빠집니다.
+          <strong>프라이빗 폴더(Private Folders)</strong>라고 부릅니다.
         </p>
         <ul>
           <li><code>_components/</code>: 해당 페이지 전용 UI 컴포넌트</li>
@@ -512,8 +513,8 @@ app/
 
         <h2>7. 우리 팀의 의사결정 과정</h2>
         <p>
-          배경에서 언급한 비효율을 해결하기 위해 FE Weekly 회의에서 App Router Colocation을 논의했습니다. 팀원들
-          의견은 이랬습니다.
+          배경에서 언급한 비효율을 해결하기 위해 FE Weekly 회의에서 App Router Colocation을 논의했습니다. 팀원들 의견은
+          이랬습니다.
         </p>
         <ul>
           <li>
@@ -525,8 +526,8 @@ app/
             코드를 살펴보는 게 더 편했다."
           </li>
           <li>
-            <strong>C:</strong> "개발 흐름에서 Colocation이 더 익숙하고 편한 점에 공감하고 FSD는 그 부분에서
-            폴더를 오가야하는 것은 맞다. 다만 AI로 코드 작성을 하다 보니 중요성이 조금 낮아진 느낌이긴 하다."
+            <strong>C:</strong> "개발 흐름에서 Colocation이 더 익숙하고 편한 점에 공감하고 FSD는 그 부분에서 폴더를
+            오가야하는 것은 맞다. 다만 AI로 코드 작성을 하다 보니 중요성이 조금 낮아진 느낌이긴 하다."
           </li>
           <li>
             <strong>D:</strong> "AI를 적극 활용하기에 폴더 구조의 중요도는 떨어졌지만, 사람이 탐색하기 편하고 유지보수
