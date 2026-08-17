@@ -1,0 +1,742 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <!-- Google AdSense -->
+    <meta name="google-adsense-account" content="ca-pub-9401013749529244" />
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9401013749529244"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Basic SEO -->
+    <title>Next.js App Router에서 FSD 대신 Colocation을 선택한 이유 | doong-jo</title>
+    <meta
+      name="description"
+      content="FSD 원칙을 고수하다 App Router의 Colocation을 채택한 이야기. Page Router와 App Router의 차이, 페이지 근처에 코드를 두는 실용적 폴더 구조 설계."
+    />
+    <meta name="author" content="doong-jo" />
+    <meta
+      name="keywords"
+      content="Next.js, App Router, Colocation, FSD, Feature-Sliced Design, 폴더 구조, 프론트엔드 아키텍처"
+    />
+    <meta name="post-tags" content="구현, Next.js, 아키텍처" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://doong-jo.github.io/posts/nextjs-application-colocation-design.html" />
+
+    <!-- RSS Feed -->
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="doong-jo RSS Feed"
+      href="https://doong-jo.github.io/feed.xml"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Next.js App Router에서 FSD 대신 Colocation을 선택한 이유" />
+    <meta
+      property="og:description"
+      content="FSD 원칙을 고수하다 App Router의 Colocation을 채택한 이야기. Page Router와 App Router의 차이, 페이지 근처에 코드를 두는 실용적 폴더 구조 설계."
+    />
+    <meta property="og:url" content="https://doong-jo.github.io/posts/nextjs-application-colocation-design.html" />
+    <meta property="og:site_name" content="doong-jo" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta
+      property="og:image"
+      content="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/b94fa00f-252a-422c-93e0-864a3e0c2c00/w=1200"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="article:author" content="Sungdong Cho" />
+    <meta property="article:published_time" content="2026-08-17" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Next.js App Router에서 FSD 대신 Colocation을 선택한 이유" />
+    <meta
+      name="twitter:description"
+      content="FSD 원칙을 고수하다 App Router의 Colocation을 채택한 이야기. Page Router와 App Router의 차이, 페이지 근처에 코드를 두는 실용적 폴더 구조 설계."
+    />
+    <meta
+      name="twitter:image"
+      content="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/b94fa00f-252a-422c-93e0-864a3e0c2c00/w=1200"
+    />
+
+    <!-- JSON-LD: BlogPosting Schema -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Next.js App Router에서 FSD 대신 Colocation을 선택한 이유",
+        "description": "FSD 원칙을 고수하다 App Router의 Colocation을 채택한 이야기. Page Router와 App Router의 차이, 페이지 근처에 코드를 두는 실용적 폴더 구조 설계.",
+        "image": "https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/b94fa00f-252a-422c-93e0-864a3e0c2c00/w=1200",
+        "author": {
+          "@type": "Person",
+          "name": "doong-jo",
+          "url": "https://doong-jo.github.io/about.html"
+        },
+        "publisher": {
+          "@type": "Person",
+          "name": "doong-jo"
+        },
+        "datePublished": "2026-08-17",
+        "dateModified": "2026-08-17",
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "https://doong-jo.github.io/posts/nextjs-application-colocation-design.html"
+        },
+        "inLanguage": "ko-KR"
+      }
+    </script>
+
+    <!-- Stylesheets -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    />
+    <link rel="stylesheet" href="../common/common.css" />
+    <link rel="stylesheet" href="../nav/nav.css" />
+    <link rel="stylesheet" href="../post/post.css" />
+    <link rel="stylesheet" href="../post/prism.css" />
+    <link rel="stylesheet" href="../subscribe/subscribe.css" />
+    <style></style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a href="/" class="site-logo">doong-jo</a>
+        <nav aria-label="사이트 메뉴">
+          <ul id="nav-list">
+            <li><a href="/index.html" id="nav-post" class="current">Post</a></li>
+            <li><a href="/about.html" id="nav-about">About</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <div class="content">
+      <main>
+        <time>2026-08-17</time>
+        <div class="post-tags">
+          <span class="tag">구현</span>
+          <span class="tag">Next.js</span>
+          <span class="tag">아키텍처</span>
+        </div>
+        <h1>Next.js App Router에서 FSD 대신 Colocation을 선택한 이유</h1>
+
+        <h2>배경</h2>
+        <p>
+          우리 팀은 프론트엔드 아키텍처로 Feature-Sliced Design(FSD)을 선택했었습니다. Pages Router와 App Router가
+          공존하는 프로젝트에서 <strong>일관성을 위해 FSD만 쓰자</strong>고 정했습니다. 두 라우터 모두 같은 폴더 구조를
+          따르면 컨텍스트 스위칭 없이 작업할 수 있으리라 봤습니다.
+        </p>
+        <p>
+          그런데 App Router로 개발하면서 비효율을 느끼는 의견들이 있었습니다. 특정 페이지에서만 쓰는 컴포넌트를 굳이
+          <code>features/</code>나 <code>widgets/</code>로 올려보내야 했고, 파일 간 거리가 멀어지니 코드를 읽고 수정할
+          때 피로도가 쌓였습니다. 여러 라우트가 화면을 공유하는 도메인에서는 "이 코드를 라우트에 둘까, FSD 슬라이스에
+          둘까"라는 모호함이 생기기도 했습니다.
+        </p>
+        <p>
+          이 글에서는 Colocation이 무엇인지, Pages Router에서 왜 온전한 Colocation이 어려운지, App Router에서
+          프레임워크 지원 덕분에 Colocation이 쉬워진 이유를 설명합니다. 마지막으로 우리 팀이 FSD 고수에서 App Router
+          Colocation 채택으로 전환한 의사결정 과정을 공유합니다.
+        </p>
+
+        <h3>참고 문서</h3>
+        <ul>
+          <li>
+            <a
+              href="https://nextjs.org/docs/app/getting-started/project-structure#colocation"
+              target="_blank"
+              rel="noopener"
+              >Next.js App Router Colocation</a
+            >
+          </li>
+          <li>
+            <a href="https://fsd.how/kr/docs/guides/tech/with-nextjs/" target="_blank" rel="noopener"
+              >FSD + Next.js 가이드</a
+            >
+          </li>
+        </ul>
+
+        <h2>TL;DR</h2>
+        <ul>
+          <li>
+            <strong>핵심 내용:</strong> App Router에서는 FSD의 <code>pages</code> 계층을 생략하고,
+            <code>app</code> 폴더가 그 역할을 대체하도록 합니다.
+          </li>
+          <li>
+            <strong>장점:</strong> 특정 페이지를 수정할 때 해당 폴더 안에서만 작업하면 되어 인지적 과부하가 줄어듭니다.
+            재사용될지 모르는 컴포넌트를 미리 <code>features</code>나 <code>widgets</code>로 분리하지 않아 YAGNI(미리
+            구현하지 않음) 원칙을 따릅니다.
+          </li>
+          <li><strong>단점:</strong> Pages Router와의 물리적 폴더 구조 일관성이 깨집니다.</li>
+          <li>
+            <strong>단점에 대한 생각:</strong> 물리적 구조는 다르지만 아키텍처의 '개념적 일관성'은 유지됩니다. "App
+            Router의 app 폴더 = FSD의 pages 레이어"라는 한 가지 규칙만 공유하면 충분합니다.
+          </li>
+          <li>
+            <strong>최종 결론:</strong> 앱별로 동일한 설계를 적용합니다. Pages Router 앱은 FSD, 신규 App Router 앱은
+            Colocation.
+          </li>
+        </ul>
+
+        <h2>1. Colocation이란</h2>
+        <p>
+          Colocation은 <strong>관련 코드를 물리적으로 가까운 곳에 배치하는 방식</strong>입니다. 특정 기능이나 페이지 전용
+          컴포넌트, 훅, 유틸리티 함수를 해당 기능 폴더 바로 옆에 둡니다.
+        </p>
+        <p>
+          반대로 <strong>타입별로 코드를 분류</strong>하는 방식도 있습니다. 모든 컴포넌트는 <code>components/</code>에,
+          훅은 <code>hooks/</code>에, 유틸리티는 <code>utils/</code>에 모으는 구조입니다.
+        </p>
+
+        <h3>타입별 분류의 문제</h3>
+        <pre><code class="language-plaintext">src/
+├── components/
+│   ├── DashboardChart.tsx      # 대시보드 전용
+│   ├── DashboardFilter.tsx     # 대시보드 전용
+│   ├── ProfileForm.tsx         # 프로필 전용
+│   └── Button.tsx              # 공통
+├── hooks/
+│   ├── useDashboardData.ts     # 대시보드 전용
+│   └── useProfileUpdate.ts     # 프로필 전용
+└── pages/
+    ├── dashboard.tsx
+    └── profile.tsx</code></pre>
+        <p>
+          대시보드 페이지를 수정하려면 <code>pages/dashboard.tsx</code>, <code>components/DashboardChart.tsx</code>,
+          <code>hooks/useDashboardData.ts</code> 등 여러 폴더를 오가야 합니다. 파일 간 거리가 멀어질수록 코드를 읽고
+          수정하는 피로도가 올라갑니다.
+        </p>
+
+        <h3>Colocation 적용 후</h3>
+        <pre><code class="language-plaintext">src/
+├── dashboard/
+│   ├── page.tsx
+│   ├── DashboardChart.tsx
+│   ├── DashboardFilter.tsx
+│   └── useDashboardData.ts
+├── profile/
+│   ├── page.tsx
+│   ├── ProfileForm.tsx
+│   └── useProfileUpdate.ts
+└── shared/
+    └── Button.tsx</code></pre>
+        <p>
+          대시보드 관련 코드가 한 폴더에 모여 있으니 수정할 때 그 폴더만 보면 됩니다. 여러 곳에서 공유하는
+          <code>Button</code>만 <code>shared/</code>로 분리합니다.
+        </p>
+
+        <h3>Colocation의 핵심 원칙</h3>
+        <ul>
+          <li><strong>가까이 두기:</strong> 특정 기능에서만 사용하는 코드는 해당 기능 폴더 안에 배치</li>
+          <li>
+            <strong>늦게 추상화하기:</strong> 처음부터 재사용을 가정하지 않고, 실제로 재사용이 필요해질 때 상위 계층으로
+            이동하여 YAGNI 원칙("You Aren't Gonna Need It", 미래에 필요할 것 같은 추상화를 미리 만들지 않음)을 따르기
+          </li>
+        </ul>
+
+        <h2>2. Colocation은 FSD v2.1과 같은 방향이다</h2>
+        <p>
+          FSD v2.1은 Pages-First 사고방식을 도입합니다<sup><a href="#ref-1">[1]</a></sup
+          >.
+        </p>
+        <blockquote>
+          <p>
+            개발자가 코드베이스를 탐색할 때 Page 단위로 구조를 파악하는 게 자연스럽고, 구성 요소를 찾는 출발점도 대부분
+            Page이기 때문입니다. 주요 UI와 비즈니스 로직은 Page 내부에 두고, Shared layer에는 순수 재사용 요소만
+            유지하며, 여러 Page에서 실제로 공유되는 로직만 Feature/Entity로 분리합니다.
+          </p>
+        </blockquote>
+        <p>
+          App Router 기반 Colocation도 같은 원칙을 공유합니다. 라우트 세그먼트가 Page의 책임 단위가 되고, 해당 화면의
+          UI, 훅, 비즈니스 로직을 라우트 내부에 배치합니다. 공유가 필요해진 코드만 상위 세그먼트나
+          <code>_shared</code>로 승격하므로 과도한 선제 추상화를 줄이고 Page 중심으로 책임과 탐색 경로를 명확히
+          잡습니다.
+        </p>
+        <p>
+          결국
+          <strong
+            >Colocation은 FSD를 부정하기보다, App Router가 제공하는 라우트 중심 경계 위에서 FSD v2.1의 Pages-First
+            방식을 더 자연스럽게 구현한 것</strong
+          >입니다.
+        </p>
+
+        <h2>3. Pages Router에서 Colocation이 어려운 이유</h2>
+        <p>
+          Next.js Pages Router는 <code>pages/</code> 폴더 안의 모든 파일을 라우트로 인식합니다. 그래서 페이지 전용
+          컴포넌트를 페이지 파일 옆에 둘 수가 없습니다.
+        </p>
+        <pre><code class="language-plaintext"># 이렇게 하고 싶지만...
+pages/
+├── dashboard/
+│   ├── index.tsx           # /dashboard 라우트
+│   ├── DashboardChart.tsx  # ❌ /dashboard/DashboardChart 라우트가 되어버림
+│   └── _components/        # ❌ 언더스코어 prefix로도 라우팅 제외 불가
+│       └── Filter.tsx</code></pre>
+        <p>
+          Pages Router에서 <code>pages/</code> 안에 컴포넌트 파일을 두면 그 파일도 라우트가 됩니다.
+          언더스코어(<code>_</code>) prefix를 붙여도 라우팅에서 빠지지 않습니다. 결국 페이지 전용 코드도
+          <code>pages/</code> 바깥의 <code>components/</code>, <code>features/</code> 등에 둬야 합니다.
+        </p>
+        <pre><code class="language-plaintext"># Pages Router + FSD 구조
+├── pages/                        # Next.js 라우트 (루트)
+│   └── dashboard/
+│       └── index.tsx             # src/pages/dashboard를 연결만 함
+└── src/
+    ├── pages/                    # 실제 페이지 컴포넌트
+    │   └── dashboard/
+    │       └── index.tsx
+    ├── features/
+    │   └── dashboard/
+    │       ├── DashboardChart.tsx
+    │       └── useDashboardData.ts
+    └── shared/
+        └── ui/
+            └── Button.tsx</code></pre>
+        <p>
+          이 구조에서 대시보드를 수정하려면 <code>src/pages/dashboard/</code>와 <code>src/features/dashboard/</code>를
+          함께 열어야 합니다. 코드가 흩어져 있어 변경 범위를 파악하기 어렵습니다.
+        </p>
+
+        <h2>4. App Router에서 Colocation이 쉬운 이유</h2>
+        <p>
+          Next.js App Router는 <strong>파일 기반 라우팅 규칙이 다릅니다.</strong> <code>app/</code> 폴더 안에서
+          <code>page.tsx</code>, <code>layout.tsx</code>, <code>loading.tsx</code> 같은 특정 파일명만 라우팅에 관여하고,
+          나머지 파일은 자동으로 무시됩니다.
+        </p>
+        <pre><code class="language-plaintext"># App Router에서 가능한 구조
+app/
+└── dashboard/
+    ├── page.tsx              # /dashboard 라우트
+    ├── DashboardChart.tsx    # ✅ 라우팅 무시됨
+    ├── _components/          # ✅ 프라이빗 폴더, 라우팅 무시됨
+    │   └── Filter.tsx
+    └── hooks/
+        └── useDashboardData.ts</code></pre>
+        <p>
+          프레임워크 자체가 Colocation을 지원하니 페이지 전용 컴포넌트나 훅, 유틸리티를 라우트 폴더 안에 마음껏 둘 수
+          있습니다.
+        </p>
+
+        <h3>App Router의 프라이빗 폴더 규칙</h3>
+        <p>
+          폴더명 앞에 언더스코어(<code>_</code>)를 붙이면 그 폴더와 하위 폴더 전체가 라우팅에서 빠집니다. <strong>프라이빗 폴더(Private Folders)</strong>라고 부릅니다.
+        </p>
+        <ul>
+          <li><code>_components/</code>: 해당 페이지 전용 UI 컴포넌트</li>
+          <li><code>_hooks/</code>: 해당 페이지 전용 커스텀 훅</li>
+          <li><code>_lib/</code>: 해당 페이지 전용 유틸리티 함수</li>
+        </ul>
+        <p>
+          이 규칙 덕분에 Pages Router에서는 불가능했던 완전한 Colocation을 App Router에서는 프레임워크가 직접 지원해
+          줍니다. 자세한 내용은
+          <a
+            href="https://nextjs.org/docs/app/getting-started/project-structure#colocation"
+            target="_blank"
+            rel="noopener"
+            >Next.js 공식 문서</a
+          >를 참고하세요.
+        </p>
+
+        <h2>5. Colocation의 구체적 이점</h2>
+        <p>Colocation이 FSD의 폴더 구조를 그대로 따르진 않지만, FSD가 추구하는 목적은 똑같이 달성합니다.</p>
+
+        <div class="table-wrap">
+          <table class="post-table">
+            <thead>
+              <tr>
+                <th>관점</th>
+                <th>Colocation의 이점</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>삭제 용이성</td>
+                <td>라우트 폴더 삭제 = 관련 코드 전부 삭제</td>
+              </tr>
+              <tr>
+                <td>코드 리뷰</td>
+                <td>PR 변경 파일이 한 라우트 폴더에 모임</td>
+              </tr>
+              <tr>
+                <td>탐색 용이성</td>
+                <td>"이 페이지 코드 어디?" → <code>app/products/[productId]/</code> 한 곳</td>
+              </tr>
+              <tr>
+                <td>코드 스플리팅</td>
+                <td>라우트 단위 자동 스플리팅과 일치</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p><strong>FSD:</strong> 대시보드 페이지의 구성을 파악하려면 두 폴더를 탐색해야 함</p>
+        <pre><code class="language-plaintext">├── app/dashboard/
+│   └── page.tsx              # 여기서 시작 → @/widgets/dashboard 를 import
+│
+└── src/widgets/dashboard/    # 여기로 이동해야 실제 구현 확인
+    ├── index.ts
+    ├── DashboardContent.tsx
+    ├── DashboardChart.tsx
+    └── DashboardFilter.tsx</code></pre>
+
+        <p><strong>Colocation:</strong> 대시보드 폴더 하나만 열면 전부 보임</p>
+        <pre><code class="language-plaintext">app/dashboard/                # 이 폴더 하나만 보면 됨
+├── page.tsx
+└── _components/
+    ├── DashboardContent.tsx
+    ├── DashboardChart.tsx
+    └── DashboardFilter.tsx</code></pre>
+        <p>
+          FSD에서는 <code>app/</code>과 <code>src/widgets/</code>를 오가야 하지만, Colocation에서는
+          <code>app/dashboard/</code> 폴더 안에서 모든 파일을 확인합니다.
+        </p>
+
+        <h3>FSD의 목적을 Colocation으로 달성하기</h3>
+        <div class="table-wrap">
+          <table class="post-table">
+            <thead>
+              <tr>
+                <th>FSD의 목적</th>
+                <th>Colocation에서의 실현</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>단방향 의존</td>
+                <td><code>page → _components → _hooks → _shared</code> 단방향 유지</td>
+              </tr>
+              <tr>
+                <td>관련 코드의 응집</td>
+                <td>라우트 폴더 안에 전부 모임 (FSD보다 응집도 높음)</td>
+              </tr>
+              <tr>
+                <td>public API</td>
+                <td>bind 패턴의 <code>index.ts</code> 배럴로 유지</td>
+              </tr>
+              <tr>
+                <td>역할 분리</td>
+                <td><code>_components/_hooks/_lib</code> prefix로 구분</td>
+              </tr>
+              <tr>
+                <td>공유 코드 승격</td>
+                <td>2개 이상 라우트 공유 시 <code>_shared/</code>로 이동 (FSD와 동일 원칙)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          핵심은 <strong>App Router가 이미 FSD의 pages+widgets 역할을 품고 있다</strong>는 점입니다. 굳이 중복 레이어를
+          만들 이유가 없습니다.
+        </p>
+
+        <h2>6. App Router Colocation이 FSD보다 더 응집도가 높았던 사례</h2>
+        <p>
+          두 플로우(웹뷰/카카오톡 인앱)가 같은 화면 네 개를 공유하는 도메인이 있었습니다. 라우트는 플로우별로 폴더가
+          갈라져 있는데, 구현은 FSD에 맞춰 단일 슬라이스에 모았더니 응집도가 떨어졌습니다.
+        </p>
+
+        <h3>FSD 구조: 라우트와 슬라이스의 경계 불일치</h3>
+        <pre><code class="language-plaintext">├── app/
+│   ├── webview/health/               # 웹뷰 플로우
+│   │   ├── layout.tsx                # 🤔 구현을 슬라이스에서 import? 여기에 직접?
+│   │   ├── error.tsx                 # 🤔 라우트 세그먼트 파일들의 위치가 모호
+│   │   ├── page.tsx                  # 얇은 셸, widgets import만
+│   │   ├── result/page.tsx
+│   │   └── history/page.tsx
+│   │
+│   └── kakaotalk/health/             # 카카오톡 인앱 플로우
+│       ├── layout.tsx                # webview와 같은 레이아웃인데 중복?
+│       ├── page.tsx
+│       ├── result/page.tsx
+│       └── history/page.tsx
+│
+└── src/widgets/health/               # 단일 슬라이스
+    ├── webview/
+    │   ├── HealthMain.tsx
+    │   └── ResultView.tsx
+    ├── kakaotalk/
+    │   ├── HealthMain.tsx
+    │   └── ResultView.tsx
+    ├── shared/
+    │   └── HistoryList.tsx
+    └── HealthLayout.tsx              # 🤔 두 플로우가 공유하는 레이아웃</code></pre>
+        <p>
+          <strong>문제:</strong> 슬라이스 내부를 디렉터리로 나눠도 근본적인 문제는 남습니다. 페이지 로직을 추적하려면
+          <code>app/</code> → <code>src/widgets/</code>를 오가야 하고, 라우트에 넣는 게 더 자연스러울 것 같지만 원칙을
+          지켜야 하니 슬라이스에 둬야 하는 부자연스러움이 생깁니다.
+        </p>
+        <p>
+          또한 App Router의 <code>layout.tsx</code>, <code>error.tsx</code>, <code>loading.tsx</code> 같은 라우트
+          세그먼트 파일은 <code>app/</code>에만 존재합니다. FSD 원칙대로라면 이 파일들의 구현도 슬라이스에 두고
+          <code>app/</code>에서 불러와야 하는데, 라우트 구조와 슬라이스 구조가 1:1로 대응하지 않으면 불일치가 생깁니다.
+        </p>
+
+        <h3>Colocation 구조: 라우트가 곧 경계</h3>
+        <pre><code class="language-plaintext">app/
+├── webview/health/                   # 웹뷰 플로우 — 이 폴더가 경계
+│   ├── layout.tsx                    # ✅ 라우트 세그먼트 파일이 제자리에
+│   ├── error.tsx                     # ✅ 에러 처리도 라우트 안에
+│   ├── page.tsx
+│   ├── _components/
+│   │   └── HealthMain.tsx
+│   ├── result/
+│   │   ├── page.tsx
+│   │   └── _components/
+│   │       └── ResultView.tsx
+│   └── history/
+│       └── ...
+│
+├── kakaotalk/health/                 # 카카오톡 플로우 — 이 폴더가 경계
+│   ├── layout.tsx                    # ✅ 플로우별 레이아웃 분리 명확
+│   ├── error.tsx
+│   ├── page.tsx
+│   ├── _components/
+│   │   └── HealthMain.tsx
+│   ├── result/
+│   │   └── ...
+│   └── history/
+│       └── ...
+│
+└── _shared/health/                   # 두 플로우가 공유하는 코드만
+    └── HealthHeader.tsx              # 공유 컴포넌트만 승격</code></pre>
+        <p>
+          <strong>해결:</strong> 라우트 폴더 자체가 경계가 됩니다. 플로우별 구현이 각 라우트 안에 있으니 페이지 로직을
+          추적할 때 해당 폴더만 보면 됩니다. 두 플로우가 실제로 공유하는 코드만 <code>_shared/</code>로 승격합니다.
+        </p>
+
+        <h2>7. 우리 팀의 의사결정 과정</h2>
+        <p>
+          배경에서 언급한 비효율을 해결하기 위해 FE Weekly 회의에서 App Router Colocation을 논의했습니다. 팀원들
+          의견은 이랬습니다.
+        </p>
+        <ul>
+          <li>
+            <strong>A:</strong> "100% 일관성을 지킬 필요 없다고 생각하고, 이 방안이 합리적이라 생각하지만 팀 논의에서
+            의견을 한번 더 듣고 진행하고 싶다."
+          </li>
+          <li>
+            <strong>B:</strong> "App Router Colocation이 개발할 때 더 용이했다. 로직을 찾을 때 라우트 하위로 가서 찾고
+            코드를 살펴보는 게 더 편했다."
+          </li>
+          <li>
+            <strong>C:</strong> "개발 흐름에서 Colocation이 더 익숙하고 편한 점에 공감하고 FSD는 그 부분에서
+            폴더를 오가야하는 것은 맞다. 다만 AI로 코드 작성을 하다 보니 중요성이 조금 낮아진 느낌이긴 하다."
+          </li>
+          <li>
+            <strong>D:</strong> "AI를 적극 활용하기에 폴더 구조의 중요도는 떨어졌지만, 사람이 탐색하기 편하고 유지보수
+            쉬운 방식으로 가는 것은 맞다."
+          </li>
+          <li>
+            <strong>E:</strong> "현재까지는 Pages Router에서 작업을 해와 불편함을 느끼지 못했다. 둘의 장단이 존재하고,
+            나눠야 한다면 라우터 기준으로 나눴으면 좋겠다."
+          </li>
+        </ul>
+
+        <h3>예상 반론과 대응</h3>
+        <p>Colocation도 만능은 아닙니다. 논의 중 나온 반론과 대응을 정리했습니다.</p>
+        <div class="table-wrap">
+          <table class="post-table">
+            <thead>
+              <tr>
+                <th>반론</th>
+                <th>대응</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>라우트가 늘면 <code>_components</code>가 중복될 텐데?</td>
+                <td>
+                  두 곳 이상에서 쓰이면 상위 세그먼트나 <code>_shared</code>로 올립니다. FSD의 승격 원칙과 같습니다.
+                </td>
+              </tr>
+              <tr>
+                <td>FSD는 lint로 강제되는데 Colocation은 규칙이 약하다</td>
+                <td>
+                  맞는 지적입니다. App Router 앱에 대한 최소한의 lint 규칙은 필요합니다. (역의존성 방지, 네이밍 규칙 등)
+                </td>
+              </tr>
+              <tr>
+                <td>하나의 앱에 두 라우터가 공존하면 더 헷갈릴 수 있다</td>
+                <td>신규 App Router 앱에 한해 적용합니다.</td>
+              </tr>
+              <tr>
+                <td>FSD + Pages Router인 앱에 App Router를 도입하고 싶으면?</td>
+                <td>Codeowner가 App Router + FSD를 유지할지, Colocation으로 전환할지 선택합니다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>최종 결론: 앱별로 같은 설계</h3>
+        <p>논의 끝에 우리 팀은 <strong>앱별로 같은 설계를 적용</strong>하기로 했습니다.</p>
+        <ul>
+          <li><strong>기존 Pages Router 앱:</strong> FSD 유지</li>
+          <li><strong>신규 App Router 앱:</strong> Next.js 공식 문서 기반의 Colocation 적용</li>
+        </ul>
+
+        <h2>8. 폴더 구조 예시</h2>
+        <pre><code class="language-plaintext">apps/&lt;dashboard-app&gt;/
+├── app/                                  # 라우터 + 앱 코드 전부
+│   ├── layout.tsx                        # 루트 레이아웃
+│   ├── globals.css
+│   ├── global-error.tsx
+│   │
+│   ├── _shared/                          # 앱 전역 공유
+│   │   ├── ui/                           # 공유 컴포넌트
+│   │   ├── lib/                          # 공유 유틸리티
+│   │   └── hooks/                        # 공유 훅
+│   │
+│   └── dashboard/                        # 라우트 세그먼트 = 도메인 경계
+│       ├── layout.tsx                    # 사이드바, 헤더 등 대시보드 셸
+│       ├── page.tsx                      # 개요 페이지
+│       ├── loading.tsx
+│       ├── error.tsx
+│       ├── _components/
+│       │   └── OverviewChart.tsx
+│       ├── _hooks/                       # 쿼리, 상태 훅
+│       ├── _lib/                         # 순수 로직 + 테스트 콜로케이션
+│       │
+│       ├── patients/                     # 목록
+│       │   ├── page.tsx
+│       │   ├── _components/
+│       │   ├── _hooks/
+│       │   └── _lib/searchParams.ts      # 필터, 페이지네이션 파라미터 스키마
+│       │
+│       ├── patients/[patientId]/         # 상세
+│       │   ├── page.tsx
+│       │   ├── loading.tsx
+│       │   └── _components/
+│       │
+│       ├── reports/
+│       │   ├── page.tsx
+│       │   └── _components/
+│       │
+│       └── settings/
+│           ├── page.tsx
+│           └── _components/</code></pre>
+
+        <h2>9. Import 규칙: 단방향 의존성 흐름</h2>
+        <p>
+          Colocation은 파일을 가까이 두는 것만으로 끝나지 않습니다. 의존성 방향을 한쪽으로 통일해야 코드가 엉키지
+          않습니다.
+        </p>
+        <p>
+          단방향 의존성은 <strong>계층형 설계</strong>를 기반으로 합니다. 하위 계층일수록 재사용성이 높고, 상위
+          계층일수록 추가·수정이 쉽습니다.
+        </p>
+        <ul>
+          <li>
+            <strong>하위 계층 = 높은 재사용성:</strong> <code>_shared</code>, <code>_lib</code>은 여러 페이지에서 가져다
+            쓰므로 안정적으로 유지합니다. 변경 시 영향 범위가 넓어 신중해야 합니다.
+          </li>
+          <li>
+            <strong>상위 계층 = 쉬운 추가:</strong> <code>page</code>, <code>_components</code>는 특정 라우트에 종속되어
+            있어 자유롭게 추가·수정합니다. 다른 곳에 영향을 주지 않습니다.
+          </li>
+        </ul>
+        <p><strong>왜 단방향이어야 하는가?</strong></p>
+        <ul>
+          <li><strong>순환 참조 방지:</strong> A → B → A 같은 순환이 생기면 빌드 오류나 런타임 버그로 이어집니다.</li>
+          <li>
+            <strong>삭제가 쉬워짐:</strong> 상위 계층만 하위를 참조하면, 하위 코드를 삭제할 때 영향 범위가 명확합니다.
+          </li>
+          <li><strong>코드 추적이 단순해짐:</strong> "이 훅을 누가 쓰지?"라는 질문에 상위 계층만 보면 됩니다.</li>
+        </ul>
+        <pre class="mermaid">
+flowchart LR
+  A["page"] --> B["_components"]
+  B --> C["_hooks"]
+  C --> D["_lib"]
+  D --> E["_shared"]
+  B --> E
+  C --> E</pre
+        >
+        <ul>
+          <li>
+            <code>page</code> → <code>_components</code> → <code>_hooks</code> → <code>_lib</code> →
+            <code>_shared</code>
+          </li>
+          <li>
+            예: <code>_components</code> 안에서는 <code>_hooks</code>나 <code>_shared</code>를 불러올 수 있지만,
+            <code>_shared</code> 안에서 <code>_components</code> 코드를 불러오면 안 됩니다.
+          </li>
+        </ul>
+
+        <h2>10. 기대 효과</h2>
+        <ol>
+          <li>
+            <strong>빠른 초기 개발:</strong> 페이지 안(<code>_components/</code>)에서 빠르게 개발하고, 필요할 때만
+            승격합니다.
+          </li>
+          <li><strong>높은 응집도:</strong> 특정 페이지를 수정할 때 해당 폴더 안에서만 작업하면 됩니다.</li>
+          <li><strong>쉬운 삭제:</strong> 라우트 폴더 삭제 = 관련 코드 전부 삭제.</li>
+          <li><strong>YAGNI 원칙 준수:</strong> 재사용이 필요해지기 전까지 불필요한 추상화를 만들지 않습니다.</li>
+        </ol>
+
+        <h2>정리</h2>
+        <p>
+          App Router의 Colocation은 FSD를 부정하지 않습니다. App Router가 이미 FSD의 pages+widgets 역할을 품고 있으니
+          중복 레이어 없이 FSD v2.1의 Pages-First 방식을 더 자연스럽게 구현하는 셈입니다.
+        </p>
+        <p>
+          프레임워크 기능을 최대한 활용하면서 개발 편의성을 챙기는 게 이번 의사결정의 핵심이었습니다. 원칙을
+          고수하기보다 프레임워크가 제공하는 기능을 활용해 실용성을 높이는 방향으로 설계했습니다.
+        </p>
+        <p>
+          물론 이 설계가 모든 상황에 맞는 정답은 아닙니다.
+          <a href="https://en.wikipedia.org/wiki/Conway%27s_law" target="_blank" rel="noopener">콘웨이 법칙</a>이
+          말하듯, 소프트웨어 구조는 조직 구조를 반영합니다.
+        </p>
+        <blockquote>
+          <p>"시스템을 설계하는 조직은 그 조직의 의사소통 구조를 그대로 복제한 설계를 만들어낼 수밖에 없다."</p>
+        </blockquote>
+        <p>
+          팀 상황과 비즈니스 요구에 따라 설계는 언제든 달라집니다. 그 상황에서 최선의 설계를 찾는 게 좋지 않을까
+          생각합니다.
+        </p>
+
+        <!-- 구독 섹션 -->
+        <section class="subscribe-inline">
+          <h3>새 글 알림 받기</h3>
+          <p>새로운 글이 발행되면 이메일로 알려드립니다.</p>
+          <form data-subscribe-form class="subscribe-inline-form">
+            <input
+              type="email"
+              name="email"
+              class="subscribe-input"
+              placeholder="이메일 주소"
+              required
+              autocomplete="email"
+            />
+            <button type="submit" class="subscribe-submit">구독</button>
+          </form>
+          <div data-subscribe-message class="subscribe-message" style="display: none"></div>
+        </section>
+
+        <div class="back-to-list">
+          <a href="/index.html" class="back-button">← 글 목록으로 돌아가기</a>
+        </div>
+      </main>
+      <script
+        src="https://utteranc.es/client.js"
+        repo="doong-jo/doong-jo.github.io"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async
+      ></script>
+    </div>
+    <script src="../common/common.js"></script>
+    <script src="../nav/nav.js"></script>
+    <script src="../post/prism.js"></script>
+    <script src="../post/mermaid.min.js"></script>
+    <script src="../post/mermaid.js"></script>
+    <script src="../subscribe/subscribe.js"></script>
+  </body>
+</html>
