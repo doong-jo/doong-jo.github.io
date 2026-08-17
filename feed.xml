@@ -11,6 +11,15 @@
     <webMaster>doong-jo@github.io (Sungdong Cho)</webMaster>
 
     <item>
+      <title>Next.js App Router에서 FSD 대신 Colocation을 선택한 이유</title>
+      <link>https://doong-jo.github.io/posts/nextjs-application-colocation-design.html</link>
+      <description>FSD 원칙을 고수하다 App Router의 Colocation을 채택한 이야기. Page Router와 App Router의 차이, 페이지 근처에 코드를 두는 실용적 폴더 구조 설계.</description>
+      <pubDate>Sun, 16 Aug 2026 00:00:00 +0900</pubDate>
+      <guid isPermaLink="true">https://doong-jo.github.io/posts/nextjs-application-colocation-design.html</guid>
+      <author>doong-jo@github.io (Sungdong Cho)</author>
+    </item>
+
+    <item>
       <title>iOS 웹뷰에서 첫 화면이 10초 넘게 안 뜬 이유, WebKit 렌더링 분석</title>
       <link>https://doong-jo.github.io/posts/ios-webview-first-paint-delay.html</link>
       <description>CSS에 선언만 하고 쓰지 않은 폰트 때문에 iOS 웹뷰가 최대 19초간 백지를 보여줬습니다. WebKit 레이어 트리 동결이 원인이었습니다.</description>
