@@ -269,8 +269,10 @@
 
         <h2>3. Pages Router에서 Colocation이 어려운 이유</h2>
         <p>
-          Next.js Pages Router는 <code>pages/</code> 폴더 안의 모든 파일을 라우트로 인식합니다. 그래서 페이지 전용
-          컴포넌트를 페이지 파일 옆에 둘 수가 없습니다.
+          FSD v2.1이 Pages-First를 지향하더라도, Next.js Pages Router의 기술적 제약 때문에 이를 온전히 구현하기 어렵습니다.
+        </p>
+        <p>
+          Pages Router는 <code>pages/</code> 폴더 안의 모든 파일을 라우트로 인식합니다. 그래서 페이지 전용 컴포넌트를 페이지 파일 옆에 둘 수가 없습니다.
         </p>
         <pre><code class="language-plaintext"># 이렇게 하고 싶지만...
 pages/
@@ -284,24 +286,22 @@ pages/
           언더스코어(<code>_</code>) prefix를 붙여도 라우팅에서 빠지지 않습니다. 결국 페이지 전용 코드도
           <code>pages/</code> 바깥의 <code>components/</code>, <code>features/</code> 등에 둬야 합니다.
         </p>
-        <pre><code class="language-plaintext"># Pages Router + FSD 구조
+        <pre><code class="language-plaintext"># Pages Router + FSD v2.1 (Pages-First) 구조
 ├── pages/                        # Next.js 라우트 (루트)
 │   └── dashboard/
 │       └── index.tsx             # src/pages/dashboard를 연결만 함
 └── src/
-    ├── pages/                    # 실제 페이지 컴포넌트
+    ├── pages/                    # FSD pages 레이어
     │   └── dashboard/
-    │       └── index.tsx
-    ├── features/
-    │   └── dashboard/
+    │       ├── index.tsx         # 실제 페이지 컴포넌트
     │       ├── DashboardChart.tsx
     │       └── useDashboardData.ts
     └── shared/
         └── ui/
             └── Button.tsx</code></pre>
         <p>
-          이 구조에서 대시보드를 수정하려면 <code>src/pages/dashboard/</code>와 <code>src/features/dashboard/</code>를
-          함께 열어야 합니다. 코드가 흩어져 있어 변경 범위를 파악하기 어렵습니다.
+          Pages-First 구조를 따르더라도, Next.js <code>pages/</code>와 FSD <code>src/pages/</code>가 분리되어 있어
+          대시보드를 수정하려면 두 폴더를 오가야 합니다. 라우트 파일과 실제 구현이 떨어져 있어 변경 범위를 파악하기 어렵습니다.
         </p>
 
         <h2>4. App Router에서 Colocation이 쉬운 이유</h2>
