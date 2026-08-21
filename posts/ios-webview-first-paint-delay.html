@@ -16,7 +16,7 @@
     <title>iOS 웹뷰에서 첫 화면이 10초 넘게 안 뜬 이유, WebKit 렌더링 분석 | doong-jo</title>
     <meta
       name="description"
-      content="CSS에 선언만 하고 쓰지 않은 폰트 때문에 iOS 웹뷰가 최대 19초간 백지를 보여줬습니다. WebKit 레이어 트리 동결이 원인이었습니다."
+      content="CSS에 선언만 하고 쓰지 않은 폰트 때문에 iOS 웹뷰가 최대 19초간 빈 화면을 보여줬습니다. WebKit 레이어 트리 동결이 원인이었습니다."
     />
     <meta name="author" content="doong-jo" />
     <meta name="keywords" content="iOS, WebView, 성능 최적화, 폰트, @font-face, WebKit, Next.js, 첫 화면 지연, FCP" />
@@ -38,7 +38,7 @@
     <meta property="og:title" content="iOS 웹뷰에서 첫 화면이 10초 넘게 안 뜬 이유, WebKit 렌더링 분석" />
     <meta
       property="og:description"
-      content="CSS에 선언만 하고 쓰지 않은 폰트 때문에 iOS 웹뷰가 최대 19초간 백지를 보여줬습니다. WebKit 레이어 트리 동결이 원인이었습니다."
+      content="CSS에 선언만 하고 쓰지 않은 폰트 때문에 iOS 웹뷰가 최대 19초간 빈 화면을 보여줬습니다. WebKit 레이어 트리 동결이 원인이었습니다."
     />
     <meta property="og:url" content="https://doong-jo.github.io/posts/ios-webview-first-paint-delay.html" />
     <meta property="og:site_name" content="doong-jo" />
@@ -57,7 +57,7 @@
     <meta name="twitter:title" content="iOS 웹뷰에서 첫 화면이 10초 넘게 안 뜬 이유, WebKit 렌더링 분석" />
     <meta
       name="twitter:description"
-      content="CSS에 선언만 하고 쓰지 않은 폰트 때문에 iOS 웹뷰가 최대 19초간 백지를 보여줬습니다. WebKit 레이어 트리 동결이 원인이었습니다."
+      content="CSS에 선언만 하고 쓰지 않은 폰트 때문에 iOS 웹뷰가 최대 19초간 빈 화면을 보여줬습니다. WebKit 레이어 트리 동결이 원인이었습니다."
     />
     <meta
       name="twitter:image"
@@ -382,7 +382,7 @@
         </ul>
         <p>
           미사용 폰트는 완료 신호가 없으니, WebKit은 <code>load</code> 이벤트가 발생할 때까지 "아직 준비 중"이라고
-          판단합니다. 그 사이 화면은 계속 동결된 상태로 백지를 보여줍니다.
+          판단합니다. 그 사이 화면은 계속 동결된 상태로 빈 화면을 보여줍니다.
         </p>
         <p>
           Blink는 이런 동작이 없습니다. 폰트 로딩과 관계없이 준비된 콘텐츠부터 화면에 그립니다. 같은 조건에서 Android가
@@ -423,7 +423,7 @@
         <p>
           WebKit이 레이어 트리를 동결하면 <code>requestAnimationFrame</code> 콜백이 실행되지 않습니다.
           <code>requestAnimationFrame</code>은 "다음 화면을 그리기 직전에 실행해줘"라는 요청인데, 화면 그리기 자체가
-          멈춰있으니 "다음 화면"이 오지 않는 것입니다. Next.js의 하이드레이션도 시작조차 못 하고, 사용자는 백지를 보게
+          멈춰있으니 "다음 화면"이 오지 않는 것입니다. Next.js의 하이드레이션도 시작조차 못 하고, 사용자는 빈 화면을 보게
           됩니다.
         </p>
 
