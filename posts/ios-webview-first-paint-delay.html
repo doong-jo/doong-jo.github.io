@@ -571,12 +571,20 @@
         </table>
 
         <figure>
-          <img src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/e1f69400-0885-421a-7b7b-172a41d89500/public" alt="Case 1(동결)과 Case 2(정상)의 차이" />
+          <img src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/e1f69400-0885-421a-7b7b-172a41d89500/public" alt="Case 1(동결)과 Case 2(정상)의 차이" style="max-width: 100%; width: 800px;" />
           <figcaption>Case 1(동결)과 Case 2(정상)의 차이</figcaption>
         </figure>
 
         <p>
-          우측 상단 패널에서 RAF(requestAnimationFrame)와 Load 타이밍을 확인할 수 있습니다.
+          우측 상단 패널에서 RAF와 Load 타이밍을 확인할 수 있습니다.
+        </p>
+        <ul>
+          <li><strong>Case 1 (동결)</strong>: RAF 2001ms, Load 2000ms → 차이 1ms</li>
+          <li><strong>Case 2 (정상)</strong>: RAF 48ms, Load 2005ms → 차이 1957ms</li>
+        </ul>
+        <p>
+          Case 1은 RAF와 Load가 거의 동시에 발생해 화면이 2초간 멈춰 있었습니다.
+          Case 2는 RAF가 48ms에 실행되어 화면이 바로 그려졌고, 이미지 로딩은 백그라운드에서 진행됐습니다.
         </p>
 
         <h2>해결: 미사용 폰트 제거와 스크립트 지연 로딩</h2>
