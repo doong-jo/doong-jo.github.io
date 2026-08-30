@@ -127,6 +127,29 @@
         </div>
         <h1>iOS 웹뷰에서 첫 화면이 10초 넘게 안 뜬 이유, WebKit 렌더링 분석</h1>
 
+        <aside class="summary-box">
+          <h2>핵심 요약</h2>
+          <dl>
+            <dt>잠복 조건</dt>
+            <dd>CSS에 <code>@font-face</code>에 선언했지만 실제로 사용하지 않는 폰트가 존재</dd>
+
+            <dt>트리거</dt>
+            <dd>외부 리소스(JavaScript, CSS, 분석 스크립트, 이미지 등)가 <code>load</code> 이벤트를 지연시킬 때</dd>
+
+            <dt>발생 현상</dt>
+            <dd>WebKit이 미사용 폰트의 "완료" 신호를 받지 못해 레이어 트리를 동결하고 First Paint가 지연됨 → <code>load</code> 이벤트까지 빈 화면 유지</dd>
+
+            <dt>해결책</dt>
+            <dd>
+              <ol>
+                <li>미사용 폰트 선언 제거</li>
+                <li>전역 선언 대신 페이지별로 실제 사용하는 폰트만 선언</li>
+                <li>비필수 스크립트는 <code>load</code> 이후로 지연 로딩</li>
+              </ol>
+            </dd>
+          </dl>
+        </aside>
+
         <h2>문제: iOS 환경에서 first paint가 10초 이상 걸린다</h2>
         <p>
           최근 우리 팀의 Next.js 기반 웹앱을 iOS 웹뷰에서 열었을 때 첫 화면이 유독 늦게 떴습니다. 같은 페이지를 Android
@@ -370,7 +393,7 @@
           판단합니다. 문제는 WebKit이 해당 폰트가 실제로 사용되는지까지는 확인하지 않는다는 점입니다. 선언만 있어도
           "폰트 로딩 중"으로 간주합니다.
         </p>
-        <p>사용하는 폰트와 미사용 폰트의 운명이 여기서 갈립니다.</p>
+        <p>사용하는 폰트와 미사용 폰트의 렌더링 차이는 다음과 같습니다.</p>
         <ul>
           <li>
             <strong>사용하는 폰트</strong>: 브라우저가 폰트 파일을 다운로드 → 완료 → "준비됨"으로 전환 → 동결 해제
@@ -487,6 +510,75 @@
           조건이었습니다.
         </p>
 
+        <h2>직접 테스트해보기</h2>
+        <p>
+          이 현상을 직접 체험해볼 수 있도록 테스트 페이지를 만들었습니다.
+          Safari(macOS 또는 iOS)에서 각 케이스를 열어보면 레이어 트리 동결 여부를 눈으로 확인할 수 있습니다.
+        </p>
+
+        <figure>
+          <img src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/1914a44e-68be-4684-c355-8be26544ae00/public" alt="WebKit 레이어 트리 동결 테스트 페이지" />
+          <figcaption>테스트 케이스 목록</figcaption>
+        </figure>
+
+        <p>
+          <a href="/reproduce/webkit-layer-tree-freeze/" target="_blank">
+            → 테스트 페이지 열기
+          </a>
+        </p>
+
+        <h3>테스트 케이스</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>케이스</th>
+              <th>조건</th>
+              <th>예상 결과</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>미사용 @font-face</td>
+              <td>🔴 동결</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>사용 폰트 (성공)</td>
+              <td>🟢 정상</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>사용 폰트 (404)</td>
+              <td>🟢 정상</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>미사용 + font-display</td>
+              <td>🔴 동결</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>이미지 로딩 지연 조절</td>
+              <td>🔴 동결</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>200자/1024px 임계값</td>
+              <td>🟠 가변</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <figure>
+          <img src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/e1f69400-0885-421a-7b7b-172a41d89500/public" alt="Case 1(동결)과 Case 2(정상)의 차이" />
+          <figcaption>Case 1(동결)과 Case 2(정상)의 차이</figcaption>
+        </figure>
+
+        <p>
+          우측 상단 패널에서 RAF(requestAnimationFrame)와 Load 타이밍을 확인할 수 있습니다.
+        </p>
+
         <h2>해결: 미사용 폰트 제거와 스크립트 지연 로딩</h2>
         <p>원인을 알았으니 해결책은 명확했습니다.</p>
 
@@ -562,6 +654,83 @@
           <code>optional</code>, <code>fallback</code>, <code>block</code> 모두 5,021~5,048ms로 차이가 없었습니다.
           <code>font-display</code>는 폰트가 실제로 사용될 때 텍스트를 어떻게 보여줄지 제어하는 속성이기 때문입니다.
           폰트가 사용되지 않으면 속성 자체가 적용될 일이 없습니다.
+        </p>
+
+        <h4>여러 폰트를 사용하는 프로젝트라면</h4>
+        <p>
+          "폰트를 여러 개 쓰는데, 페이지마다 다른 폰트를 쓴다"는 상황도 있습니다. 기본 본문에는 Pretendard를,
+          프로모션 타이틀에는 브랜드 폰트를, 이벤트 페이지에는 또 다른 폰트를 쓰는 식입니다.
+        </p>
+        <p>
+          전역 CSS에 세 폰트를 모두 선언해두면, 폰트 하나만 쓰는 페이지에서 나머지 두 폰트가 미사용 상태가 됩니다.
+          앞서 설명한 문제가 그대로 발생합니다.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>페이지</th>
+              <th>Pretendard</th>
+              <th>브랜드 폰트</th>
+              <th>이벤트 폰트</th>
+              <th>결과</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>피드</td>
+              <td>사용</td>
+              <td>미사용</td>
+              <td>미사용</td>
+              <td>동결 위험</td>
+            </tr>
+            <tr>
+              <td>프로모션</td>
+              <td>사용</td>
+              <td>사용</td>
+              <td>미사용</td>
+              <td>동결 위험</td>
+            </tr>
+            <tr>
+              <td>이벤트</td>
+              <td>사용</td>
+              <td>사용</td>
+              <td>사용</td>
+              <td>정상</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>페이지별로 필요한 폰트만 선언하면 됩니다.</p>
+        <pre><code class="language-plaintext">styles/
+├── base.css      → Pretendard만 선언
+├── promo.css     → 브랜드 폰트 선언
+└── event.css     → 이벤트 폰트 선언</code></pre>
+
+        <h4>Next.js의 next/font를 쓴다면</h4>
+        <p>
+          next/font도 <code>@font-face</code>를 생성합니다. layout.tsx에서 여러 폰트를 import하면
+          모든 페이지에 해당 폰트 선언이 들어갑니다.
+        </p>
+        <pre><code class="language-tsx">// app/layout.tsx
+import { Noto_Sans_KR } from 'next/font/google';
+import localFont from 'next/font/local';
+
+const notoSans = Noto_Sans_KR({ subsets: ['latin'] });
+const brandFont = localFont({ src: './brand.woff2' });  // 프로모션용
+const eventFont = localFont({ src: './event.woff2' });  // 이벤트용
+
+// 세 폰트 모두 @font-face로 선언됨 → 미사용 폰트 문제 발생</code></pre>
+        <p>페이지별로 필요한 폰트만 import하면 해결됩니다.</p>
+        <pre><code class="language-tsx">// app/page.tsx - 기본 페이지
+import { notoSans } from '@/fonts';
+
+// app/promo/page.tsx - 프로모션 페이지
+import { notoSans, brandFont } from '@/fonts';
+
+// app/event/page.tsx - 이벤트 페이지
+import { notoSans, brandFont, eventFont } from '@/fonts';</code></pre>
+        <p>
+          컴포넌트에서 폰트를 import하면 해당 컴포넌트가 렌더링될 때만 <code>@font-face</code>가 추가됩니다.
+          전역 layout 대신 실제로 폰트를 쓰는 컴포넌트에서 import하는 게 안전합니다.
         </p>
 
         <h3>2. 분석 도구 지연 초기화</h3>
@@ -658,7 +827,11 @@ useEffect(() =&gt; {
         <p>
           <strong>초기 로딩 성능을 지속적으로 모니터링해야 합니다.</strong>
           이번 문제는 서서히 악화됐습니다. Clarity 서버가 점점 느려지면서 로딩 시간도 조금씩 길어졌는데, 팀은 "원래 이
-          정도였나?"라며 넘긴 점도 있는 것 같습니다. 팀에서는 Datadog 도입을 준비하고 있는데 <a href="https://docs.datadoghq.com/ko/real_user_monitoring/browser/monitoring_page_performance/">RUM의 페이지 성능 모니터링</a> 기능을 활용해볼 예정입니다.
+          정도였나?"라며 넘긴 점도 있는 것 같습니다. Sentry에서 Web Vitals 대시보드를 만들어 적극적으로 활용해볼 예정입니다.
+        </p>
+        <p>
+          <strong>루트에 모든 폰트를 선언하지 말고, 각 페이지에서 필요한 폰트만 선언해야 합니다.</strong>
+          전역 CSS에 여러 폰트를 선언해두면, 특정 페이지에서 쓰지 않는 폰트가 미사용 상태로 남아 동일한 문제를 일으킬 수 있습니다.
         </p>
 
         <h2>참고자료</h2>

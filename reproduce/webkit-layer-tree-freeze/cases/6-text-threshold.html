@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Case 6: 임계값</title>
+    <style>
+      @font-face {
+        font-family: "Pretendard";
+        src: url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/woff2/Pretendard-Regular.woff2")
+          format("woff2");
+      }
+      body {
+        font: 14px system-ui;
+        padding: 16px;
+        margin: 0;
+      }
+      #txt {
+        color: #666;
+        word-break: break-all;
+        font-size: 12px;
+      }
+      #img {
+        display: block;
+        margin-top: 8px;
+        background: #eee;
+      }
+      .back-btn {
+        display: inline-block;
+        margin-top: 16px;
+        padding: 8px 16px;
+        background: #333;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      .back-btn:hover { background: #555; }
+    </style>
+  </head>
+  <body>
+    <p id="txt"></p>
+    <img id="img" />
+    <script>
+      const base = "가나다라마바사아자차카타파하";
+      const p = new URLSearchParams(location.search);
+      const tc = p.has("t") ? parseInt(p.get("t")) : 100;
+      const ic = p.has("i") ? parseInt(p.get("i")) : 0;
+
+      const txtEl = document.getElementById("txt");
+      if (tc > 0) {
+        let t = "";
+        while (t.length < tc) t += base;
+        txtEl.textContent = t.slice(0, tc);
+      } else {
+        txtEl.style.display = "none";
+      }
+
+      const img = document.getElementById("img");
+      if (ic > 0) {
+        img.src = "../delay/0/image";
+        img.width = ic;
+        img.height = ic;
+      } else {
+        img.style.display = "none";
+      }
+
+      // load 지연용 숨겨진 이미지 (렌더 블로킹 아님)
+      const delayImg = document.createElement("img");
+      delayImg.src = "../delay/3000/image";
+      delayImg.style.display = "none";
+      document.body.appendChild(delayImg);
+
+      // 버튼은 load 후 추가 (초기 텍스트 카운트에서 제외)
+      window.addEventListener("load", () => {
+        const btn = document.createElement("a");
+        btn.href = "../";
+        btn.className = "back-btn";
+        btn.textContent = "← 목록으로";
+        document.body.appendChild(btn);
+      });
+    </script>
+    <script src="../reproduce.js"></script>
+  </body>
+</html>

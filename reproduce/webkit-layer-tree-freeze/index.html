@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebKit의 레이어 트리 동결 재현</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f7;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 600;
+      color: #1d1d1f;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-size: 17px;
+      color: #6e6e73;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    .subtitle a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+
+    .subtitle a:hover {
+      text-decoration: underline;
+    }
+
+    .case-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .case-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .case-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .case-number {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 600;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .case-freeze .case-number { background: #ff3b30; }
+    .case-normal .case-number { background: #34c759; }
+    .case-variable .case-number { background: #ff9500; }
+
+    .case-content {
+      flex: 1;
+    }
+
+    .case-title {
+      font-size: 17px;
+      font-weight: 500;
+      color: #1d1d1f;
+      margin-bottom: 4px;
+    }
+
+    .case-desc {
+      font-size: 14px;
+      color: #6e6e73;
+    }
+
+    .case-badge {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 12px;
+      flex-shrink: 0;
+    }
+
+    .case-freeze .case-badge {
+      background: #ffebea;
+      color: #ff3b30;
+    }
+
+    .case-normal .case-badge {
+      background: #e8f8ec;
+      color: #34c759;
+    }
+
+    .case-variable .case-badge {
+      background: #fff4e6;
+      color: #ff9500;
+    }
+
+    .legend {
+      margin-top: 32px;
+      padding: 16px 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .legend h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1d1d1f;
+      margin-bottom: 12px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #6e6e73;
+      margin-bottom: 8px;
+    }
+
+    .legend-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .legend-dot.freeze { background: #ff3b30; }
+    .legend-dot.normal { background: #34c759; }
+    .legend-dot.variable { background: #ff9500; }
+
+    .note {
+      margin-top: 24px;
+      padding: 16px;
+      background: #fff9e6;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #86610f;
+      line-height: 1.5;
+    }
+
+    .note strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>WebKit의 레이어 트리 동결 재현</h1>
+    <p class="subtitle">
+      WebKit 레이어 트리 동결 문제를 직접 테스트합니다.<br>
+      관련 글: <a href="/posts/ios-webview-first-paint-delay.html">iOS WebView 첫 화면 지연 현상</a>
+    </p>
+
+    <div class="case-grid">
+      <a href="cases/1-unused-font.html" class="case-card case-freeze">
+        <div class="case-number">1</div>
+        <div class="case-content">
+          <div class="case-title">미사용 @font-face</div>
+          <div class="case-desc">폰트를 선언만 하고 사용하지 않음 · <em>2초 이미지</em></div>
+        </div>
+        <span class="case-badge">동결</span>
+      </a>
+
+      <a href="cases/2-used-font-success.html" class="case-card case-normal">
+        <div class="case-number">2</div>
+        <div class="case-content">
+          <div class="case-title">사용 폰트 (성공)</div>
+          <div class="case-desc">폰트를 선언하고 실제로 텍스트에 적용 · <em>2초 이미지</em></div>
+        </div>
+        <span class="case-badge">정상</span>
+      </a>
+
+      <a href="cases/3-used-font-404.html" class="case-card case-normal">
+        <div class="case-number">3</div>
+        <div class="case-content">
+          <div class="case-title">사용 폰트 (404)</div>
+          <div class="case-desc">폰트 적용했지만 파일이 없음 · <em>2초 이미지</em></div>
+        </div>
+        <span class="case-badge">정상</span>
+      </a>
+
+      <a href="cases/4-font-display.html" class="case-card case-freeze">
+        <div class="case-number">4</div>
+        <div class="case-content">
+          <div class="case-title">font-display 속성</div>
+          <div class="case-desc">swap, block 등 font-display 지정 · <em>2초 이미지</em></div>
+        </div>
+        <span class="case-badge">동결</span>
+      </a>
+
+      <a href="cases/5-slow-resource.html" class="case-card case-freeze">
+        <div class="case-number">5</div>
+        <div class="case-content">
+          <div class="case-title">이미지 로딩 지연</div>
+          <div class="case-desc">이미지 로딩 지연시간 조절 · <em>조절 가능</em></div>
+        </div>
+        <span class="case-badge">동결</span>
+      </a>
+
+      <div class="case-card case-variable" style="flex-direction:column;align-items:stretch;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="case-number">6</div>
+          <div class="case-content">
+            <div class="case-title">200자 or 1024px 임계값</div>
+            <div class="case-desc">?t=글자수&i=이미지px (기본: t=100, i=0) · <em>3초 이미지</em></div>
+          </div>
+          <span class="case-badge">가변</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+          <a href="cases/6-text-threshold.html?t=10" style="padding:6px 12px;background:#f0f0f0;border-radius:4px;font-size:12px;color:#333;text-decoration:none;">10자 🔴</a>
+          <a href="cases/6-text-threshold.html?t=100" style="padding:6px 12px;background:#f0f0f0;border-radius:4px;font-size:12px;color:#333;text-decoration:none;">100자 🔴</a>
+          <a href="cases/6-text-threshold.html?t=200" style="padding:6px 12px;background:#f0f0f0;border-radius:4px;font-size:12px;color:#333;text-decoration:none;">200자 🟢</a>
+          <a href="cases/6-text-threshold.html?t=0&i=500" style="padding:6px 12px;background:#f0f0f0;border-radius:4px;font-size:12px;color:#333;text-decoration:none;">이미지 500px 🔴</a>
+          <a href="cases/6-text-threshold.html?t=0&i=1024" style="padding:6px 12px;background:#f0f0f0;border-radius:4px;font-size:12px;color:#333;text-decoration:none;">이미지 1024px 🟢</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <h3>판정 기준</h3>
+      <div class="legend-item">
+        <span class="legend-dot freeze"></span>
+        <span><strong>동결</strong>: |raf - load| &lt; 100ms → 레이어 트리가 동결됨</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot normal"></span>
+        <span><strong>정상</strong>: raf &lt;&lt; load → 정상적으로 점진적 렌더링</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot variable"></span>
+        <span><strong>가변</strong>: 조건에 따라 결과가 달라짐</span>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>⚠️ 테스트 주의사항</strong>
+      폰트 캐시를 비우거나 시크릿 모드에서 테스트하세요.<br>
+      첫 방문 시 Service Worker가 등록되며, 새로고침 후 정상 작동합니다.
+    </div>
+  </div>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+</body>
+</html>

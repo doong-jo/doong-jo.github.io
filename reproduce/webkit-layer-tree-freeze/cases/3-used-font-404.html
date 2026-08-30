@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Case 3: 404 폰트</title>
+  <style>
+    @font-face {
+      font-family: 'NotExist';
+      src: url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/woff2/NOT-EXIST.woff2') format('woff2');
+    }
+    body { font: 15px system-ui; padding: 16px; }
+    h1 { font-size: 18px; margin: 0 0 8px; font-family: 'NotExist', system-ui; }
+    p { margin: 0; color: #666; font-family: 'NotExist', system-ui; }
+    img { display: block; margin-top: 12px; }
+    .back-btn { display: inline-block; margin-top: 16px; padding: 8px 16px; background: #333; color: #fff; text-decoration: none; border-radius: 4px; font-size: 14px; }
+    .back-btn:hover { background: #555; }
+  </style>
+</head>
+<body>
+  <h1>Case 3: 사용 폰트 (404)</h1>
+  <p>폰트 선언 O, 사용 O, 404 → 정상 예상</p>
+  <img src="../delay/2000/image" width="50" height="50">
+  <a href="../" class="back-btn">← 목록으로</a>
+  <script src="../reproduce.js"></script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+/* iOS WebView 폰트 문제 재현 테스트 - 공통 스타일 */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f5f5f7;
+  min-height: 100vh;
+  padding: 60px 20px 40px;
+}
+
+/* 타이밍 결과 표시 */
+.timing-panel {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  font-size: 13px;
+  z-index: 1000;
+  min-width: 200px;
+}
+
+.timing-panel h4 {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6e6e73;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.timing-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.timing-label {
+  color: #6e6e73;
+}
+
+.timing-value {
+  font-family: 'SF Mono', Monaco, Consolas, monospace;
+  font-weight: 500;
+  color: #1d1d1f;
+}
+
+.timing-result {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e5e7;
+}
+
+.timing-verdict {
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.timing-verdict.freeze {
+  background: #ffebea;
+  color: #ff3b30;
+}
+
+.timing-verdict.normal {
+  background: #e8f8ec;
+  color: #34c759;
+}
+
+.timing-verdict.pending {
+  background: #f5f5f7;
+  color: #6e6e73;
+}
+
+/* 테스트 컨테이너 */
+.test-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #0066cc;
+  text-decoration: none;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-bottom: 8px;
+}
+
+.case-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.case-badge.freeze {
+  background: #ffebea;
+  color: #ff3b30;
+}
+
+.case-badge.normal {
+  background: #e8f8ec;
+  color: #34c759;
+}
+
+.case-badge.variable {
+  background: #fff4e6;
+  color: #ff9500;
+}
+
+/* 설명 영역 */
+.description {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.description h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-bottom: 8px;
+}
+
+.description p {
+  font-size: 14px;
+  color: #6e6e73;
+  line-height: 1.6;
+}
+
+/* 코드 블록 */
+.code-block {
+  background: #1d1d1f;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 12px;
+  overflow-x: auto;
+}
+
+.code-block code {
+  font-family: 'SF Mono', Monaco, Consolas, monospace;
+  font-size: 13px;
+  color: #f5f5f7;
+  line-height: 1.5;
+}
+
+/* 테스트 컨텐츠 영역 */
+.test-content {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.test-content h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-bottom: 16px;
+}
+
+/* 컨트롤 영역 */
+.controls {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.controls label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1d1d1f;
+  margin-bottom: 8px;
+}
+
+.controls input[type="range"] {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.controls .value-display {
+  font-size: 14px;
+  color: #6e6e73;
+  text-align: center;
+}
+
+.controls button {
+  width: 100%;
+  padding: 12px;
+  background: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+.controls button:hover {
+  background: #0055b3;
+}
+
+/* 폰트 적용 테스트 텍스트 */
+.font-test-text {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #1d1d1f;
+}

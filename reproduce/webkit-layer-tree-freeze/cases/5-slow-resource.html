@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Case 5: 지연 조절</title>
+  <style>
+    @font-face {
+      font-family: 'Pretendard';
+      src: url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/woff2/Pretendard-Regular.woff2') format('woff2');
+    }
+    body { font: 15px system-ui; padding: 16px; }
+    h1 { font-size: 18px; margin: 0 0 8px; }
+    p { margin: 0; color: #666; }
+    .ctrl { margin: 12px 0; }
+    img { display: block; margin-top: 12px; }
+    .back-btn { display: inline-block; margin-top: 16px; padding: 8px 16px; background: #333; color: #fff; text-decoration: none; border-radius: 4px; font-size: 14px; }
+    .back-btn:hover { background: #555; }
+  </style>
+</head>
+<body>
+  <h1>Case 5: 이미지 로딩 지연</h1>
+  <p>이미지 로딩 지연시간 조절</p>
+  <div class="ctrl">
+    <input type="range" id="s" min="500" max="5000" step="500" value="2000">
+    <span id="v">2000</span>ms
+    <button id="b">적용</button>
+  </div>
+  <img id="img" width="50" height="50">
+  <a href="../" class="back-btn">← 목록으로</a>
+  <script>
+    const p = new URLSearchParams(location.search);
+    const d = parseInt(p.get('d')) || 2000;
+    document.getElementById('s').value = d;
+    document.getElementById('v').textContent = d;
+    document.getElementById('s').oninput = e => document.getElementById('v').textContent = e.target.value;
+    document.getElementById('b').onclick = () => location.href = '?d=' + document.getElementById('s').value;
+    document.getElementById('img').src = '../delay/' + d + '/image';
+  </script>
+  <script src="../reproduce.js"></script>
+</body>
+</html>
