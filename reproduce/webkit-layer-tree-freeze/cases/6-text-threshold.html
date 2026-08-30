@@ -53,8 +53,9 @@
         document.write('<p id="txt">' + t.slice(0, tc) + '</p>');
       }
       if (ic > 0) {
-        // 외부 placeholder 서비스 사용 (실제 크기 이미지)
-        document.write('<img id="img" src="https://placehold.co/' + ic + 'x' + ic + '/ddd/ddd" />');
+        // Data URL SVG (즉시 로드, 실제 크기)
+        const svg = "<svg xmlns='http://www.w3.org/2000/svg' width='" + ic + "' height='" + ic + "'><rect fill='%23ddd' width='100%25' height='100%25'/></svg>";
+        document.write('<img id="img" src="data:image/svg+xml,' + encodeURIComponent(svg).replace(/'/g, "%27") + '" />');
       }
     </script>
     <!-- load 지연용 숨겨진 이미지 -->
