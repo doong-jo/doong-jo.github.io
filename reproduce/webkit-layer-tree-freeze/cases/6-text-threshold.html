@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Case 6: 임계값</title>
+    <title>Case 6: 200자 or 32×32 임계값</title>
     <style>
       @font-face {
         font-family: "Pretendard";
@@ -58,9 +58,8 @@
 
       const img = document.getElementById("img");
       if (ic > 0) {
-        img.src = "../delay/0/image";
-        img.width = ic;
-        img.height = ic;
+        // 실제 크기의 이미지 요청 (WebKit은 원본 이미지 픽셀 수를 카운트)
+        img.src = "../delay/0/image/" + ic;
       } else {
         img.style.display = "none";
       }
