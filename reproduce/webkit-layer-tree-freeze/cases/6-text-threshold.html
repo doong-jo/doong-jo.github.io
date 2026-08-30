@@ -53,9 +53,14 @@
         document.write('<p id="txt">' + t.slice(0, tc) + '</p>');
       }
       if (ic > 0) {
-        // Data URL SVG (즉시 로드, 실제 크기)
-        const svg = "<svg xmlns='http://www.w3.org/2000/svg' width='" + ic + "' height='" + ic + "'><rect fill='%23ddd' width='100%25' height='100%25'/></svg>";
-        document.write('<img id="img" src="data:image/svg+xml,' + encodeURIComponent(svg).replace(/'/g, "%27") + '" />');
+        // PNG Data URL (SVG는 intrinsic size 문제 있음)
+        const pngMap = {
+          31: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAfCAIAAACQzIFuAAAAJUlEQVR42u3MMQEAAAwCIPt3tIspdg0CkF6K3W632+12u93+bB9JMblfn+vWkQAAAABJRU5ErkJggg==",
+          32: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAJ0lEQVR42u3NMQ0AAAwDoPr3WC9VsWMJGCA9FoFAIBAIBAKBQPAlGHpfXJeAREnAAAAAAElFTkSuQmCC"
+        };
+        if (pngMap[ic]) {
+          document.write('<img id="img" src="' + pngMap[ic] + '" />');
+        }
       }
     </script>
     <!-- load 지연용 숨겨진 이미지 -->
