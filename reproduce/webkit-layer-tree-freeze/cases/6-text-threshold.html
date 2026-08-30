@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Case 6: 200자 or 32×32 임계값</title>
+    <title>Case 6: 200자 임계값</title>
     <style>
       /* 미사용 @font-face: 동결 조건 유발 */
       @font-face {
@@ -21,11 +21,6 @@
         word-break: break-all;
         font-size: 12px;
       }
-      #img {
-        display: block;
-        margin-top: 8px;
-        background: #eee;
-      }
       .back-btn {
         display: inline-block;
         margin-top: 16px;
@@ -41,26 +36,15 @@
   </head>
   <body>
     <script>
-      // 파싱 시점에 텍스트/이미지를 document.write로 삽입 (body 내부)
+      // 파싱 시점에 텍스트를 document.write로 삽입
       const p = new URLSearchParams(location.search);
       const tc = p.has("t") ? parseInt(p.get("t")) : 100;
-      const ic = p.has("i") ? parseInt(p.get("i")) : 0;
 
       const base = "가나다라마바사아자차카타파하";
       if (tc > 0) {
         let t = "";
         while (t.length < tc) t += base;
         document.write('<p id="txt">' + t.slice(0, tc) + '</p>');
-      }
-      if (ic > 0) {
-        // PNG Data URL (SVG는 intrinsic size 문제 있음)
-        const pngMap = {
-          31: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAfCAIAAACQzIFuAAAAJUlEQVR42u3MMQEAAAwCIPt3tIspdg0CkF6K3W632+12u93+bB9JMblfn+vWkQAAAABJRU5ErkJggg==",
-          32: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAJ0lEQVR42u3NMQ0AAAwDoPr3WC9VsWMJGCA9FoFAIBAIBAKBQPAlGHpfXJeAREnAAAAAAElFTkSuQmCC"
-        };
-        if (pngMap[ic]) {
-          document.write('<img id="img" src="' + pngMap[ic] + '" />');
-        }
       }
     </script>
     <!-- load 지연용 숨겨진 이미지 -->
