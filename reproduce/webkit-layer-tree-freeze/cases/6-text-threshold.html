@@ -5,11 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Case 6: 200자 or 32×32 임계값</title>
     <style>
-      @font-face {
-        font-family: "Pretendard";
-        src: url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/woff2/Pretendard-Regular.woff2")
-          format("woff2");
-      }
       body {
         font: 14px system-ui;
         padding: 16px;
@@ -37,39 +32,28 @@
       }
       .back-btn:hover { background: #555; }
     </style>
-  </head>
-  <body>
-    <p id="txt"></p>
-    <img id="img" />
     <script>
-      const base = "가나다라마바사아자차카타파하";
+      // 파싱 시점에 텍스트/이미지를 document.write로 삽입
       const p = new URLSearchParams(location.search);
       const tc = p.has("t") ? parseInt(p.get("t")) : 100;
       const ic = p.has("i") ? parseInt(p.get("i")) : 0;
 
-      const txtEl = document.getElementById("txt");
+      const base = "가나다라마바사아자차카타파하";
       if (tc > 0) {
         let t = "";
         while (t.length < tc) t += base;
-        txtEl.textContent = t.slice(0, tc);
-      } else {
-        txtEl.style.display = "none";
+        document.write('<p id="txt" style="color:#666;word-break:break-all;font-size:12px;">' + t.slice(0, tc) + '</p>');
       }
-
-      const img = document.getElementById("img");
       if (ic > 0) {
-        // 실제 크기의 이미지 요청 (WebKit은 원본 이미지 픽셀 수를 카운트)
-        img.src = "../delay/0/image/" + ic;
-      } else {
-        img.style.display = "none";
+        // 외부 placeholder 서비스 사용 (실제 크기 이미지)
+        document.write('<img id="img" src="https://placehold.co/' + ic + 'x' + ic + '/ddd/ddd" style="display:block;margin-top:8px;" />');
       }
-
-      // load 지연용 숨겨진 이미지 (렌더 블로킹 아님)
-      const delayImg = document.createElement("img");
-      delayImg.src = "../delay/3000/image";
-      delayImg.style.display = "none";
-      document.body.appendChild(delayImg);
-
+    </script>
+  </head>
+  <body>
+    <!-- load 지연용 숨겨진 이미지 -->
+    <img src="../delay/3000/image" style="display:none" />
+    <script>
       // 버튼은 load 후 추가 (초기 텍스트 카운트에서 제외)
       window.addEventListener("load", () => {
         const btn = document.createElement("a");
