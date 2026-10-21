@@ -13,15 +13,15 @@
     ></script>
 
     <!-- Basic SEO -->
-    <title>프론트엔드 에러 핸들링, Sentry 설치가 전부가 아닙니다 | doong-jo</title>
+    <title>에러 한 건이 알림이 되기까지 | doong-jo</title>
     <meta
       name="description"
-      content="분류·전파·표현·기록·운영 5단계 패턴. 커스텀 Error, React Query throwOnError, Sentry beforeSend, Ownership Rules, Dashboard, fatal/error 알림."
+      content="에러 한 건이 throw된 순간부터 알림이 울리기까지. normalize·classify·beforeSend, React Query·서버 컴포넌트 입구별 경로, Apps Script 알림 릴레이와 데일리 리포트."
     />
     <meta name="author" content="doong-jo" />
     <meta
       name="keywords"
-      content="프론트엔드, 에러 핸들링, Sentry, React Query, Error Boundary, captureException, beforeSend"
+      content="Sentry, 에러 핸들링, beforeSend, fingerprint, React Query, onRequestError, Google Apps Script, 알림"
     />
     <meta name="post-tags" content="구현, React, Sentry" />
 
@@ -41,10 +41,10 @@
 
     <!-- Open Graph -->
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="프론트엔드 에러 핸들링, Sentry 설치가 전부가 아닙니다" />
+    <meta property="og:title" content="에러 한 건이 알림이 되기까지" />
     <meta
       property="og:description"
-      content="분류·전파·표현·기록·운영 5단계. 커스텀 Error, Sentry Tag/beforeSend, Ownership Rules, Dashboard error rate, fatal/error Slack 알림."
+      content="에러 한 건이 throw된 순간부터 알림이 울리기까지. normalize·classify·beforeSend, React Query·서버 컴포넌트 입구별 경로, Apps Script 알림 릴레이와 데일리 리포트."
     />
     <meta
       property="og:url"
@@ -63,10 +63,10 @@
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="프론트엔드 에러 핸들링, Sentry 설치가 전부가 아닙니다" />
+    <meta name="twitter:title" content="에러 한 건이 알림이 되기까지" />
     <meta
       name="twitter:description"
-      content="분류·전파·표현·기록·운영 5단계. 커스텀 Error, Sentry Tag/beforeSend, Ownership Rules, Dashboard error rate, fatal/error Slack 알림."
+      content="에러 한 건이 throw된 순간부터 알림이 울리기까지. normalize·classify·beforeSend, React Query·서버 컴포넌트 입구별 경로, Apps Script 알림 릴레이와 데일리 리포트."
     />
     <meta
       name="twitter:image"
@@ -78,8 +78,8 @@
       {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
-        "headline": "프론트엔드 에러 핸들링, Sentry 설치가 전부가 아닙니다",
-        "description": "분류·전파·표현·기록·운영 5단계. 커스텀 Error, Sentry beforeSend, Ownership Rules, Dashboard, fatal/error 알림 실무 패턴.",
+        "headline": "에러 한 건이 알림이 되기까지",
+        "description": "에러 한 건이 throw된 순간부터 알림이 울리기까지. normalize·classify·beforeSend, React Query·서버 컴포넌트 입구별 경로, Apps Script 알림 릴레이와 데일리 리포트.",
         "image": "https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%86%AB%E1%84%90%E1%85%B3%E1%84%8B%E1%85%A6%E1%86%AB%E1%84%83%E1%85%B3-%E1%84%8B%E1%85%A6%E1%84%85%E1%85%A5-%E1%84%92%E1%85%A2%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF%E1%84%85%E1%85%B5%E1%86%BC-Sentry-%E1%84%89%E1%85%A5%E1%86%AF%E1%84%8E%E1%85%B5%E1%84%80%E1%85%A1-%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%87%E1%85%AE%E1%84%80%E1%85%A1-%E1%84%8B%E1%85%A1%E1%84%82%E1%85%B5%E1%86%B8%E1%84%82%E1%85%B5%E1%84%83%E1%85%A1.png/w=1200",
         "author": {
           "@type": "Person",
@@ -91,7 +91,7 @@
           "name": "doong-jo"
         },
         "datePublished": "2026-06-14",
-        "dateModified": "2026-06-29",
+        "dateModified": "2026-10-21",
         "mainEntityOfPage": {
           "@type": "WebPage",
           "@id": "https://doong-jo.github.io/posts/frontend-error-handling-beyond-throw-and-capture.html"
@@ -108,8 +108,8 @@
     <link rel="stylesheet" href="../common/common.css" />
     <link rel="stylesheet" href="../nav/nav.css" />
     <link rel="stylesheet" href="../post/post.css" />
-    <link rel="stylesheet" href="../post/prism.css" />
     <link rel="stylesheet" href="../subscribe/subscribe.css" />
+    <link rel="stylesheet" href="../post/sentry-deck.css" />
     <style></style>
   </head>
   <body>
@@ -124,635 +124,690 @@
         </nav>
       </div>
     </header>
-    <div class="content">
-      <main>
-        <time>2026-06-14</time>
-        <div class="post-tags">
-          <span class="tag">구현</span>
-          <span class="tag">React</span>
-          <span class="tag">Sentry</span>
+    <article class="sj-deck" id="sjDeck" aria-label="에러 한 건이 알림이 되기까지 · 슬라이드">
+<header class="bar">
+  <span class="deck">에러 한 건이 알림이 되기까지</span>
+  <span class="now" id="nowTitle"></span>
+  <button class="btn" id="easyBtn" type="button" aria-pressed="true" title="쉬운 설명 한 줄과 용어 풀이 켜기/끄기">쉽게</button>
+  <button class="btn" id="glossBtn" type="button">용어</button>
+  <button class="btn" id="tocBtn" type="button">목차</button>
+  <button class="btn fs" id="fsBtn" type="button" aria-pressed="false" title="전체 화면 (F)">전체 화면</button>
+  <span class="count" id="count">1 / 1</span>
+</header>
+
+<div id="deck">
+
+<!-- 표지 -->
+<section class="slide cover" data-title="표지">
+  <div class="eyebrow"><time datetime="2026-06-14">2026-06-14</time> · 수정 2026-10-21 · 구현 · React · Sentry</div>
+  <h1>에러 한 건이<br>알림이 되기까지</h1>
+  <div class="trace pulse" aria-label="따라갈 경로">
+    <span class="hot">TypeError</span><i>→</i><span>normalize</span><i>→</i><span>classify</span><i>→</i><span>enrich</span><i>→</i><span>beforeSend</span><i>→</i><span>Sentry</span><i>→</i><span class="end">Google Chat</span>
+  </div>
+  <p class="lead">Sentry 콘솔 사용법이 아니라, 에러가 우리 코드에서 출발해 알림이 울리기까지 지나는 코드 경로를 따라갑니다. 사내 스터디에서 발표한 덱을 글로 옮겼습니다.</p>
+  <p class="kbd-hint"><kbd>←</kbd><kbd>→</kbd> 이동 · <kbd>F</kbd> 전체 화면 · 위 막대의 <b>목차</b>·<b>용어</b> · 슬라이드 아래 <b>자세히</b>에 보충 설명</p>
+  <details class="more">
+    <summary>자세히</summary>
+    <p>예시는 Next.js App Router 앱 두 개입니다. 대화형 서비스 <code>chat-web</code>과 건강 관리 서비스 <code>health-web</code>이 같은 공용 Sentry 패키지를 씁니다. 사내 패키지·앱 이름은 일반화했습니다.</p>
+    <p>순서: 큰 그림 → 패키지 안(4단계) → 패키지 밖(React Query·서버) → 통합 시뮬레이터 → 알림과 운영.</p>
+  </details>
+</section>
+
+<!-- 스토리 -->
+<section class="slide" data-title="에러 한 건의 하루">
+  <div class="head">
+    <div class="eyebrow">처음이라면 여기부터 · <kbd>→</kbd>로 한 칸씩</div>
+    <h2>에러 한 건의 하루</h2>
+    <p class="easy">쉽게 말하면 · 에러를 응급 환자라고 생각해 보세요. 발견 → 문진 → 중증도 → 차트 → 검문 → 기록 → 호출 순서로 갑니다.</p>
+  </div>
+  <div class="story" id="story"></div>
+  <div class="storybox" id="storyBox" aria-live="polite"></div>
+  <details class="more">
+    <summary>자세히</summary>
+    <p>오늘 볼 전부를 응급실 비유 하나로 먼저 훑습니다. 뒤 슬라이드는 이 칸 하나하나를 확대해서 보는 것입니다.</p>
+    <p>핵심 두 가지만 기억하면 됩니다: ① 모든 에러가 Sentry까지 가는 건 아니다(중간에 버려진다), ② 모든 기록이 알림이 되는 건 아니다(급한 것만).</p>
+  </details>
+</section>
+
+<!-- 세 판단 -->
+<section class="slide" data-title="세 가지 판단">
+  <div class="head">
+    <div class="eyebrow">왜 공용 패키지인가</div>
+    <h2>에러 하나, 판단 셋</h2>
+    <p class="easy">쉽게 말하면 · 에러가 생기면 "신고할까? 얼마나 급해? 전에 본 그 에러야?"를 정합니다.</p>
+  </div>
+  <div class="grid cols-3">
+    <div class="card">
+      <div class="k">report</div>
+      <h3>보낼까?</h3>
+      <div class="evlist">
+        <div><code>TypeError</code><span class="lv lv-ok">보냄</span></div>
+        <div><code>Network Error</code><span class="lv lv-drop">버림</span></div>
+        <div><code>요청 취소</code><span class="lv lv-drop">버림</span></div>
+        <div><code>알려진 주입 스크립트 노이즈</code><span class="lv lv-drop">버림</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="k">level</div>
+      <h3>얼마나 급해?</h3>
+      <div class="ladder">
+        <div><span class="lv lv-fatal">fatal</span><span class="lv lv-error">error</span><b class="bell">stg·prd 알림</b></div>
+        <div><span class="lv lv-warning">warning</span><span class="lv lv-info">info</span><span class="muted small">기록만</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="k">fingerprint</div>
+      <h3>같은 에러야?</h3>
+      <div class="funnel">
+        <code>…/conversation/01J9…/messages</code>
+        <code>…/conversation/01JA…/messages</code>
+        <code>…/conversation/01JB…/messages</code>
+        <span class="down">↓</span>
+        <code class="one">…/conversation/{param}/messages · 이슈 1개</code>
+      </div>
+    </div>
+  </div>
+  <div class="apps"><span class="k">같은 규칙을 쓰는 앱 12개 · 앱은 DSN(받을 Sentry 프로젝트 주소)만 넘긴다</span><span class="pill on">chat-web</span><span class="pill on">health-web</span><span class="pill">…</span></div>
+  <details class="more">
+    <summary>자세히</summary>
+    <p>앱마다 따로 판단하면 결과도 앱마다 달라집니다. 그래서 판단 규칙은 공용 패키지에 두고 앱은 DSN(이벤트를 받을 Sentry 프로젝트 주소)과 환경 이름 같은 설정값만 넘깁니다.</p>
+    <p>report·level은 classify가, fingerprint는 normalize가 정합니다. level은 알림을 정합니다: stg·prd에서 error 이상만 Google Chat.</p>
+  </details>
+</section>
+
+<!-- 노선도 -->
+<section class="slide" data-title="에러 노선도">
+  <div class="head">
+    <div class="eyebrow">클라이언트 · 서버 노선도 · 노선을 고르면 점이 달립니다 · <kbd>→</kbd> 한 역씩</div>
+    <h2>에러는 어디서 내리고, 어디까지 가나</h2>
+    <p class="easy">쉽게 말하면 · 실선은 우리가 잡아 패키지를 거치는 길, 점선은 아무도 못 잡아 바로 SDK로 가는 길입니다. ✕ 역에서 내리면 Sentry에 안 갑니다.</p>
+  </div>
+  <div class="routes" id="routePick"></div>
+  <div class="metro-wrap"><svg class="metro" id="metro" viewBox="0 0 1000 425" role="img" aria-label="클라이언트와 서버의 에러 흐름 노선도"></svg></div>
+  <div class="metro-log" id="metroLog" aria-live="polite"></div>
+  <details class="more">
+    <summary>자세히</summary>
+    <p>위 라인은 브라우저, 아래 라인은 Node 서버입니다. 둘 다 오른쪽 Sentry 역에서 합쳐지고 급한 것만 Google Chat까지 갑니다.</p>
+    <p>실선(handled): 우리가 잡아서 sentryCaptureException → normalize·classify·enrich → SDK. 이벤트에 isPreProcessed가 붙어 beforeSend는 통과만 합니다.</p>
+    <p>점선(unhandled): 아무도 못 잡았거나 SDK를 직접 부른 경우. 패키지 단계를 건너뛰고 SDK로 바로 가서 beforeSend ①에서 같은 판단 함수로 분류됩니다.</p>
+    <p>이 순서로 눌러 보세요: 렌더 TypeError(알림) → 망 단절(classify에서 하차) → 서버 컴포넌트 500(점선, 알림) → SSR 클라이언트 API(필터에서 하차).</p>
+  </details>
+</section>
+
+<!-- Core -->
+<section class="slide" data-title="Core 4단계">
+  <div class="head">
+    <div class="eyebrow">core/ · 4단계 · <kbd>→</kbd>로 진행</div>
+    <h2>세 질문에 답하고, 네 번째에 보낸다</h2>
+    <p class="easy">쉽게 말하면 · 응급실 접수처럼: 무슨 에러인지 적고 → 급한 정도를 정하고 → 메모를 붙이고 → 보냅니다.</p>
+  </div>
+  <div class="ex-pick" id="coreEx" role="group" aria-label="예시 에러"><span class="lbl">예시</span></div>
+  <div class="line" id="coreLine">
+    <button class="station" type="button" data-st="0"><span class="num">01 · 문진</span><span class="nm">normalize</span><span class="q">무슨 에러? 같은 에러?</span></button>
+    <button class="station" type="button" data-st="1"><span class="num">02 · 중증도</span><span class="nm">classify</span><span class="q">보낼까? 급해?</span></button>
+    <button class="station" type="button" data-st="2"><span class="num">03 · 차트</span><span class="nm">enrich</span><span class="q">뭘 적어 둘까?</span></button>
+    <button class="station" type="button" data-st="3"><span class="num">04 · 전송</span><span class="nm">record</span><span class="q">SDK로 보낸다</span></button>
+  </div>
+  <div class="rail" aria-hidden="true"><i id="coreRail"></i></div>
+  <div class="morph">
+    <div class="mbox in"><div class="cap" id="coreInCap"></div><div id="coreIn"></div></div>
+    <div class="arr" aria-hidden="true">→</div>
+    <div class="mbox"><div class="cap" id="coreOutCap"></div><div id="coreOut"></div></div>
+  </div>
+  <div class="sim-ctrl">
+    <button class="btn" type="button" id="corePrev">이전 단계</button>
+    <button class="btn primary" type="button" id="coreNext">다음 단계</button>
+  </div>
+  <details class="more">
+    <summary>자세히</summary>
+    <p>병원 비유: 문진표를 쓰고(normalize), 중증도를 나누고(classify), 차트에 적어(enrich), 진료실로 넘깁니다(record).</p>
+    <p>404는 warning, TypeError는 fatal, 망 단절은 classify에서 멈춰 enrich·record가 실행되지 않습니다.</p>
+    <p>세 단계는 서로 부르지 않고 앞 결과만 받습니다. 그래서 단계마다 따로 테스트할 수 있습니다. unhandled는 앞의 셋을 beforeSend 안에서 하고 record 대신 SDK가 만든 이벤트를 직접 고칩니다.</p>
+  </details>
+</section>
+
+<!-- classify -->
+<section class="slide" data-title="classify 규칙">
+  <div class="head">
+    <div class="eyebrow">classify · defaultSeverityRules.ts</div>
+    <h2>위에서부터, 처음 맞는 규칙이 이긴다</h2>
+    <p class="easy">쉽게 말하면 · 규칙 목록을 위에서부터 읽다가, 처음 맞는 줄의 결정을 따릅니다. 조건을 바꿔 보세요.</p>
+  </div>
+  <div class="play">
+    <div class="form">
+      <div class="field">
+        <label for="pKind">에러 종류</label>
+        <select id="pKind">
+          <option value="http">axios · HTTP 응답</option>
+          <option value="network">axios · 망 단절</option>
+          <option value="timeout">axios · 타임아웃</option>
+          <option value="cancel">axios · 요청 취소</option>
+          <option value="runtime">JS 런타임 에러</option>
+          <option value="errorbase">도메인 에러 (ErrorBase)</option>
+          <option value="wrapped">감싼 에러 · cause가 망 단절</option>
+          <option value="recovered">UserSyncRecoveredError</option>
+          <option value="other">그 밖의 Error</option>
+        </select>
+      </div>
+      <div class="field" id="pStatusField">
+        <label for="pStatus">HTTP status</label>
+        <select id="pStatus">
+          <option>400</option><option>401</option><option>403</option><option selected>404</option><option>408</option><option>409</option><option>429</option><option>500</option><option>502</option><option>503</option>
+        </select>
+      </div>
+      <div class="field" id="pNameField" hidden>
+        <label for="pName">에러 이름</label>
+        <select id="pName"><option>TypeError</option><option>ReferenceError</option><option>RangeError</option><option>SyntaxError</option></select>
+      </div>
+      <label class="check" id="pOptField"><input type="checkbox" id="pOpt"> <span>axios config로 끔 <code>sentryOn404: false</code> 등</span></label>
+      <div class="field">
+        <label for="pLevel">호출부 level 명시</label>
+        <select id="pLevel"><option value="">없음</option><option>fatal</option><option>error</option><option>warning</option><option>info</option></select>
+      </div>
+    </div>
+    <div class="grid" style="align-content:start">
+      <div class="rules" id="pRules"></div>
+      <div class="verdict" id="pVerdict"></div>
+      <p class="small muted" id="pWhy"></p>
+    </div>
+  </div>
+  <details class="more">
+    <summary>자세히</summary>
+    <p>400·403을 warning으로 안 내리는 이유: 잘못된 요청 바디나 권한 배선 실수처럼 프론트 결함이 섞여 있어서 일괄로 내리면 진짜 버그가 알림에서 사라집니다.</p>
+    <p>caller-opt-out-skip이 1번인 이유: Sentry 자동 계측이 같은 요청을 axios 인터셉터 밖에서 따로 캡처해 우회한 사례가 있었습니다. 그래서 normalize가 config를 직접 읽고 맨 앞에서 판정합니다.</p>
+    <p>level 우선순위: 스킵 판정 &gt; 호출자 level &gt; 규칙 &gt; 기본 error. 앱별 규칙 주입은 아무도 안 써서 걷어냈습니다.</p>
+  </details>
+</section>
+
+<!-- fingerprint -->
+<section class="slide" data-title="같은 에러를 하나로">
+  <div class="head">
+    <div class="eyebrow">normalize · fingerprint</div>
+    <h2>ID를 지워야 한 이슈로 모인다</h2>
+    <p class="easy">쉽게 말하면 · 주소에 들어간 ID(대화 번호 등)를 지워야 "같은 에러"로 한데 모입니다.</p>
+    <p class="formula"><code>[method, status, 경로]</code> · 숫자·UUID·하이픈·_·%·@ 조각 → <code>{param}</code></p>
+  </div>
+  <div class="play">
+    <div class="form">
+      <div class="field">
+        <label for="uUrl">요청 URL</label>
+        <input type="text" id="uUrl" value="https://api.example.com/api/v1/conversation/01J9Z4K2QX/messages?cursor=20" spellcheck="false" autocomplete="off">
+      </div>
+      <div class="grid cols-2" style="gap:10px">
+        <div class="field"><label for="uMethod">method</label><select id="uMethod"><option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option></select></div>
+        <div class="field"><label for="uStatus">status</label><select id="uStatus"><option>400</option><option>401</option><option selected>404</option><option>409</option><option>500</option><option>502</option></select></div>
+      </div>
+      <div class="field" id="uCodeField" hidden>
+        <label for="uCode">서버 바디 code</label>
+        <input type="text" id="uCode" value="401002" spellcheck="false" autocomplete="off">
+      </div>
+      <div class="presets" id="uPresets">
+        <button class="chip" type="button" data-u="https://api.example.com/api/v1/conversation/01J9Z4K2QX/messages?cursor=20" data-m="GET" data-s="404">대화 메시지</button>
+        <button class="chip" type="button" data-u="https://api.example.com/score-card/v1" data-m="GET" data-s="500">하이픈 함정</button>
+        <button class="chip" type="button" data-u="/api/v1/me/withdrawal-user" data-m="POST" data-s="500">탈퇴</button>
+        <button class="chip" type="button" data-u="/v1/users/alice@example.com" data-m="GET" data-s="404">이메일</button>
+        <button class="chip" type="button" data-u="/api/v1/auth/my-info" data-m="GET" data-s="401">401</button>
+      </div>
+    </div>
+    <div class="grid" style="align-content:start">
+      <div class="segs" id="uSegs"></div>
+      <div class="out" id="uOut"></div>
+      <div class="callout small" id="uNote"></div>
+    </div>
+  </div>
+  <details class="more">
+    <summary>자세히</summary>
+    <p>score-card처럼 고정된 경로도 하이픈 때문에 지워집니다. 이슈가 쪼개지는 것보다 더 묶이는 쪽을 택한 규칙. 실제 경로는 http request context의 rawUrl로 봅니다.</p>
+    <p>401은 서버 바디 코드마다 대응(재시도·로그아웃·무처리)이 달라 코드별로 이슈를 나눕니다.</p>
+  </details>
+</section>
+
+<!-- beforeSend -->
+<section class="slide" data-title="beforeSend 체인">
+  <div class="head">
+    <div class="eyebrow">beforeSend · 관문을 눌러 보세요</div>
+    <h2>보내기 직전 관문, 앱 정책이 마지막</h2>
+    <p class="easy">쉽게 말하면 · 보내기 직전 마지막 검문소들. 여기서 버려지거나 내용이 고쳐집니다.</p>
+  </div>
+  <div class="explore" id="bsExplore">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" type="button" aria-selected="true" data-pipe="bsClient">브라우저</button>
+      <button class="tab" role="tab" type="button" aria-selected="false" data-pipe="bsServer">Node 서버</button>
+    </div>
+    <div class="pipe" id="bsClient">
+      <button class="xbtn drop" type="button" data-key="f"><small>ⓞ SDK</small>ignoreErrors · denyUrls</button><span class="ar">→</span>
+      <button class="xbtn modify" type="button" data-key="u"><small>①</small>분류</button><span class="ar">→</span>
+      <button class="xbtn drop" type="button" data-key="h"><small>②</small>브릿지 노이즈</button><span class="ar">→</span>
+      <button class="xbtn modify" type="button" data-key="t"><small>③</small>서드파티</button><span class="ar">→</span>
+      <button class="xbtn modify app" type="button" data-key="a"><small>④ 앱</small>앱 정책</button><span class="ar">→</span>
+      <button class="xbtn drop" type="button" data-key="d"><small>⑤</small>로컬 콘솔</button><span class="ar">→</span>
+      <span class="sink">Sentry</span>
+    </div>
+    <div class="pipe" id="bsServer" hidden>
+      <button class="xbtn drop" type="button" data-key="fs"><small>ⓞ SDK</small>ignoreErrors</button><span class="ar">→</span>
+      <button class="xbtn modify" type="button" data-key="u"><small>①</small>분류</button><span class="ar">→</span>
+      <button class="xbtn drop" type="button" data-key="d"><small>②</small>로컬 콘솔</button><span class="ar">→</span>
+      <span class="sink">Sentry</span>
+    </div>
+    <div class="legend"><span><i class="l-drop"></i>버릴 수 있음</span><span><i class="l-mod"></i>고칠 수 있음</span></div>
+    <div class="card xdetail" aria-live="polite"></div>
+    <div hidden>
+      <div class="xsrc" data-key="f"><h3>SDK 필터</h3><p class="small">메시지(<code>Network Error</code>·<code>Failed to fetch</code>·<code>Load failed</code>…)나 크래시 프레임 URL(외부 분석 스크립트)로 버립니다. beforeSend보다 먼저 돕니다.</p></div>
+      <div class="xsrc" data-key="fs"><h3>서버 ignoreErrors</h3><p class="small"><code>SsrSkippedApiCallError</code>(SSR 중 클라이언트 전용 API), <code>The destination stream closed early.</code>(사용자가 먼저 떠남) 등.</p></div>
+      <div class="xsrc" data-key="u"><h3>① beforeSendForUnhandledError</h3><p class="small"><code>isPreProcessed</code>가 있으면 통과. 없으면 normalize·classify해서 level·fingerprint·태그를 쓰고 스킵 판정이면 버립니다. 분류 중 예외가 나도 이벤트는 그대로 넘깁니다.</p></div>
+      <div class="xsrc" data-key="h"><h3>② 웹뷰 브릿지 노이즈</h3><p class="small">웹뷰 lifecycle 이벤트(pagehide 등) 리스너 안에서 난 서드파티 SDK의 브릿지 에러만 버립니다. 메시지만 보고 거르면 우리 브릿지 에러까지 묻히기 때문입니다.</p></div>
+      <div class="xsrc" data-key="t"><h3>③ 서드파티</h3><p class="small"><code>third_party_code</code> 태그가 있을 때만. 노이즈면 버리고, 확실히 남의 코드면 제목을 <code>ThirdPartyError (…)</code>로. 우리 API 에러·위치 없는 프레임·우리 번들 청크는 손대지 않습니다(모르면 우리 것). 예외 하나: Sentry가 감싼 콜백(setTimeout·addEventListener)인데 남은 프레임이 Sentry wrap뿐이면 콜백 자체가 위치 없는 주입 스크립트라 버립니다.</p></div>
+      <div class="xsrc" data-key="a"><h3>④ 앱 beforeSend</h3><p class="small">공용 판정 뒤라 앱이 최종 결정. 예를 들어 health-web은 인앱 브라우저 브릿지 노이즈를 <span class="lv lv-info">info</span>로 내립니다(기록은 남기고 알림만 끔).</p></div>
+      <div class="xsrc" data-key="d"><h3>로컬 콘솔</h3><p class="small"><code>NODE_ENV=development</code>면 보낼 내용을 <code>console.error('[will be sent to Sentry]', …)</code>로 찍고 버립니다.</p></div>
+    </div>
+  </div>
+  <details class="more">
+    <summary>자세히</summary>
+    <p>순서가 곧 우선순위. 하나라도 null이면 거기서 끝. 앱 정책이 맨 뒤라 최종 결정권을 가집니다.</p>
+    <p>health-web이 인앱 브라우저 노이즈를 버리지 않고 info로 내리는 이유: info는 "기록은 남기고 알림만 끄는" 표준 수단입니다. 급증하면 볼 수 있어야 합니다.</p>
+  </details>
+</section>
+
+<!-- 안전장치 -->
+<section class="slide" data-title="안전장치">
+  <div class="head">
+    <div class="eyebrow">record · 안전장치</div>
+    <h2>한 번만 분류, 실패해도 앱은 멀쩡</h2>
+    <p class="easy">쉽게 말하면 · 같은 에러를 두 번 검사하지 않고, 보고하다 실패해도 앱은 멈추지 않습니다.</p>
+  </div>
+  <div class="grid cols-3">
+    <div class="card">
+      <div class="k">isPreProcessed</div>
+      <div class="flowmini"><span>래퍼 분류</span><i>→</i><span class="tagged">isPreProcessed ✓</span><i>→</i><span class="muted">① 통과</span></div>
+      <p class="small muted">두 번 분류하지 않는다</p>
+    </div>
+    <div class="card">
+      <div class="k">판정 기록(audit) 태그</div>
+      <div class="flowmini"><span>규칙 태그</span><i>← 덮음</i><span>호출자 태그</span><i>← 덮음</i><span class="tagged">classify.reason</span></div>
+      <p class="small muted">맨 마지막에 넣어 호출자가 못 지운다</p>
+    </div>
+    <div class="card">
+      <div class="k">실패 격리</div>
+      <div class="flowmini"><span>분류 실패</span><i>→</i><span>원본만 전송</span><i>→</i><span class="muted">그것도 실패면 포기</span></div>
+      <p class="small muted">리포팅 실패를 던지지 않는다</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="k">SDK를 직접 부르면 · SSE 재시도 한도 초과 보고</div>
+    <div class="flowmini wide">
+      <code>scope.setFingerprint(['sse-retry-limit-exceeded', …])</code><i>→</i><span>scope가 이벤트에 입혀짐</span><i>→</i><span>① isPreProcessed 없음</span><i>→</i><code class="strike">['sse-retry-limit-exceeded', …]</code><code>[name, message]</code>
+    </div>
+    <p class="small muted">scope = SDK가 다음 이벤트에 붙일 값 바구니. 지정한 fingerprint가 덮인다 → <code>sentryCaptureException(err, {'{'} fingerprint {'}'})</code>로 넘기기</p>
+  </div>
+  <details class="more">
+    <summary>자세히</summary>
+    <p>isPreProcessed가 없으면 beforeSend의 두 번째 분류가 호출자가 정한 level·fingerprint를 덮습니다.</p>
+    <p>판정 기록 태그: 같은 키의 전역 태그가 규칙 이름을 지우면 규칙별 집계가 틀어지므로 마지막에 병합합니다.</p>
+    <p>scope는 SDK가 다음 이벤트에 붙일 태그·사용자·fingerprint를 담아 두는 바구니. SDK는 scope를 먼저 입히고 beforeSend를 부르므로 ①이 덮어씁니다.</p>
+  </details>
+</section>
+
+<!-- React Query -->
+<section class="slide" data-title="React Query 안에서">
+  <div class="head">
+    <div class="eyebrow">패키지 밖 ① · React Query · 단계를 눌러 보세요 · <kbd>→</kbd> 다음 훅</div>
+    <h2>훅마다 Sentry까지 가는 길이 다르다</h2>
+    <p class="easy">쉽게 말하면 · 같은 API 실패라도 어떤 훅을 썼느냐에 따라 Sentry에 가기도, 안 가기도 합니다.</p>
+  </div>
+  <div class="explore" id="rqExplore">
+    <div class="tabs" role="tablist" id="rqTabs"></div>
+    <div class="small muted" id="rqWho"></div>
+    <div class="pipe" id="rqPipe"></div>
+    <div class="card xdetail" aria-live="polite"></div>
+  </div>
+  <div class="grid cols-2">
+    <div class="card">
+      <div class="k">용어</div>
+      <ul class="plain small">
+        <li><b>throwOnError</b> · 에러를 ErrorBoundary로 던질지 정하는 옵션. 앱 기본값이 이 안에서 캡처한다</li>
+        <li><b>meta</b> · 쿼리·뮤테이션에 붙이는 옵션 객체 (<code>sentryOn409: false</code> 등)</li>
+        <li><b>앱 게이트</b> · meta를 보고 보고 여부를 거르는 함수</li>
+        <li><b>Dedupe</b> · 직전과 같은 이벤트를 SDK가 버리는 기능</li>
+      </ul>
+    </div>
+    <div class="callout bad small"><b>요청 바디가 Sentry에 남는다.</b> SDK가 axios <code>config.data</code>를 context로 그대로 싣습니다. 예: 탈퇴 실패 시 사용자가 쓴 사유.</div>
+  </div>
+  <details class="more">
+    <summary>자세히</summary>
+    <p>재시도는 셋 다 같음: 5xx·망 단절·타임아웃(408)만 2회, 나머지 4xx·취소는 바로 실패. 다른 건 마지막 실패를 누가 받느냐.</p>
+    <p>왜 게이트가 패키지 밖에: data-access는 Sentry를 모릅니다. createAppQueryClient는 captureException을 주입받고, 재시도(retryOn404)와 보고(sentryOn404)를 같은 meta에서 정하려고 게이트를 쿼리 쪽에 뒀습니다. 대가로 끄는 어휘가 두 벌(axios config 400/403/404, meta 400/404/409/429/503).</p>
+    <p>suspense 우회는 TanStack 버그가 아니라 캡처를 throwOnError 안에 둔 결과. queryCache.onError로 옮기면 suspense·refetch 실패도 게이트를 탑니다(대신 바운더리 재캡처 중복 정리 필요).</p>
+    <p>요청 바디: extraErrorDataIntegration이 에러 객체 필드를 context로 펼치며 axios config.data(바디 JSON 문자열)를 싣습니다. mutation.variables context는 기본 깊이 3에서 [Object]로 잘립니다.</p>
+  </details>
+</section>
+
+<!-- 서버 -->
+<section class="slide" data-title="서버에서 난 에러">
+  <div class="head">
+    <div class="eyebrow">패키지 밖 ② · 서버 컴포넌트 · 단계를 눌러 보세요</div>
+    <h2>서버 에러는 서버에서 한 번만 보고한다</h2>
+    <p class="easy">쉽게 말하면 · 서버 컴포넌트에서 난 에러는 서버가 원인과 함께 보고합니다. 사용자 화면은 에러 화면만 보여 주고 다시 보내지 않습니다.</p>
+  </div>
+  <div class="explore" id="svExplore">
+    <div class="seq">
+      <div class="seqcol server">
+        <div class="seqh">Node 서버 <span class="small muted">원인</span></div>
+        <button class="xbtn" type="button" data-key="s1"><small>1</small><code>await consentHistory()</code> → 500</button>
+        <button class="xbtn" type="button" data-key="s2"><small>2</small>onRequestError</button>
+        <button class="xbtn modify" type="button" data-key="s3"><small>3</small>① server-fetch로 분류</button>
+        <button class="xbtn send" type="button" data-key="s4"><small>4</small><code>[500][GET] …/me/{param}</code></button>
+      </div>
+      <div class="seqmid" aria-hidden="true"><span>digest</span><i>⇢</i></div>
+      <div class="seqcol browser">
+        <div class="seqh">브라우저 <span class="small muted">영향 범위</span></div>
+        <button class="xbtn" type="button" data-key="b1"><small>1</small>배포 빌드는 메시지 삭제 · digest만</button>
+        <button class="xbtn" type="button" data-key="b2"><small>2</small><code>error.tsx</code></button>
+        <button class="xbtn drop" type="button" data-key="b3"><small>3</small>digest 있음 → 보고 생략</button>
+        <button class="xbtn" type="button" data-key="b4"><small>4</small>원인·빈도는 서버 이슈에서</button>
+      </div>
+    </div>
+    <div class="other">
+      <span class="k">다른 경우</span>
+      <button class="chip" type="button" data-key="o1">Route Handler</button>
+      <button class="chip" type="button" data-key="o2">SSR에서 클라이언트 API</button>
+      <button class="chip" type="button" data-key="o3">서버 401</button>
+    </div>
+    <div class="card xdetail" aria-live="polite"></div>
+    <div hidden>
+      <div class="xsrc" data-key="s1"><h3>서버 컴포넌트가 API를 직접 부름</h3><p class="small">동의 이력 화면(서버 컴포넌트). 서버엔 React Query도 재시도도 없어서 한 번 실패로 <code>ServerFetchError</code>(status·url·method·payload)가 납니다.</p></div>
+      <div class="xsrc" data-key="s2"><h3>Next.js → onRequestError</h3><p class="small">렌더가 실패하면 <code>instrumentation.ts</code>가 내보낸 <code>Sentry.captureRequestError</code>를 부릅니다(unhandled).</p></div>
+      <div class="xsrc" data-key="s3"><h3>beforeSend ①</h3><p class="small">kind <code>server-fetch</code>, 5xx → <span class="lv lv-error">error</span>. 제목을 엔드포인트로 바꿉니다. 서버 체인은 ①과 로컬 콘솔 두 단계뿐.</p></div>
+      <div class="xsrc" data-key="s4"><h3>서버 이슈</h3><p class="small">원인(엔드포인트)이 보이는 쪽. user 필드는 비지만 SDK 기본값(requestData의 cookies: true) 때문에 요청 쿠키(guid 등)는 실립니다. ServerFetchError 필드도 context로 실립니다. <code>consent-history</code>도 하이픈이라 <code>{param}</code>.</p></div>
+      <div class="xsrc" data-key="b1"><h3>배포 빌드(dev·stg·prd)는 메시지를 지운다</h3><p class="small">Next.js가 에러를 브라우저로 넘길 때 원래 메시지를 지우고 <code>digest</code>(서버 에러와 짝을 맞추는 해시)만 남깁니다.</p></div>
+      <div class="xsrc" data-key="b2"><h3>error.tsx가 받는다</h3><p class="small">에러 화면은 그대로 보여 줍니다. 보고는 공용 <code>captureBoundaryError</code>로 하고, 바운더리 공통 처리(user 세팅 등)도 그대로 돕니다.</p></div>
+      <div class="xsrc" data-key="b3"><h3>digest가 있으면 보내지 않는다</h3><p class="small"><code>digest</code>는 서버 렌더 에러에만 붙습니다. 원본은 ①~④에서 이미 보고했으니 건너뜁니다. 예전엔 여기서 메시지 없는 <code>An error occurred in the Server Components render</code>가 <span class="lv lv-error">error</span>로 따로 올라가, 서버 401(<span class="lv lv-warning">warning</span>)까지 알림을 울렸습니다.</p><pre class="code hl">// error.tsx · global-error.tsx
+captureBoundaryError(error) // digest 있으면 return</pre></div>
+      <div class="xsrc" data-key="b4"><h3>서버 이슈 하나만 본다</h3><p class="small">원인(엔드포인트)과 빈도는 서버 이슈에 있습니다. 서버 이벤트엔 user가 비어 있어 영향 사용자 수는 정확히 나오지 않습니다. 클라이언트에서 난 렌더 에러는 digest가 없어 지금처럼 바운더리가 보고합니다.</p></div>
+      <div class="xsrc" data-key="o1"><h3>Route Handler가 실패를 응답으로 바꿈</h3><p class="small">Next.js엔 정상 응답이라 onRequestError가 안 울림 → 직접 <code>sentryCaptureException</code>. 외부 API가 닫은 keep-alive 소켓 끊김(<code>UND_ERR_SOCKET</code>)은 공용 클라이언트가 조회 요청만 1회 다시 보냅니다.</p></div>
+      <div class="xsrc" data-key="o2"><h3>SSR 중 클라이언트 전용 API</h3><p class="small"><code>SsrSkippedApiCallError</code> → 서버 ignoreErrors가 버림. 클라이언트에서만 쿼리를 띄우는 게이트 컴포넌트로 애초에 막기도 합니다.</p></div>
+      <div class="xsrc" data-key="o3"><h3>서버 요청 401</h3><p class="small">dev·stg·로컬 + 테스트 계정 env + 재시도 대상 코드(401002·401016·코드 없음)일 때만 한 번 다시 부릅니다(실제 쿠키 갱신은 로컬만). prd는 바로 렌더 실패 → 서버 이벤트는 <span class="lv lv-warning">warning</span>. 브라우저는 digest라 보고하지 않으니 알림도 가지 않습니다.</p></div>
+    </div>
+  </div>
+  <details class="more">
+    <summary>자세히</summary>
+    <p>운영 관점: 서버 이슈 하나만 남습니다. 예전엔 브라우저 error.tsx가 digest만 남은 사본을 따로 보내, 원인 없는 error 이슈가 하나 더 생겼습니다. 서버가 401을 warning으로 낮춰도 이 사본 때문에 알림이 울렸습니다.</p>
+    <p>잃는 것: 서버 이벤트엔 user가 없어 영향 사용자 수를 바로 볼 수 없습니다. 필요하면 서버 쪽 scope에 user를 심는 방향으로.</p>
+  </details>
+</section>
+
+<!-- 시뮬레이터 -->
+<section class="slide" data-title="시뮬레이터">
+  <div class="head">
+    <div class="eyebrow">직접 흘려 보기 · 숫자키 <kbd>1</kbd>–<kbd>0</kbd> 선택 · <kbd>→</kbd> 진행</div>
+    <h2>골라서, 결과를 먼저 맞혀 보기</h2>
+    <p class="easy">쉽게 말하면 · 아무 에러나 고르고 →를 누르며 따라가 보세요. 마지막에 알림이 갈지 먼저 맞혀 보세요.</p>
+  </div>
+  <div class="sim" id="sim">
+    <div class="sim-pick" id="simPick" role="group" aria-label="시나리오"></div>
+    <div class="sim-row">
+      <span class="lbl">환경</span>
+      <div class="seg" id="simEnv" role="group" aria-label="배포 환경">
+        <button type="button" data-env="local">로컬</button>
+        <button type="button" data-env="dev">dev</button>
+        <button type="button" data-env="stg">stg</button>
+        <button type="button" data-env="prd" aria-pressed="true">prd</button>
+      </div>
+      <span class="small muted" id="simSummary"></span>
+    </div>
+    <div class="track-wrap"><div class="track" id="simTrack"></div></div>
+    <div class="sim-body">
+      <div class="sim-text">
+        <div class="step-k" id="simStepK"></div>
+        <h3 id="simTitle"></h3>
+        <div id="simBody" class="small"></div>
+        <div class="file" id="simFile"></div>
+        <div class="sim-ctrl">
+          <button class="btn" type="button" id="simReset">처음</button>
+          <button class="btn" type="button" id="simPrev">이전</button>
+          <button class="btn primary" type="button" id="simNext">다음 단계</button>
+          <span class="pos" id="simPos"></span>
         </div>
-        <h1>프론트엔드 에러 핸들링, Sentry 설치가 전부가 아닙니다</h1>
-        <img
-          class="post-thumbnail"
-          src="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%86%AB%E1%84%90%E1%85%B3%E1%84%8B%E1%85%A6%E1%86%AB%E1%84%83%E1%85%B3-%E1%84%8B%E1%85%A6%E1%84%85%E1%85%A5-%E1%84%92%E1%85%A2%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF%E1%84%85%E1%85%B5%E1%86%BC-Sentry-%E1%84%89%E1%85%A5%E1%86%AF%E1%84%8E%E1%85%B5%E1%84%80%E1%85%A1-%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%87%E1%85%AE%E1%84%80%E1%85%A1-%E1%84%8B%E1%85%A1%E1%84%82%E1%85%B5%E1%86%B8%E1%84%82%E1%85%B5%E1%84%83%E1%85%A1.png/w=1360,fit=scale-down"
-          srcset="
-            https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%86%AB%E1%84%90%E1%85%B3%E1%84%8B%E1%85%A6%E1%86%AB%E1%84%83%E1%85%B3-%E1%84%8B%E1%85%A6%E1%84%85%E1%85%A5-%E1%84%92%E1%85%A2%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF%E1%84%85%E1%85%B5%E1%86%BC-Sentry-%E1%84%89%E1%85%A5%E1%86%AF%E1%84%8E%E1%85%B5%E1%84%80%E1%85%A1-%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%87%E1%85%AE%E1%84%80%E1%85%A1-%E1%84%8B%E1%85%A1%E1%84%82%E1%85%B5%E1%86%B8%E1%84%82%E1%85%B5%E1%84%83%E1%85%A1.png/w=680,fit=scale-down   680w,
-            https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/thumbnail-%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%86%AB%E1%84%90%E1%85%B3%E1%84%8B%E1%85%A6%E1%86%AB%E1%84%83%E1%85%B3-%E1%84%8B%E1%85%A6%E1%84%85%E1%85%A5-%E1%84%92%E1%85%A2%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF%E1%84%85%E1%85%B5%E1%86%BC-Sentry-%E1%84%89%E1%85%A5%E1%86%AF%E1%84%8E%E1%85%B5%E1%84%80%E1%85%A1-%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%87%E1%85%AE%E1%84%80%E1%85%A1-%E1%84%8B%E1%85%A1%E1%84%82%E1%85%B5%E1%86%B8%E1%84%82%E1%85%B5%E1%84%83%E1%85%A1.png/w=1360,fit=scale-down 1360w
-          "
-          sizes="(max-width: 680px) 100vw, 680px"
-          alt=""
-        />
+      </div>
+      <div class="sim-side" id="simSide" aria-live="polite"></div>
+    </div>
+  </div>
+  <details class="more">
+    <summary>자세히</summary>
+    <p>이 순서로 눌러 보세요: 1(suspense 404 → 게이트 건너뜀) → 4(useMutation → 요청 바디) → 7(렌더 TypeError → fatal) → 9(서버 컴포넌트). 더 보려면 3(throwOnError: false → 0건)과 8(인앱 브라우저 → info).</p>
+    <p>환경을 로컬로 바꾸면 health-web은 콘솔에만 찍히고 chat-web은 아무 일도 일어나지 않습니다(로컬 DSN이 비어 있음).</p>
+  </details>
+</section>
 
-        <p>
-          프론트엔드에서 에러 처리를 처음 정비할 때 흔히 쓰는 패턴은 두 가지입니다. API 호출이 실패하면
-          <code>throw</code>하고, catch 블록에서 <code>Sentry.captureException(error)</code>를 호출합니다. Sentry를
-          붙였으니 "에러 핸들링 끝"이라고 생각하기 쉽습니다.
-        </p>
-        <p>
-          운영해 보면 이 방식만으로는 부족합니다. axios/fetch 실패마다 captureException을 호출하면 Sentry Issues에
-          <strong>같은 API 500이 수백 건</strong> 쌓이고 stack trace와 message만 조금씩 달라 분류 작업이 불가능해집니다.
-          사용자 입장에서도 "재고 부족"은 toast로 충분한데 결제 실패는 페이지 fallback UI가 필요합니다. 모든 에러를
-          똑같이 처리하기 어렵습니다.
-        </p>
-        <p>
-          에러는 한 번에 처리할 대상이 아닙니다. <strong>분류 → 전파 → 표현 → 기록 → 운영</strong>, 이 5단계로 나눠
-          설계해야 합니다. 이 글에서는 커스텀 Error 클래스, React Query mutationCache, Error Boundary, Sentry
-          Tag/beforeSend, Ownership Rules, Dashboard, fatal/error 알림까지 순서대로 쌓는 패턴을 공유합니다. 코드 예시는
-          익명 API를 사용한 일반화된 TypeScript/React 패턴입니다.
-        </p>
+<!-- 알림 -->
+<section class="slide" data-title="알림까지">
+  <div class="head">
+    <div class="eyebrow">Sentry → Apps Script 릴레이 → Google Chat</div>
+    <h2>환경 × level, 끈 에러는 아무도 못 본다</h2>
+    <p class="easy">쉽게 말하면 · 팀 채팅 알림은 stg·prd에서 error 이상일 때만 갑니다. 나머지는 Sentry에 쌓이기만 합니다.</p>
+  </div>
+  <div class="table-wrap">
+    <table class="matrix">
+      <thead><tr><th>level</th><th>로컬</th><th>dev</th><th>stg</th><th>prd</th></tr></thead>
+      <tbody>
+        <tr><td><span class="lv lv-fatal">fatal</span></td><td rowspan="4" class="small muted">콘솔<br>(로컬 DSN 있을 때)</td><td rowspan="4" class="small muted">기록만</td><td class="on">알림</td><td class="on">알림</td></tr>
+        <tr><td><span class="lv lv-error">error</span></td><td class="on">알림</td><td class="on">알림</td></tr>
+        <tr><td><span class="lv lv-warning">warning</span></td><td class="muted">기록만</td><td class="muted">기록만</td></tr>
+        <tr><td><span class="lv lv-info">info</span></td><td class="muted">기록만</td><td class="muted">기록만</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid cols-2">
+    <div class="card">
+      <div class="k">끄기 vs 낮추기</div>
+      <table class="mini">
+        <thead><tr><th>남는 것</th><th>이벤트</th><th>이슈 알림</th><th>메트릭 알럿</th></tr></thead>
+        <tbody>
+          <tr><td>끄기 <span class="small muted">mutation meta · axios config</span></td><td class="x">없음</td><td class="muted">없음</td><td class="x">없음</td></tr>
+          <tr><td>낮추기 <span class="small muted">level · 앱 정책</span></td><td class="o">남음</td><td class="muted">없음</td><td class="o">잡힘</td></tr>
+        </tbody>
+      </table>
+      <p class="small muted">useQuery meta는 바운더리가 다시 보고, suspense엔 무효</p>
+    </div>
+    <div class="card">
+      <div class="k">Sentry가 0건인 실패</div>
+      <div class="zero">
+        <span>망 단절 · 타임아웃 (브라우저)</span>
+        <span>게이트웨이 장애 (CORS 없는 502)</span>
+        <span><code>throwOnError: false</code></span>
+        <span>캐시 있는 suspense refetch</span>
+        <span><code>.catch(() =&gt; null)</code></span>
+      </div>
+      <p class="small muted">→ 서버·LB 지표로 잡는다</p>
+    </div>
+  </div>
+  <details class="more">
+    <summary>자세히</summary>
+    <p>릴레이가 environment(staging·production)와 level(error 이상)로 거릅니다. 규칙이 언제 발동하는지(새 이슈·회귀 등)는 Sentry 알림 규칙 설정을 따릅니다. pre-production은 릴레이 조건에 없습니다.</p>
+    <p>끄기 vs 낮추기: 404·409·429는 이미 warning이라 끄면 알림은 그대로고 빈도만 잃습니다. React Query 경로는 호출부가 level을 넘길 수 없어서 앱 beforeSend에서 경로·메시지 단위로 내립니다.</p>
+    <p>0건: 게이트웨이가 CORS 헤더 없이 502를 주거나 서버가 응답 없이 멈추면 브라우저엔 Network Error. queryFn에서 .catch(() =&gt; null)로 삼킨 쿼리(브리핑·추천 질문 등)는 API가 다 죽어도 0건.</p>
+    <p>자주 받는 질문: "401이 쏟아지면?" 401은 warning이고 일부 코드는 앱 게이트의 401 정책이 캡처하지 않아 알림 없음. 이슈 빈도로 봅니다.</p>
+  </details>
+</section>
 
-        <h2>1. 분류: 이 에러는 무엇인가</h2>
-        <p>
-          axios raw error나 <code>Error('something went wrong')</code>는 message와 stack이 제각각이라 이후
-          전파·표현·기록·운영 어디서도 일관되게 분기할 수 없습니다. 먼저 <strong>에러 타입을 정의</strong>해 operational
-          error(재고 부족처럼 예상 가능한 에러)와 코드 버그(예상 밖 예외)를 구분합니다. <code>instanceof</code> 결과가
-          이후 4단계 정책의 입력값이 됩니다.
-        </p>
-        <p>
-          비즈니스 규칙 위반은 버그가 아니라 <strong>의도된 operational error</strong>입니다. 베이스 클래스와 도메인별
-          서브클래스를 정의하고, <code>isOperational</code> 플래그로 “사용자에게 설명 가능한 에러”와 “프로그래머 버그”를
-          구분합니다.
-        </p>
-        <pre><code class="language-typescript">// errors/app-error.ts
-export class AppError extends Error {
-  constructor(
-    message: string,
-    public readonly code: string,
-    public readonly isOperational = true,
-  ) {
-    super(message);
-    this.name = this.constructor.name;
-    Object.setPrototypeOf(this, new.target.prototype);
-  }
-}
-
-export class ValidationError extends AppError {
-  constructor(message: string, public readonly field?: string) {
-    super(message, "VALIDATION_ERROR");
-  }
-}
-
-export class UnauthorizedError extends AppError {
-  constructor(message = "로그인이 필요합니다.") {
-    super(message, "UNAUTHORIZED");
-  }
-}
-
-export class OutOfStockError extends AppError {
-  constructor(public readonly productId: string) {
-    super("재고가 부족합니다.", "OUT_OF_STOCK");
-  }
-}</code></pre>
-
-        <p>
-          HTTP 응답 에러는 별도 <code>ApiError</code>로 wrap합니다. axios raw error는 message와 stack이 제각각이라
-          Sentry에서 그룹핑하기 어렵습니다. API 클라이언트 한곳에서 변환해 두면 이후 레이어가 일관된 형태를 받습니다.
-        </p>
-        <pre><code class="language-typescript">// errors/api-error.ts
-export class ApiError extends Error {
-  constructor(
-    message: string,
-    public readonly status: number,
-    public readonly method: string,
-    public readonly endpoint: string,
-    public readonly responseBody?: unknown,
-  ) {
-    super(message);
-    this.name = "ApiError";
-    Object.setPrototypeOf(this, new.target.prototype);
-  }
-}
-
-// api/client.ts · axios interceptor 예시
-import axios from "axios";
-import { ApiError } from "../errors/api-error";
-
-const client = axios.create({ baseURL: "https://api.example.com" });
-
-client.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (axios.isAxiosError(error) &amp;&amp; error.response) {
-      const { status, config, data } = error.response;
-      throw new ApiError(
-        data?.message ?? error.message,
-        status,
-        (config?.method ?? "GET").toUpperCase(),
-        config?.url ?? "unknown",
-        data,
-      );
-    }
-    throw error;
-  },
-);
-
-export { client };</code></pre>
-
-        <p>도메인 로직에서는 HTTP status를 직접 해석하지 않고, 비즈니스 규칙에 맞는 Error를 throw합니다.</p>
-        <pre><code class="language-typescript">// features/checkout/submit-order.ts
-export async function submitOrder(cartId: string) {
-  const cart = await fetchCart(cartId);
-
-  if (cart.items.some((item) => item.stock === 0)) {
-    throw new OutOfStockError(cart.items.find((i) => i.stock === 0)!.productId);
-  }
-
-  try {
-    return await client.post("/orders", { cartId });
-  } catch (error) {
-    if (error instanceof ApiError &amp;&amp; error.status === 401) {
-      throw new UnauthorizedError();
-    }
-    throw error;
-  }
-}</code></pre>
-
-        <p>
-          programmer error는 <code>level: fatal</code>로 기록해 즉시 대응 대상으로 삼고, operational error는 Sentry·알림
-          모두 생략합니다. Error message에 PII(이메일, 카드번호 같은 개인정보)를 넣지 마세요. <code>orderId</code>처럼
-          디버깅에 필요한 식별자만 이후 context에 담습니다.
-        </p>
-
-        <h2>2. 전파: 에러를 어디까지 올릴 것인가</h2>
-        <p>
-          타입이 정해지면 <strong>앱 안에서 에러를 어디까지 전달할지</strong> 결정합니다. mutation 에러를 전부 toast로
-          처리하면 결제 실패처럼 페이지 fallback이 필요한 케이스를 놓치고 전부 Error Boundary로 올리면 "닉네임 변경
-          실패"에 전체 화면 에러 UI가 뜹니다.
-        </p>
-        <p>
-          React Query v5의 <code>MutationCache.onError</code>에서 mutation <code>meta</code>로 전파 정책을 분리합니다.
-          <code>reportError</code>로 Sentry에 기록하고 <code>throwOnError</code> 여부에 따라 Error Boundary 또는 toast로
-          분기합니다.
-        </p>
-
-        <pre><code class="language-typescript">import {
-  QueryClient,
-  MutationCache,
-} from "@tanstack/react-query";
-import { reportError } from "./sentry/report-error";
-import { toUserMessage } from "./errors/to-user-message";
-import { showToast } from "./ui/toast";
-
-declare module "@tanstack/react-query" {
-  interface Register {
-    mutationMeta: {
-      throwOnError?: boolean;
-      feature?: string;
-    };
-  }
-}
-
-export const queryClient = new QueryClient({
-  mutationCache: new MutationCache({
-    onError: (error, _variables, _context, mutation) => {
-      reportError(error);
-
-      if (mutation.meta?.throwOnError) {
-        throw error; // Error Boundary가 catch
-      }
-
-      showToast(toUserMessage(error));
-    },
-  }),
-});</code></pre>
-
-        <h3>mutation meta로 전파 정책 지정</h3>
-        <pre><code class="language-tsx">// 닉네임 변경: toast로 충분, throwOnError 없음
-const updateProfile = useMutation({
-  mutationFn: (name: string) => client.patch("/profile", { name }),
-  meta: { feature: "profile" },
-});
-
-// 결제: Error Boundary까지 전파
-const checkout = useMutation({
-  mutationFn: submitOrder,
-  meta: { throwOnError: true, feature: "checkout" },
-});</code></pre>
-
-        <p>
-          Error Boundary는 전역 1개만 두기보다 <strong>route/feature 단위</strong>로 배치합니다. query는
-          <code>throwOnError: true</code> + Suspense/Error Boundary 조합이 일반적이고, mutation은
-          <strong>mutationCache.onError</strong>가 전역 관문 역할을 합니다.
-        </p>
-
-        <h3>함정</h3>
-        <ul>
-          <li>
-            <code>meta.throwOnError</code> mutation을 Error Boundary <strong>바깥</strong>에서 호출하면 uncaught promise
-            rejection이 됩니다.
-          </li>
-          <li>
-            mutationCache에서 <code>throw error</code>는 microtask(Promise 콜백이 실행되는 타이밍)에서 실행됩니다. React
-            18+에서 boundary가 catch하지만 테스트할 때 async flush가 필요할 수 있습니다.
-          </li>
-        </ul>
-
-        <h2>3. 표현: 사용자에게 어떻게 보여줄 것인가</h2>
-        <p>
-          전파 정책이 정해진 뒤 <strong>throw하지 않으면 toast</strong>,
-          <strong>throw하면 Error Boundary fallback</strong>이 사용자 경험을 담당합니다. operational error는
-          boundary까지 올리지 않습니다.
-        </p>
-
-        <h3>toast vs fallback 선택 기준</h3>
-        <ul>
-          <li><strong>toast:</strong> 재고 부족, 닉네임 변경 실패, 사용자가 바로 재시도할 수 있는 가벼운 실패</li>
-          <li><strong>fallback UI:</strong> 결제 실패, checkout 전체 불능, 페이지·flow 단위 복구 UI 필요</li>
-        </ul>
-
-        <h3>toUserMessage: operational 분기</h3>
-        <pre><code class="language-typescript">// errors/to-user-message.ts
-export function toUserMessage(error: unknown): string {
-  if (error instanceof AppError) {
-    return error.message;
-  }
-  if (error instanceof ApiError &amp;&amp; error.status &lt; 500) {
-    return error.message;
-  }
-  return "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
-}</code></pre>
-
-        <p>
-          <code>OutOfStockError</code> 같은 operational error는 <code>throwOnError</code>를 쓰지 않고 toast로
-          처리합니다.
-        </p>
-
-        <h3>Error Boundary fallback UI</h3>
-        <pre><code class="language-tsx">import { Component, type ReactNode } from "react";
-
-type Props = { children: ReactNode; fallback: ReactNode };
-type State = { hasError: boolean };
-
-class FeatureErrorBoundary extends Component&lt;Props, State&gt; {
-  state: State = { hasError: false };
-
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
-
-  render() {
-    if (this.state.hasError) return this.props.fallback;
-    return this.props.children;
-  }
-}
-
-function CheckoutPage() {
-  return (
-    &lt;FeatureErrorBoundary fallback={&lt;CheckoutErrorFallback /&gt;}&gt;
-      &lt;CheckoutForm /&gt;
-    &lt;/FeatureErrorBoundary&gt;
-  );
-}</code></pre>
-
-        <h2>4. 기록: Sentry에 어떻게 남길 것인가</h2>
-        <p>
-          programmer error만 Sentry에 남깁니다. Issues가 <code>[502] GET /orders/:id</code> 하나로 묶이면 담당자 지정과
-          알림 정책은 Ownership Rules로 자동화할 수 있습니다. Tag naming을 Ownership Rules와 1:1로 맞춰 두면 분류 작업
-          없이 바로 담당 팀에 assign됩니다.
-        </p>
-
-        <h3>reportError: operational 생략</h3>
-        <pre><code class="language-typescript">import * as Sentry from "@sentry/react";
-import { ApiError } from "../errors/api-error";
-import { AppError } from "../errors/app-error";
-
-export function reportError(error: unknown) {
-  if (error instanceof AppError &amp;&amp; error.isOperational) {
-    return;
-  }
-
-  const level =
-    error instanceof ApiError &amp;&amp; error.status &gt;= 500 ? "fatal" : "error";
-
-  Sentry.captureException(error, { level });
-}</code></pre>
-
-        <h3>Tag vs Context</h3>
-        <p>Tag는 Issues 필터·Ownership Rules·Dashboard group by에 쓰고, Context는 이벤트 상세 패널 디버깅용입니다.</p>
-
-        <div class="table-wrap">
-          <table class="post-table">
-            <thead>
-              <tr>
-                <th>구분</th>
-                <th>Tag</th>
-                <th>Context</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>용도</td>
-                <td>필터·Ownership Rules·Dashboard 그룹핑</td>
-                <td>이벤트 상세 패널에서 디버깅</td>
-              </tr>
-              <tr>
-                <td>값의 형태</td>
-                <td>짧은 문자열, 종류 다양성 낮음</td>
-                <td>객체·배열 (중첩 가능)</td>
-              </tr>
-              <tr>
-                <td>예시</td>
-                <td><code>feature.checkout</code>, <code>http.status</code></td>
-                <td><code>order: { orderId, step }</code></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <p>
-          이벤트 단위로는 <code>Sentry.withScope</code>로 격리합니다. <code>setTag</code>를 전역에 남겨 두면 다음
-          capture까지 값이 유지되는 함정이 있습니다.
-        </p>
-        <pre><code class="language-typescript">export function captureCheckoutError(
-  error: unknown,
-  ctx: { orderId: string; step: string },
-) {
-  Sentry.withScope((scope) => {
-    scope.setTag("feature.checkout", "true");
-    scope.setTag("checkout.step", ctx.step);
-    scope.setContext("order", {
-      orderId: ctx.orderId,
-      step: ctx.step,
-    });
-    Sentry.captureException(error);
-  });
-}</code></pre>
-
-        <p>Tag naming convention은 Ownership Rules와 1:1로 맞춥니다:</p>
-        <ul>
-          <li><code>feature.{name}</code>: 기능 단위 (<code>feature.checkout</code>)</li>
-          <li><code>http.status</code>: HTTP 상태 코드</li>
-          <li><code>api.method</code>, <code>api.endpoint</code>: 정규화된 API 경로</li>
-        </ul>
-
-        <h3>beforeSend(Sentry로 전송 전 이벤트를 가공하는 훅): API 에러 정규화</h3>
-        <p>
-          같은 <code>GET /orders/123</code>, <code>GET /orders/456</code> 실패가 path param 때문에 별도 Issue로
-          쌓입니다. <code>beforeSend</code>에서 endpoint + status 기준으로 fingerprint(같은 에러를 하나로 묶는 식별자)를
-          고정합니다.
-        </p>
-        <pre><code class="language-typescript">// sentry/normalize-endpoint.ts
-const UUID_RE =
-  /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
-const NUMERIC_ID_RE = /\/\d+(?=\/|$)/g;
-
-export function normalizeEndpoint(raw: string): string {
-  return raw
-    .replace(UUID_RE, ":id")
-    .replace(NUMERIC_ID_RE, "/:id")
-    .split("?")[0];
-}</code></pre>
-
-        <pre><code class="language-typescript">Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-  initialScope: { tags: { app: "shop-web" } },
-  beforeSend(event, hint) {
-    const error = hint.originalException;
-    if (!(error instanceof ApiError)) return event;
-
-    const endpoint = normalizeEndpoint(error.endpoint);
-
-    event.fingerprint = [
-      "api-error",
-      error.method,
-      endpoint,
-      String(error.status),
-    ];
-    event.message = `[${error.status}] ${error.method} ${endpoint}`;
-    event.tags = {
-      ...event.tags,
-      "http.status": String(error.status),
-      "api.method": error.method,
-      "api.endpoint": endpoint,
-    };
-
-    if (error.responseBody) {
-      event.contexts = {
-        ...event.contexts,
-        response: { body: error.responseBody },
-      };
-    }
-
-    return event;
-  },
-});</code></pre>
-
-        <p>
-          <strong>개선 전:</strong> message만 다른 동일 API 502가 수십 Issue로 분산.<br />
-          <strong>개선 후:</strong> <code>[502] GET /orders/:id</code> 하나로 묶이고, Tag 필터로 분류 작업 가능.
-        </p>
-        <p>
-          Context에는 디버깅에 꼭 필요한 필드만 담습니다. PII와 high-cardinality 값은 Tag·Context·Slack 어디에도 넣지
-          마세요.
-        </p>
-
-        <h2>5. 운영: 팀이 어떻게 추적·알림·처리할 것인가</h2>
-        <p>
-          기록·정규화만으로는 on-call이 Issues 목록을 수동으로 열어봐야 합니다. Sentry Dashboard로 추세를 보고
-          <strong>fatal은 즉시</strong>, <strong>error는 계획적으로 줄이는</strong> 운영 루프가 필요합니다. 담당자
-          지정은 수동 assign보다 <strong>Ownership Rules</strong>를 최대한 활용합니다.
-        </p>
-
-        <h3>level: fatal vs error</h3>
-        <div class="table-wrap">
-          <table class="post-table">
-            <thead>
-              <tr>
-                <th>level</th>
-                <th>의미</th>
-                <th>알림 정책</th>
-                <th>대응 목표</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>fatal</strong></td>
-                <td>결제·인증 등 핵심 flow 불능, 5xx 급증</td>
-                <td>즉시, 첫 발생 또는 짧은 threshold</td>
-                <td>on-call 즉시 조치, incident</td>
-              </tr>
-              <tr>
-                <td><strong>error</strong></td>
-                <td>비핵심 기능 실패, 간헐적 4xx/5xx</td>
-                <td>지연·요약, digest, 주간 리뷰</td>
-                <td>스프린트 백로그, 점진적 감소</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p>
-          <code>reportError</code>에서 checkout 5xx는 <code>fatal</code>, 그 외 programmer error는 <code>error</code>로
-          기록합니다. Alert Rule은 <code>level:fatal</code>과 Tag(<code>feature.checkout</code>,
-          <code>http.status</code>) 조합으로 설정합니다.
-        </p>
-
-        <h3>Ownership Rules: 담당자 자동 지정</h3>
-        <p>
-          Issue가 생길 때마다 수동 assign하면 분류 작업이 밀립니다. Sentry Ownership Rules를
-          <code>.sentry/ownership</code> 또는 Project Settings → Ownership Rules에 정의해 두면, <strong>페이지 URL</strong>·Tag·path에
-          따라 Owner Team이 <strong>자동 assign</strong>됩니다. Slack 알림·Dashboard 집계 모두 이 assign 결과를
-          사용합니다.
-        </p>
-        <p>
-          Sentry SDK는 에러 발생 시점의 페이지 URL을 자동 수집합니다. 따라서 mutation <code>meta</code> 체인 없이도
-          URL 패턴만으로 팀을 지정할 수 있어, 프론트엔드에서는 URL 기반 Rule이 가장 실용적입니다.
-        </p>
-        <pre><code class="language-plaintext"># .sentry/ownership · URL 기반 (프론트엔드 권장)
+<!-- 운영 ① -->
+<section class="slide" data-title="담당자와 알림 릴레이">
+  <div class="head">
+    <div class="eyebrow">운영 ① · Ownership Rules · Sentry → Apps Script → Google Chat</div>
+    <h2>울리는 알림에는 담당자가 붙어 있어야 한다</h2>
+    <p class="easy">쉽게 말하면 · 이슈가 생기면 담당 팀을 자동으로 정하고 급한 것만 팀 채팅 스레드로 보냅니다. 같은 이슈는 같은 스레드에 모입니다.</p>
+  </div>
+  <div class="grid cols-2">
+    <div class="card">
+      <div class="k">Ownership Rules · 담당 팀 자동 지정</div>
+      <pre class="code hl"># URL 기반 (프론트엔드 권장)
 url:*/checkout/*   #checkout-team
 url:*/profile/*    #profile-team
-url:*/catalog/*    #catalog-team
 
-# Tag 기반 (URL로 구분이 어려운 경우)
-tags.feature.checkout:true  #checkout-team
+# URL로 구분이 어려울 때(모달·공통 컴포넌트)만 태그 보조
+tags.feature:checkout  #checkout-team
 
-# API endpoint 기반
-tags.api.endpoint:"POST /orders/:id"  #checkout-team
-tags.http.status:502                  #platform-oncall
+# fallback
+*  #frontend-platform</pre>
+      <p class="small muted">SDK가 에러 시점의 페이지 URL을 자동으로 모으니, 프론트엔드에서는 URL 규칙이 가장 손이 덜 갑니다.</p>
+    </div>
+    <div class="card">
+      <div class="k">알림 릴레이 · Apps Script Web App</div>
+      <div class="flowmini"><span>Sentry 웹훅</span><i>→</i><span>environment<br>staging·production?</span><i>→</i><span>level<br>error 이상?</span><i>→</i><span class="tagged">Google Chat 스레드</span></div>
+      <ul class="plain small">
+        <li><b>triggered만 받는다</b> · issue 웹훅의 <code>created</code>는 이슈 단위라 environment가 없다</li>
+        <li><b>스레드로 묶는다</b> · threadKey <code>sentry_issue_{issueId}</code>, 같은 이슈는 한 스레드</li>
+        <li><b>담당자 멘션</b> · <code>assigned</code>가 오면 그 스레드에 답글로 멘션</li>
+        <li><b>재시도</b> · Chat이 429·5xx면 300ms, 900ms 간격으로 두 번 더</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout warn small"><b>함정 · assigned가 먼저 도착한다.</b> 자동 배정은 triggered와 거의 동시라 순서가 뒤집히기도 합니다. assigned에는 environment도 없어서 어느 채널로 보낼지 모릅니다.</div>
+  <details class="more">
+    <summary>자세히</summary>
+    <p>Sentry에는 Google Chat 기본 연동이 없어서 Sentry 웹훅을 Apps Script Web App으로 받아 Google Chat 웹훅으로 넘깁니다. 앞 슬라이드의 "stg·prd에서 error 이상만" 조건은 이 릴레이가 거릅니다. 환경마다 채널 웹훅을 따로 둡니다.</p>
+    <p>순서 역전은 세 겹으로 처리합니다. triggered 때 이슈 ID별 environment를 1시간 캐시해 두고 assigned 때 꺼내 씁니다. 캐시가 아직 없으면 assigned를 잠시 보류했다가 triggered가 스레드를 만든 뒤 답글로 보냅니다. 그래도 없으면 Sentry API로 최신 이벤트를 조회해 environment를 알아냅니다. 확인과 보류 등록은 락으로 묶어 그 사이에 triggered가 지나가 보류분이 고아가 되지 않게 했습니다.</p>
+    <p>멘션은 Sentry 담당자 이메일을 Chat 사용자 ID로 바꾸는 표로 합니다. 매핑이 없으면 이름만 굵게 씁니다.</p>
+  </details>
+</section>
 
-# fallback: 어떤 Rule에도 매칭되지 않은 Issue
-*  #frontend-platform</code></pre>
-        <p>Ownership Rules 작성 원칙:</p>
-        <ul>
-          <li>
-            <strong>URL 우선:</strong> Sentry SDK가 페이지 URL을 자동 수집하므로, <code>url:*/checkout/*</code> 같은
-            패턴만으로 팀 지정이 가능합니다. mutation meta 체인 없이도 동작해 설정이 간단합니다.
-          </li>
-          <li>
-            <strong>팀 단위 assign:</strong> <code>#checkout-team</code>처럼 Sentry Team을 Owner로 지정. 개인 assign은
-            triage 미팅에서만.
-          </li>
-          <li>
-            <strong>Tag 보조:</strong> URL로 구분하기 어려운 경우(모달, 공통 컴포넌트 등)에만 <code>feature.*</code> Tag를
-            사용합니다.
-          </li>
-        </ul>
+<!-- 운영 ② -->
+<section class="slide" data-title="데일리 리포트">
+  <div class="head">
+    <div class="eyebrow">운영 ② · 평일 10시 · Apps Script 시간 트리거</div>
+    <h2>울리고 지나간 알림은 묻힌다, 그래서 매일 아침 다시 꺼낸다</h2>
+    <p class="easy">쉽게 말하면 · 아직 안 고친 에러를 담당자별로 모아 매일 아침 팀 채팅에 다시 올립니다. 기록은 시트에 날짜별로 쌓습니다.</p>
+  </div>
+  <div class="grid cols-2">
+    <div class="grid" style="align-content:start">
+      <div class="k">Google Chat에 오는 메시지 (예시)</div>
+<pre class="chatmsg"><b>🧯 Sentry 데일리 리포트 · 2026-10-21 (화)</b>
+production · 최근 14일 · <span class="lnk">담당자별 이슈 현황</span>
 
-        <h3>Sentry Dashboard: error rate·담당자별 이슈 추적</h3>
-        <p>
-          Slack 알림만으로는 “전체적으로 나아지고 있는가”를 알기 어렵습니다. Ownership Rules로 assign된 Issue를
-          Dashboard에서 추적합니다.
-        </p>
-        <p><strong>위젯 1: Error rate (시계열)</strong></p>
-        <ul>
-          <li>
-            Discover <code>Errors over time</code>, filter: <code>level:fatal</code> / <code>level:error</code> 분리
-          </li>
-          <li>group by: <code>feature.checkout</code> 등 feature Tag</li>
-          <li>release marker와 겹쳐 배포 후 spike 감지</li>
-        </ul>
-        <pre><code class="language-plaintext"># Discover query: feature별 error rate
-event.type:error tag:feature.checkout | timeseries(1h) by(level)</code></pre>
+📈 <b>에러 추이</b> — 어제 1,284건 (전일 -12% / 14일 평균 +5%)
+   chat-web 612 · health-web 341 · shop-web 198 · admin-web 87 · event-web 46
 
-        <p><strong>위젯 2: Open Issues by Owner (담당자별)</strong></p>
-        <ul>
-          <li>Ownership Rules assign 결과 기준 group, “checkout-team open 12건, profile-team 3건”</li>
-          <li>filter: <code>is:unresolved level:error</code> (fatal은 별도 KPI 위젯)</li>
-          <li>주간 triage에서 팀별 Resolve / Ignore / backlog 결정</li>
-        </ul>
-        <pre><code class="language-plaintext"># Issues search: 담당자별 unresolved
-is:unresolved level:error | count() by(assigned)</code></pre>
+👥 <b>담당자별 미해결</b> — 총 9건 <i>(info·warning 23건 제외)</i>
+<span class="mention">@김개발</span> — 4건 / 2,031 events
+   • <span class="lnk">CHAT-WEB-3F</span> [500][GET] /api/v1/conversation/{param}/messages — 1,102건 / 284명
+   • <span class="lnk">CHAT-WEB-41</span> TypeError: Cannot read properties of undefined… — 512건 / 97명
+   • 외 2건
+<span class="mention">@이프론트</span> — 5건 / 870 events
+   • <span class="lnk">HEALTH-WEB-1A</span> [500][GET] /{param}/v1 — 402건 / 130명
+   • 외 4건
 
-        <p><strong>위젯 3: KPI 카드 (선택)</strong></p>
-        <ul>
-          <li>Unresolved error Issues count (목표: N건 이하)</li>
-          <li>Fatal events in last 24h (목표: 0)</li>
-          <li>Top endpoints by error count: <code>api.endpoint</code> Tag group</li>
-        </ul>
+🕳️ 미할당 3건
+📄 <span class="lnk">일자별 아카이브</span></pre>
+    </div>
+    <div class="grid" style="align-content:start">
+      <div class="card">
+        <div class="k">담당자 목록은 대시보드에서 읽는다</div>
+        <p class="small">매번 Sentry 대시보드 정의를 API로 읽어 위젯 쿼리의 <code>assigned:&lt;email&gt;</code>, <code>!project:</code> 제외 필터, environment를 가져옵니다. 대시보드에서 사람을 넣고 빼면 리포트가 따라옵니다.</p>
+      </div>
+      <div class="card">
+        <div class="k">레벨은 받아온 뒤 거른다</div>
+        <p class="small">이슈 검색의 <code>level:</code>은 이슈에 포함된 과거 이벤트까지 봅니다. info로 낮춰 알림을 끈 이슈가 다시 걸려 나오므로, 표시 레벨을 릴레이와 같은 기준(error 이상)으로 직접 거릅니다.</p>
+      </div>
+      <div class="card">
+        <div class="k">"어제"는 KST 자정 기준</div>
+        <p class="small"><code>statsPeriod=14d</code>는 UTC 일자로 잘려 KST 오전 리포트의 "어제"와 하루 어긋납니다. 조회 구간을 KST 자정 경계로 직접 맞춥니다.</p>
+      </div>
+      <div class="card">
+        <div class="k">조용히 죽지 않는다</div>
+        <p class="small">실패하면 사유를 같은 채널에 보냅니다. 리포트가 안 오는 걸 아무도 눈치채지 못하는 게 가장 위험합니다.</p>
+      </div>
+    </div>
+  </div>
+  <details class="more">
+    <summary>자세히</summary>
+    <p>릴레이가 "이슈가 생긴 순간"을 알린다면, 데일리 리포트는 "쌓여 있는 미해결"을 리마인드합니다. 같은 Apps Script 프로젝트에 붙였고 Google Sheets에 일자별로 아카이브합니다. 같은 날짜 행이 있으면 덮어써서 다시 돌려도 아카이브가 오염되지 않습니다.</p>
+    <p>events-stats의 top events 집계에서 <code>orderby=-count()</code>를 빼면 가장 큰 프로젝트가 <code>Other</code> 버킷으로 밀려 사라집니다. Google Chat 메시지는 4096자가 한도라, 넘으면 담당자당 이슈를 3건에서 1건으로 줄여 다시 렌더합니다. 시간 트리거는 정시가 아니라 10~11시 구간에 돌고, 주말은 함수 안에서 건너뜁니다. 설치할 때는 발송·기록 없이 수집과 렌더만 검증하는 자체 점검 함수를 먼저 돌립니다.</p>
+<pre class="code hl">// 대시보드 정의에서 담당자·제외 필터를 읽는다 (하드코딩 대신 단일 출처)
+for (const widget of dashboard.widgets || []) {
+  for (const query of widget.queries || []) {
+    const cond = query.conditions || ''
+    for (const token of cond.match(/assigned:(\S+@\S+)/g) || []) {
+      const email = token.slice('assigned:'.length)
+      if (!assignees.includes(email)) assignees.push(email)
+    }
+  }
+}
 
-        <h3>메신저 알림: 가독성과 멘션</h3>
-        <p>
-          Alert Rule에서 Ownership Rules로 assign된 Owner Team을 Slack 알림에 포함합니다. Sentry Slack integration은
-          Issue Owner를 멘션 대상으로 쓸 수 있습니다.
-        </p>
-        <pre><code class="language-plaintext">🚨 [FATAL] checkout · POST /orders/:id · 502
-Issue: SHOP-WEB-123 · 3 events in 5m
-Owner: #checkout-team
-→ https://sentry.io/organizations/.../issues/123/</code></pre>
-        <ul>
-          <li><strong>fatal:</strong> Owner Team 멘션, title·endpoint·status·event count만 (stack trace는 링크)</li>
-          <li>
-            <strong>error:</strong> <code>#eng-errors-digest</code> 채널, 일 1회 요약 또는 threshold(50 events/h) 초과
-            시
-          </li>
-        </ul>
+// level: 쿼리는 과거 이벤트까지 보므로, 받아온 뒤 표시 레벨로 거른다
+const assigned = fetchIssues(dash, 'is:unresolved !assigned:none')
+  .filter((issue) =&gt; isAllowedLevel(issue.level)) // 릴레이와 같은 기준</pre>
+  </details>
+</section>
 
-        <h3>운영 루프: fatal 즉시 vs error 점진 감소</h3>
-        <ul>
-          <li>
-            <strong>fatal:</strong> Alert Rule → Slack Owner Team 멘션 → incident → resolve → Dashboard fatal line 확인
-          </li>
-          <li>
-            <strong>error:</strong> 주간 triage, Dashboard error rate·팀별 open count review → Resolve/regression/Ignore
-            → open count 목표
-          </li>
-          <li>fingerprint 덕분에 동일 API 502 300건이 1 Issue → Dashboard·digest 모두 1줄 집계</li>
-        </ul>
+<!-- 체크리스트 -->
+<section class="slide" data-title="내 코드에서 보고할 때">
+  <div class="head">
+    <div class="eyebrow">실전 체크리스트 · 항목을 눌러 보세요</div>
+    <h2>보고하는 코드를 쓰기 전에</h2>
+    <p class="easy">쉽게 말하면 · 내가 에러를 보고하는 코드를 쓸 때 확인할 6가지. 눌러서 하나씩 체크하세요.</p>
+  </div>
+  <div class="explore" id="ckExplore">
+    <div class="checks">
+      <button class="ck" type="button" data-key="c1"><span class="box"></span><span>이미 보내고 있지 않은가</span></button>
+      <button class="ck" type="button" data-key="c2"><span class="box"></span><span>삼킨 에러는 직접 보낸다</span></button>
+      <button class="ck" type="button" data-key="c3"><span class="box"></span><span>예상된 실패는 호출부에서 끈다</span></button>
+      <button class="ck" type="button" data-key="c4"><span class="box"></span><span>핵심 흐름이면 level 명시</span></button>
+      <button class="ck" type="button" data-key="c5"><span class="box"></span><span>태그 · context · 바디 구분</span></button>
+      <button class="ck" type="button" data-key="c6"><span class="box"></span><span>SDK 대신 래퍼</span></button>
+    </div>
+    <div class="card xdetail" aria-live="polite"></div>
+    <div hidden>
+      <div class="xsrc" data-key="c1"><p class="small">쿼리·뮤테이션·ErrorBoundary·error.tsx가 이미 보냅니다(서버 렌더 에러는 onRequestError가). catch에서 또 보내면 두 번째는 SDK가 대개 버려서 거기 붙인 tags·level이 조용히 사라집니다.</p></div>
+      <div class="xsrc" data-key="c2"><p class="small">실패를 응답·리다이렉트·토스트·<code>null</code>로 바꾸면 Sentry는 모릅니다.</p><pre class="code hl">import { sentryCaptureException } from '@/lib/sentry'
 
-        <h3>함정</h3>
-        <ul>
-          <li>모든 에러를 fatal로 올리면 알림 노이즈 → on-call이 fatal을 무시</li>
-          <li>operational error(재고 부족)까지 capture·Slack 멘션 → 노이즈. 분류 단계에서 걸러야 합니다.</li>
-          <li>SPA에서 URL이 실제 feature를 반영하지 않는 경우(모달, drawer 등) → URL Rule 매칭 실패. Tag 보조 필요</li>
-          <li>Dashboard 없이 Issues 목록만 보면 추세·팀별 부하 파악 불가</li>
-        </ul>
+sentryCaptureException(error, { tags: { boundary: 'checkout', gate: 'outbound' } })</pre></div>
+      <div class="xsrc" data-key="c3"><p class="small">뮤테이션 meta가 가장 확실합니다. useQuery meta는 바운더리가 다시 보고하고 suspense엔 무효라 쿼리는 axios config(<code>sentryOn400/403/404</code>)로. 503은 앱 beforeSend로만.</p><pre class="code hl">useRecalculateScore({
+  mutation: { meta: { sentryOn409: false } },
+})</pre></div>
+      <div class="xsrc" data-key="c4"><p class="small">결제·서명은 <code>level: 'fatal'</code>, 기록만이면 <code>'warning'</code>. 도메인 지식이라 패키지가 대신 못 합니다. 스킵 판정(망 단절 등)은 명시한 level보다 우선.</p></div>
+      <div class="xsrc" data-key="c5"><p class="small">태그 = 값 종류가 몇 개뿐인 검색용(feature, boundary). ID처럼 계속 달라지는 값은 context. 건강 정보·개인정보는 어디에도 넣지 않고 민감한 바디를 보내는 요청은 실패 시 바디가 실린다는 걸 기억합니다.</p></div>
+      <div class="xsrc" data-key="c6"><p class="small"><code>Sentry.captureException</code>보다 <code>sentryCaptureException</code>. 래퍼를 써야 내가 넘긴 level·fingerprint가 그대로 갑니다. <code>error.tsx</code>·<code>global-error.tsx</code>에선 digest를 걸러 주는 <code>captureBoundaryError</code>.</p></div>
+    </div>
+  </div>
+  <details class="more">
+    <summary>자세히</summary>
+    <p>가장 흔한 실수는 첫 번째. 이미 React Query가 보내는 에러를 catch에서 태그를 붙여 또 보내면, 태그 붙은 쪽이 사라집니다.</p>
+  </details>
+</section>
 
-        <p>지금까지 다룬 5단계 흐름을 도식화하면 다음과 같습니다.</p>
-        <pre class="mermaid">
-flowchart LR
-  subgraph step1 [분류]
-    CustomError["Custom Error / ApiError"]
-  end
-  subgraph step2 [전파]
-    RQ["mutationCache throwOnError"]
-  end
-  subgraph step3 [표현]
-    Toast["Toast / Fallback"]
-  end
-  subgraph step4 [기록]
-    Report["reportError + level"]
-    BeforeSend["beforeSend normalize"]
-  end
-  subgraph step5 [운영]
-    Dashboard["Dashboard error rate / by assignee"]
-    Ownership["Ownership Rules"]
-    Slack["Slack + @mention"]
-  end
-  CustomError --> RQ --> Toast
-  CustomError --> Report --> BeforeSend --> Sentry["Sentry Issues"]
-  Sentry --> Dashboard
-  Sentry --> Ownership --> Slack</pre
-        >
+<!-- 정리 -->
+<section class="slide" data-title="정리">
+  <div class="head">
+    <div class="eyebrow">정리</div>
+    <h2>세 줄로</h2>
+  </div>
+  <div class="grid cols-3">
+    <div class="card big"><div class="k">01</div><h3>규칙은 하나, 판단 자리는 넷</h3><div class="gates"><span class="gate">앱 게이트</span><span class="gate">normalize</span><span class="gate">classify</span><span class="gate">앱 beforeSend</span></div></div>
+    <div class="card big"><div class="k">02</div><h3>level이 알림을 정한다</h3><p class="small muted">stg·prd에서 error 이상만 울린다. 쌓인 미해결은 데일리 리포트가 매일 다시 꺼낸다.</p></div>
+    <div class="card big"><div class="k">03</div><h3>입구마다 길이 다르다</h3><p class="small muted">useQuery · useSuspenseQuery · useMutation · 서버 컴포넌트</p></div>
+  </div>
+  <p class="lead"><code>throw</code>하고 <code>captureException</code>을 부르는 데서 끝나지 않습니다. 에러 한 건이 어느 길로 들어와 어디서 버려지고 무엇이 알림이 되는지 알아야 알림을 믿을 수 있습니다.</p>
+  <details class="more">
+    <summary>자세히</summary>
+    <p>01: 앱 게이트·normalize(axios config)·classify·앱 beforeSend. 새 예외는 가장 바깥(앱)에. 02: stg·prd에서 error 이상만. 끄기와 낮추기를 구분. 03: useQuery·useSuspenseQuery·useMutation·서버 컴포넌트는 각자 다른 곳에서 보고됩니다.</p>
+    <p>자주 받는 질문: "백엔드가 통째로 죽으면?" 브라우저: 5xx는 오지만 CORS 실패·응답 없는 멈춤은 0건. 서버 컴포넌트: 망 단절도 status 없는 ServerFetchError라 default error로 알림이 갑니다. "suspense 쿼리에서 400 끄려면?" axios config의 sentryOn400(503은 앱 beforeSend로만). "RSC 장애면 알림 두 번?" 아니요. 서버 이슈 하나만 울립니다(브라우저 error.tsx는 digest라 생략).</p>
+  </details>
+</section>
 
-        <h2>정리: 5단계 체크리스트</h2>
-        <ol>
-          <li>
-            <strong>분류:</strong> operational error는 커스텀 Error, HTTP 실패는 <code>ApiError</code> wrap.
-            <code>isOperational</code>로 programmer bug 구분.
-          </li>
-          <li>
-            <strong>전파:</strong> <code>MutationCache.onError</code> + <code>meta.throwOnError</code>, feature 단위
-            Error Boundary 배치.
-          </li>
-          <li>
-            <strong>표현:</strong> toast(가벼운 실패) vs fallback UI(페이지 복구). <code>toUserMessage</code> +
-            operational 분기.
-          </li>
-          <li>
-            <strong>기록:</strong> Tag/Context, <code>beforeSend</code> fingerprint, <code>level</code> 지정. Tag
-            naming은 Ownership Rules와 1:1.
-          </li>
-          <li>
-            <strong>운영:</strong> Ownership Rules 자동 assign, Dashboard(error rate·팀별 open Issues), fatal 즉시
-            Slack+멘션, error burn-down.
-          </li>
-        </ol>
-        <p>
-          <code>throw</code> + <code>captureException</code>은 시작점일 뿐입니다. 에러 타입을 정의하고 앱 내부 전파·UX
-          표현을 분리하고, Sentry에 정규화해 기록한 뒤, Ownership Rules와 Dashboard로 운영까지 챙겨야 에러를 지속적으로
-          예방하고 줄일 수 있습니다.
-        </p>
+</div>
 
+
+<nav class="ctrl" aria-label="슬라이드 이동">
+  <button class="btn" type="button" id="prevBtn" aria-label="이전 슬라이드">←</button>
+  <div class="progress" id="progress"></div>
+  <button class="btn" type="button" id="nextBtn" aria-label="다음 슬라이드">→</button>
+</nav>
+
+<div id="gloss" hidden><div class="panel" id="glossPanel" role="dialog" aria-label="용어 사전"></div></div>
+<div id="tip" role="tooltip" hidden></div>
+<div id="toc" hidden><div class="panel" id="tocPanel" role="dialog" aria-label="목차"></div></div>
+    </article>
+    <div class="content">
+      <main>
         <!-- 구독 섹션 -->
         <section class="subscribe-inline">
           <h3>새 글 알림 받기</h3>
@@ -786,9 +841,7 @@ flowchart LR
     </div>
     <script src="../common/common.js"></script>
     <script src="../nav/nav.js"></script>
-    <script src="../post/prism.js"></script>
-    <script src="../post/mermaid.min.js"></script>
-    <script src="../post/mermaid.js"></script>
     <script src="../subscribe/subscribe.js"></script>
+    <script src="../post/sentry-deck.js"></script>
   </body>
 </html>
