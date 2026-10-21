@@ -1,0 +1,1063 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <!-- Google AdSense -->
+    <meta name="google-adsense-account" content="ca-pub-9401013749529244" />
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9401013749529244"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Basic SEO -->
+    <title>iOS 웹뷰 키보드 노출 시 스크롤/화면 밀림 이슈 깔끔하게 해결하기 | doong-jo</title>
+    <meta
+      name="description"
+      content="iOS 웹뷰에서 키보드가 뜰 때 헤더가 화면 밖으로 밀리던 문제. 투명한 입력창은 WebKit이 밀지 않는다는 점을 이용해 밀림 자체를 막고, 드래그로 닫을 때 남는 포커스까지 정리했습니다."
+    />
+    <meta name="author" content="doong-jo" />
+    <meta
+      name="keywords"
+      content="iOS, WebView, WKWebView, WebKit, 키보드, visualViewport, 화면 밀림, frontend"
+    />
+    <meta name="post-tags" content="구현, iOS, WebView" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://doong-jo.github.io/posts/ios-webview-keyboard-scroll-shift.html" />
+
+    <!-- RSS Feed -->
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="doong-jo RSS Feed"
+      href="https://doong-jo.github.io/feed.xml"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="iOS 웹뷰 키보드 노출 시 스크롤/화면 밀림 이슈 깔끔하게 해결하기" />
+    <meta
+      property="og:description"
+      content="iOS 웹뷰에서 키보드가 뜰 때 헤더가 화면 밖으로 밀리던 문제. 투명한 입력창은 WebKit이 밀지 않는다는 점을 이용해 밀림 자체를 막고, 드래그로 닫을 때 남는 포커스까지 정리했습니다."
+    />
+    <meta property="og:url" content="https://doong-jo.github.io/posts/ios-webview-keyboard-scroll-shift.html" />
+    <meta property="og:site_name" content="doong-jo" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta
+      property="og:image"
+      content="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=1200"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="article:author" content="Sungdong Cho" />
+    <meta property="article:published_time" content="2026-10-21" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="iOS 웹뷰 키보드 노출 시 스크롤/화면 밀림 이슈 깔끔하게 해결하기" />
+    <meta
+      name="twitter:description"
+      content="iOS 웹뷰에서 키보드가 뜰 때 헤더가 화면 밖으로 밀리던 문제. 투명한 입력창은 WebKit이 밀지 않는다는 점을 이용해 밀림 자체를 막고, 드래그로 닫을 때 남는 포커스까지 정리했습니다."
+    />
+    <meta
+      name="twitter:image"
+      content="https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=1200"
+    />
+
+    <!-- JSON-LD: BlogPosting Schema -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "iOS 웹뷰 키보드 노출 시 스크롤/화면 밀림 이슈 깔끔하게 해결하기",
+        "description": "iOS 웹뷰에서 키보드가 뜰 때 헤더가 화면 밖으로 밀리던 문제. 투명한 입력창은 WebKit이 밀지 않는다는 점을 이용해 밀림 자체를 막고, 드래그로 닫을 때 남는 포커스까지 정리했습니다.",
+        "image": "https://imagedelivery.net/uuQqF0zSl8Q3hu0vRu101g/snapkit-c7634062-8152-4777-a7e0-11c6b2956f59/729f15a7-c4c5-4cce-9cf0-23a4a8228996/default-og.png/w=1200",
+        "author": {
+          "@type": "Person",
+          "name": "doong-jo",
+          "url": "https://doong-jo.github.io/about.html"
+        },
+        "publisher": {
+          "@type": "Person",
+          "name": "doong-jo"
+        },
+        "datePublished": "2026-10-21",
+        "dateModified": "2026-10-21",
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "https://doong-jo.github.io/posts/ios-webview-keyboard-scroll-shift.html"
+        },
+        "inLanguage": "ko-KR"
+      }
+    </script>
+
+    <!-- Stylesheets -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    />
+    <link rel="stylesheet" href="../common/common.css" />
+    <link rel="stylesheet" href="../nav/nav.css" />
+    <link rel="stylesheet" href="../post/post.css" />
+    <link rel="stylesheet" href="../subscribe/subscribe.css" />
+    <link rel="stylesheet" href="../post/ios-keyboard-deck.css" />
+    <style></style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a href="/" class="site-logo">doong-jo</a>
+        <nav aria-label="사이트 메뉴">
+          <ul id="nav-list">
+            <li><a href="/index.html" id="nav-post" class="current">Post</a></li>
+            <li><a href="/about.html" id="nav-about">About</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <article class="ik-deck" id="ikDeck" aria-label="iOS 웹뷰 키보드 노출 시 스크롤/화면 밀림 이슈 깔끔하게 해결하기 · 슬라이드">
+<div class="deck" id="deck" aria-roledescription="슬라이드 덱">
+
+<!-- 1 표지 -->
+<section class="slide" data-sec="개요" aria-label="표지">
+  <div class="wrap cover">
+    <div class="head">
+      <span class="eyebrow">트러블슈팅 · 2026-10-20</span>
+      <h1>iOS 웹뷰 키보드 노출 시 스크롤/화면 밀림 이슈 깔끔하게 해결하기</h1>
+    </div>
+    <div class="chips">
+      <span class="chip">AI 채팅 화면</span>
+      <span class="chip">iOS 26.4 시뮬레이터에서만 검증</span>
+    </div>
+    <div class="tldr">
+      <div>
+        <b>원인</b>
+        <svg viewBox="0 0 200 92" aria-hidden="true">
+          <rect x="70" y="-20" width="60" height="60" rx="6" fill="none" stroke="var(--warn)" stroke-dasharray="4 3"/>
+          <rect x="70" y="10" width="60" height="78" rx="9" fill="var(--screen)" stroke="var(--ink)" stroke-width="1.5"/>
+          <rect x="70" y="60" width="60" height="28" fill="var(--kb)"/>
+          <path d="M150 64 V22" stroke="var(--warn)" stroke-width="2" fill="none"/>
+          <path d="M144 30 L150 20 L156 30" stroke="var(--warn)" stroke-width="2" fill="none"/>
+        </svg>
+        <span>WebKit이 입력창을 보이려고 화면을 밀었다</span>
+      </div>
+      <div>
+        <b>해결</b>
+        <svg viewBox="0 0 200 92" aria-hidden="true">
+          <rect x="40" y="34" width="120" height="26" rx="13" fill="none" stroke="var(--ok)" stroke-width="1.8" stroke-dasharray="5 4"/>
+          <text x="100" y="51" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" fill="var(--ok)">opacity: 0</text>
+        </svg>
+        <span>키보드가 뜰 때까지 입력창을 투명하게</span>
+      </div>
+      <div>
+        <b>근거</b>
+        <svg viewBox="0 0 200 92" aria-hidden="true">
+          <rect x="20" y="40" width="160" height="10" rx="5" fill="var(--code-bg)"/>
+          <rect x="20" y="40" width="80" height="10" rx="5" fill="var(--ok-soft)"/>
+          <line x1="100" y1="28" x2="100" y2="62" stroke="var(--ink)" stroke-width="2"/>
+          <text x="100" y="80" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" fill="var(--ink)">0.01</text>
+          <circle cx="40" cy="45" r="8" fill="var(--ok)"/>
+        </svg>
+        <span>opacity 곱이 0.01 미만이면 WebKit이 안 민다</span>
+      </div>
+      <div class="trap">
+        <b>함정</b>
+        <svg viewBox="0 0 200 92" aria-hidden="true">
+          <rect x="40" y="34" width="120" height="26" rx="13" fill="none" stroke="var(--accent)" stroke-width="2"/>
+          <line x1="58" y1="40" x2="58" y2="54" stroke="var(--accent)" stroke-width="2"/>
+          <text x="100" y="22" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" fill="var(--warn)">focus 남음</text>
+          <text x="100" y="82" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" fill="var(--ok)">→ blur()</text>
+        </svg>
+        <span>드래그로 닫으면 포커스가 남는다 → blur()</span>
+      </div>
+    </div>
+    <p class="note">← → 키, 아래 막대, 스와이프로 넘긴다</p>
+  </div>
+</section>
+
+<!-- 2 현상 -->
+<section class="slide" data-sec="현상" aria-label="현상" hidden>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow"><b>현상</b> · 측정</span>
+      <h2>여닫을 때마다 헤더가 화면 밖으로 나갔다 돌아왔다</h2>
+    </div>
+    <div class="viz">
+      <div class="symptom">
+        <div class="mp-col">
+          <div class="mp before" aria-hidden="true">
+            <div class="mp-screen">
+              <div class="mp-base"></div>
+              <div class="mp-page">
+                <div class="mp-hdr">✕ <i>10월 20일</i> ≡</div>
+                <div class="mp-list"><span></span><span class="u"></span><span></span><span class="u"></span><span></span></div>
+                <div class="mp-in"><span></span></div>
+              </div>
+              <div class="mp-kb"></div>
+            </div>
+          </div>
+          <span class="tag warn">Before</span>
+        </div>
+        <div class="mp-col">
+          <div class="mp after" aria-hidden="true">
+            <div class="mp-screen">
+              <div class="mp-base"></div>
+              <div class="mp-page">
+                <div class="mp-hdr">✕ <i>10월 20일</i> ≡</div>
+                <div class="mp-list"><span></span><span class="u"></span><span></span><span class="u"></span><span></span></div>
+                <div class="mp-in"><span></span></div>
+              </div>
+              <div class="mp-kb"></div>
+            </div>
+          </div>
+          <span class="tag ok">After</span>
+        </div>
+        <div class="stats">
+          <div>
+            <p class="eyebrow" style="margin-bottom:10px">X 버튼 화면 Y 흔들림 폭</p>
+            <div class="bars">
+              <span class="lbl">Before</span>
+              <div class="trk"><div class="fill" style="width:100%"></div></div>
+              <span class="num warn">240px</span>
+              <span class="lbl">After</span>
+              <div class="trk"><div class="zero"></div></div>
+              <span class="num ok">0px</span>
+            </div>
+            <p class="note" style="margin-top:6px">Before: 186px ↔ 426px 사이를 오갔다</p>
+          </div>
+          <div class="runs">
+            <p class="eyebrow">After 반복 측정 · 점 하나 = 1회, 초록 = 헤더 위치 변화 0</p>
+            <div class="run"><span>앱 새 실행 ①</span><div class="dots" data-n="14"></div></div>
+            <div class="run"><span>앱 새 실행 ②</span><div class="dots" data-n="14"></div></div>
+            <div class="run"><span>페이지 새로고침</span><div class="dots" data-n="23"></div></div>
+          </div>
+          <div class="env">
+            <span class="chip">iPhone 17 시뮬레이터</span><span class="chip">iOS 26.4</span><span class="chip">개발 빌드 앱</span>
+          </div>
+          <p class="note">1회 = 탭 → 키보드 다 올라올 때까지 대기 → 드래그로 닫기. 녹화 60fps 프레임마다 X·목록 버튼 위치만 쟀다.<br>키보드가 떠 있으면 최신 메시지가 입력바 아래로 숨고 "아래로" 버튼이 뜨는 증상도 함께 있었다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 원인 A -->
+<section class="slide" data-sec="원인" aria-label="원인 A: 판과 창" hidden>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow"><b>원인 A</b> · 웹뷰 크기</span>
+      <h2>iOS는 키보드가 떠도 웹뷰 크기가 그대로다</h2>
+    </div>
+    <div class="viz">
+      <div class="svgbox">
+        <svg viewBox="0 -76 900 434" style="min-width:640px" role="img" aria-label="Android는 웹뷰가 줄고, iOS는 보이는 창만 판 안에서 아래로 옮겨 헤더가 화면 밖으로 나간다">
+          <defs>
+            <marker id="arw" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="var(--warn)"/></marker>
+            <clipPath id="clipIos"><rect x="660" y="40" width="160" height="260" rx="16"/></clipPath>
+          </defs>
+          <g font-family="Pretendard Variable, Pretendard, sans-serif" font-size="13">
+            <!-- Android -->
+            <text x="160" y="22" text-anchor="middle" fill="var(--ink)" font-weight="700">Android 시트</text>
+            <rect x="80" y="40" width="160" height="260" rx="16" fill="var(--screen)" stroke="var(--ink)" stroke-width="1.5"/>
+            <rect x="80" y="40" width="160" height="170" rx="16" fill="none" stroke="var(--ok)" stroke-width="2.5"/>
+            <rect x="88" y="48" width="144" height="22" rx="5" fill="var(--bubble-bot)"/>
+            <text x="98" y="64" fill="var(--ink)" font-size="12">헤더</text>
+            <rect x="90" y="182" width="140" height="20" rx="10" fill="none" stroke="var(--accent)"/>
+            <text x="102" y="196" fill="var(--accent)" font-size="11">입력창</text>
+            <rect x="80" y="210" width="160" height="90" fill="var(--kb)"/>
+            <text x="160" y="260" text-anchor="middle" fill="var(--muted)" font-size="12">키보드</text>
+            <text x="160" y="330" text-anchor="middle" fill="var(--ok)" font-size="12.5">웹뷰가 키보드만큼 줄어든다</text>
+            <text x="160" y="346" text-anchor="middle" fill="var(--muted)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">WindowInsets.ime</text>
+
+            <!-- iOS 닫힘 -->
+            <text x="450" y="22" text-anchor="middle" fill="var(--ink)" font-weight="700">iOS · 키보드 닫힘</text>
+            <rect x="370" y="40" width="160" height="260" rx="16" fill="var(--screen)" stroke="var(--ink)" stroke-width="1.5"/>
+            <rect x="378" y="48" width="144" height="22" rx="5" fill="var(--bubble-bot)"/>
+            <text x="388" y="64" fill="var(--ink)" font-size="12">헤더</text>
+            <rect x="380" y="272" width="140" height="20" rx="10" fill="none" stroke="var(--accent)"/>
+            <text x="392" y="286" fill="var(--accent)" font-size="11">입력창</text>
+            <text x="450" y="330" text-anchor="middle" fill="var(--muted)" font-size="12.5">보이는 창 = 판</text>
+            <text x="450" y="346" text-anchor="middle" fill="var(--muted)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">offsetTop 0</text>
+
+            <!-- iOS 열림 -->
+            <text x="740" y="-56" text-anchor="middle" fill="var(--ink)" font-weight="700">iOS · 키보드 열림</text>
+            <rect x="660" y="-40" width="160" height="260" rx="16" fill="none" stroke="var(--warn)" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <rect x="668" y="-32" width="144" height="22" rx="5" fill="none" stroke="var(--warn)" stroke-dasharray="3 3"/>
+            <text x="678" y="-16" fill="var(--warn)" font-size="12">헤더 (화면 밖)</text>
+            <g clip-path="url(#clipIos)">
+              <rect x="660" y="40" width="160" height="260" fill="var(--screen)"/>
+              <rect x="670" y="192" width="140" height="20" rx="10" fill="none" stroke="var(--accent)"/>
+              <text x="682" y="206" fill="var(--accent)" font-size="11">입력창</text>
+              <rect x="660" y="220" width="160" height="80" fill="var(--kb)"/>
+              <text x="740" y="265" text-anchor="middle" fill="var(--muted)" font-size="12">키보드</text>
+            </g>
+            <rect x="660" y="40" width="160" height="260" rx="16" fill="none" stroke="var(--ink)" stroke-width="1.5"/>
+            <rect x="656" y="40" width="168" height="180" rx="4" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+            <path d="M640 -38 V38" stroke="var(--warn)" stroke-width="1.8" marker-start="url(#arw)" marker-end="url(#arw)" fill="none"/>
+            <text x="632" y="4" text-anchor="end" fill="var(--warn)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">offsetTop</text>
+            <text x="740" y="330" text-anchor="middle" fill="var(--warn)" font-size="12.5">보이는 창이 판 안에서 내려간다</text>
+            <text x="740" y="346" text-anchor="middle" fill="var(--muted)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">fixed 헤더가 잘린다</text>
+          </g>
+        </svg>
+      </div>
+      <div class="legend">
+        <span><i style="border:2px dashed var(--warn)"></i>판 (layout viewport · innerHeight 그대로)</span>
+        <span><i style="border:2.5px solid var(--accent)"></i>보이는 창 (visual viewport · height만 줄어듦)</span>
+        <span><i style="border:2.5px solid var(--ok)"></i>Android 웹뷰 자체</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 원인 B -->
+<section class="slide" data-sec="원인" aria-label="원인 B: 뒤늦은 보정" hidden>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow"><b>원인 B</b> · 기존 코드</span>
+      <h2>밀림을 막지 않고, 밀린 뒤에 헤더만 뒤쫓았다</h2>
+      <p class="sub"><code>useStickyToVisualViewport</code> (삭제됨) → 헤더에 <code>translateY(offsetTop)</code> · rAF 1프레임 지연 · <code>transition 200ms</code></p>
+    </div>
+    <div class="viz">
+      <div class="svgbox">
+        <svg id="lagChart" viewBox="0 0 760 300" style="min-width:520px" role="img" aria-label="화면 밀림이 먼저 커지고 헤더 보정이 늦게 따라가, 그 차이만큼 헤더가 화면 밖으로 나간다"></svg>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--warn)"></i>화면 밀림 (offsetTop)</span>
+        <span><i style="background:var(--accent)"></i>헤더 보정 (translateY)</span>
+        <span><i style="background:var(--warn-soft)"></i>차이 = 헤더가 화면 밖에 있는 양</span>
+        <span class="concept">개념도 · 실제 타이밍과 다름</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 WebKit 흐름 -->
+<section class="slide" data-sec="원인" aria-label="WebKit 내부 흐름" hidden>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow"><b>근거</b> · WebKit 소스</span>
+      <h2>WebKit은 입력창이 투명하면 화면 옮기기를 건너뛴다</h2>
+    </div>
+    <div class="viz">
+      <div class="svgbox">
+        <svg viewBox="0 0 1000 372" style="min-width:820px" role="img" aria-label="웹 프로세스가 투명 여부를 EditorState로 보내고, UI 프로세스는 키보드 신호를 기다렸다가 억제 이유가 있으면 화면을 옮기지 않는다">
+          <defs>
+            <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="var(--muted)"/></marker>
+          </defs>
+          <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">
+            <rect x="0" y="0" width="1000" height="124" rx="12" fill="var(--surface)" stroke="var(--line)"/>
+            <text x="16" y="22" fill="var(--muted)" font-family="Pretendard Variable, Pretendard, sans-serif" font-size="12" font-weight="700">웹 프로세스 · WebCore</text>
+            <rect x="0" y="140" width="1000" height="232" rx="12" fill="var(--surface)" stroke="var(--line)"/>
+            <text x="16" y="162" fill="var(--muted)" font-family="Pretendard Variable, Pretendard, sans-serif" font-size="12" font-weight="700">UI 프로세스 · WKContentView</text>
+
+            <!-- web -->
+            <rect x="24" y="40" width="170" height="60" rx="8" fill="var(--bg)" stroke="var(--ink)"/>
+            <text x="109" y="66" text-anchor="middle" fill="var(--ink)" font-family="Pretendard Variable, Pretendard, sans-serif" font-size="13">사용자 탭</text>
+            <text x="109" y="86" text-anchor="middle" fill="var(--muted)">focus</text>
+
+            <rect x="250" y="40" width="320" height="60" rx="8" fill="var(--bg)" stroke="var(--ink)"/>
+            <text x="410" y="64" text-anchor="middle" fill="var(--ink)">getPlatformEditorStateCommon</text>
+            <text x="410" y="84" text-anchor="middle" fill="var(--accent)">isTransparentOrFullyClipped ?</text>
+
+            <rect x="610" y="40" width="370" height="60" rx="8" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="795" y="64" text-anchor="middle" fill="var(--ink)" font-family="Pretendard Variable, Pretendard, sans-serif" font-size="13">조상까지 opacity를 곱해 0.01 미만</text>
+            <text x="795" y="84" text-anchor="middle" fill="var(--muted)" font-family="Pretendard Variable, Pretendard, sans-serif" font-size="12">또는 보이는 영역 0 → 투명</text>
+            <line x1="570" y1="70" x2="606" y2="70" stroke="var(--accent)" stroke-dasharray="3 3"/>
+
+            <line x1="194" y1="70" x2="246" y2="70" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/>
+            <line x1="109" y1="100" x2="109" y2="178" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/>
+            <line x1="553" y1="100" x2="553" y2="208" stroke="var(--accent)" stroke-width="2" marker-end="url(#ah)"/>
+            <text x="560" y="134" fill="var(--accent)">EditorState</text>
+
+            <!-- ui -->
+            <rect x="24" y="180" width="200" height="60" rx="8" fill="var(--bg)" stroke="var(--ink)"/>
+            <text x="124" y="204" text-anchor="middle" fill="var(--ink)">_continueElementDidFocus</text>
+            <text x="124" y="224" text-anchor="middle" fill="var(--muted)" font-family="Pretendard Variable, Pretendard, sans-serif" font-size="12">바로 옮기지 않고 대기</text>
+            <line x1="224" y1="210" x2="246" y2="210" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/>
+
+            <rect x="250" y="180" width="360" height="60" rx="8" fill="var(--bg)" stroke="var(--ink)"/>
+            <text x="262" y="198" fill="var(--muted)" font-family="Pretendard Variable, Pretendard, sans-serif" font-size="11.5">RevealFocusedElementDeferrer · 신호가 다 오면</text>
+            <rect x="262" y="210" width="118" height="22" rx="11" fill="var(--surface)" stroke="var(--line)"/>
+            <text x="321" y="225" text-anchor="middle" fill="var(--ink)" font-size="10.5">KeyboardWillShow</text>
+            <rect x="388" y="210" width="112" height="22" rx="11" fill="var(--surface)" stroke="var(--line)"/>
+            <text x="444" y="225" text-anchor="middle" fill="var(--ink)" font-size="10.5">KeyboardDidShow</text>
+            <rect x="508" y="210" width="90" height="22" rx="11" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="553" y="225" text-anchor="middle" fill="var(--accent)" font-size="10.5">EditorState</text>
+            <line x1="610" y1="210" x2="636" y2="210" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/>
+
+            <line x1="553" y1="232" x2="553" y2="278" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>
+            <rect x="250" y="280" width="360" height="60" rx="8" fill="var(--bg)" stroke="var(--ink)"/>
+            <text x="430" y="304" text-anchor="middle" fill="var(--ink)" font-size="11">_updateSelectionAssistantSuppressionState</text>
+            <text x="430" y="324" text-anchor="middle" fill="var(--accent)" font-size="10.5">+ SelectionIsTransparentOrFullyClipped</text>
+            <text x="430" y="358" text-anchor="middle" fill="var(--muted)" font-family="Pretendard Variable, Pretendard, sans-serif" font-size="11.5">커서·선택 UI도 꺼진다 (투명한 동안 커서가 안 보이는 이유)</text>
+
+            <rect x="640" y="180" width="200" height="60" rx="8" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+            <text x="740" y="204" text-anchor="middle" fill="var(--muted)">fulfill() →</text>
+            <text x="740" y="224" text-anchor="middle" fill="var(--ink)" font-size="10.8">_zoomToRevealFocusedElement</text>
+            <path d="M610 310 H740 V244" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4 3" fill="none" marker-end="url(#ah)"/>
+            <text x="652" y="302" fill="var(--accent)" font-family="Pretendard Variable, Pretendard, sans-serif" font-size="11.5">억제 이유</text>
+
+            <path d="M840 196 H866" stroke="var(--ok)" stroke-width="1.8" fill="none" marker-end="url(#ah)"/>
+            <rect x="870" y="176" width="118" height="44" rx="8" fill="var(--ok-soft)" stroke="var(--ok)"/>
+            <text x="929" y="194" text-anchor="middle" fill="var(--ok)">return</text>
+            <text x="929" y="211" text-anchor="middle" fill="var(--ok)" font-family="Pretendard Variable, Pretendard, sans-serif" font-size="12">화면 그대로</text>
+            <text x="850" y="186" fill="var(--ok)" font-family="Pretendard Variable, Pretendard, sans-serif" font-size="10.5">있음</text>
+
+            <path d="M840 226 H852 V300 H866" stroke="var(--warn)" stroke-width="1.8" fill="none" marker-end="url(#ah)"/>
+            <rect x="870" y="278" width="118" height="44" rx="8" fill="var(--warn-soft)" stroke="var(--warn)"/>
+            <text x="929" y="296" text-anchor="middle" fill="var(--warn)" font-size="10.5">_zoomToFocusRect</text>
+            <text x="929" y="313" text-anchor="middle" fill="var(--warn)" font-family="Pretendard Variable, Pretendard, sans-serif" font-size="12">화면 밀림</text>
+            <text x="858" y="266" fill="var(--warn)" font-family="Pretendard Variable, Pretendard, sans-serif" font-size="10.5">없음</text>
+          </g>
+        </svg>
+      </div>
+      <div class="codeline">
+<pre><span class="c">// WKContentViewInteraction.mm</span>
+- (void)_zoomToRevealFocusedElement {
+    if (_focusedElementInformation.preventScroll) return;
+    <mark>if (_suppressSelectionAssistantReasons || _activeTextInteractionCount)</mark>
+        <mark>return;</mark>  <span class="c">// 투명하면 여기서 끝</span>
+    [self _zoomToFocusRect:...];
+}</pre>
+<pre><span class="c">// RenderLayer.cpp</span>
+static const double minimumVisibleOpacity = 0.01;
+for (auto* layer = this; layer; layer = parentLayerCrossFrame(*layer)) {
+    <mark>currentOpacity *= opacity(layer);</mark>  <span class="c">// 조상까지 곱한다</span>
+    if (currentOpacity &lt; minimumVisibleOpacity) return true;
+}</pre>
+      </div>
+      <p class="note">WebKit main <code>2a0b884</code> 기준. 기기에 실린 iOS 26.4 WebKit과 세부가 다를 수 있다. 웹 표준이 아니라 내부 구현이다. 소스 링크는 마지막 장.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6 opacity 실험 -->
+<section class="slide" data-sec="원인" aria-label="투명 판정 실험" hidden>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow"><b>근거</b> · 직접 바꿔 보기</span>
+      <h2>정확히 0일 필요 없다. 조상까지 곱해서 0.01 미만이면 된다</h2>
+    </div>
+    <div class="viz">
+      <div class="lab">
+        <div class="layers" aria-hidden="true">
+          <div class="ly ly-anc"><span class="ly-tag">조상</span>
+            <div class="ly-fill" id="olA">
+              <div class="ly ly-par" style="border-color:transparent"><span class="ly-tag">부모</span>
+                <div class="ly-fill" id="olP">
+                  <div class="ly-in" id="olI">무엇이든 물어보세요</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+          <div class="sliders">
+            <div class="sl"><label for="olIn">입력창</label><input type="range" id="olIn" min="0" max="100" value="0"><output id="olInV" for="olIn">0.00</output></div>
+            <div class="sl"><label for="olPar">부모</label><input type="range" id="olPar" min="0" max="100" value="100"><output id="olParV" for="olPar">1.00</output></div>
+            <div class="sl"><label for="olAnc">조상</label><input type="range" id="olAnc" min="0" max="100" value="100"><output id="olAncV" for="olAnc">1.00</output></div>
+          </div>
+          <div class="product"><span class="eq" id="olEq">0 × 1 × 1 = 0</span><span class="verdict ok" id="olVerdict">투명 → 화면 안 밀림</span></div>
+          <div class="gauge" aria-hidden="true">
+            <div class="g-trk"></div><div class="g-th"></div><div class="g-dot" id="olDot"></div>
+            <span class="g-tick" style="left:0%">0</span>
+            <span class="g-tick" style="left:25%">0.001</span>
+            <span class="g-tick" style="left:50%"><b>0.01</b></span>
+            <span class="g-tick" style="left:75%">0.1</span>
+            <span class="g-tick" style="left:100%;transform:translateX(-100%)">1</span>
+          </div>
+          <div class="presets">
+            <button class="btn" type="button" data-p="0,100,100">우리 코드 0 × 1 × 1</button>
+            <button class="btn" type="button" data-p="50,50,3">0.5 × 0.5 × 0.03</button>
+            <button class="btn" type="button" data-p="10,20,100">0.1 × 0.2 × 1</button>
+            <button class="btn" type="button" data-p="100,100,0">부모 쪽을 투명하게</button>
+          </div>
+        </div>
+      </div>
+      <div class="facts">
+        <span class="fact">clip으로 보이는 영역이 0이어도 투명 취급</span>
+        <span class="fact">스크립트 <code>focus({ preventScroll: true })</code>도 같은 함수에서 건너뜀 · 사용자 탭에는 못 씀</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 함정 1 타이밍 -->
+<section class="slide" data-sec="원인" aria-label="함정 1: 판단 시점" hidden>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow"><b>함정 ①</b> · 판단 시점</span>
+      <h2>focus 순간이 아니라 키보드가 뜨는 순간에 판단한다</h2>
+    </div>
+    <div class="viz">
+      <div class="svgbox">
+        <svg viewBox="0 0 900 260" style="min-width:640px" role="img" aria-label="흔한 트릭처럼 setTimeout 0으로 되돌리면 WebKit 판단 전에 불투명해져 밀린다. 최종 코드는 resize까지 투명을 유지해 판단 시점을 덮는다">
+          <g font-family="Pretendard Variable, Pretendard, sans-serif" font-size="13">
+            <polygon points="190,74 470,40 880,40 880,74" fill="var(--kb)"/>
+            <text x="20" y="62" fill="var(--muted)">키보드</text>
+
+            <line x1="430" y1="20" x2="430" y2="226" stroke="var(--accent)" stroke-width="2" stroke-dasharray="6 4"/>
+            <text x="436" y="20" fill="var(--accent)" font-weight="700">WebKit 판단: 밀까?</text>
+            <text x="436" y="36" fill="var(--accent)" font-size="11.5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">키보드 신호 도착</text>
+
+            <text x="20" y="114" fill="var(--ink)">흔한 트릭</text>
+            <text x="20" y="130" fill="var(--muted)" font-size="11.5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">setTimeout(0)</text>
+            <rect x="190" y="104" width="16" height="22" rx="4" fill="var(--warn)"/>
+            <rect x="206" y="104" width="560" height="22" rx="4" fill="none" stroke="var(--line)"/>
+            <text x="880" y="120" text-anchor="end" fill="var(--warn)" font-weight="700">✕ 밀림</text>
+
+            <text x="20" y="164" fill="var(--ink)">최종</text>
+            <text x="20" y="180" fill="var(--muted)" font-size="11.5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">resize &gt; 150px까지</text>
+            <rect x="190" y="154" width="360" height="22" rx="4" fill="var(--ok)"/>
+            <text x="556" y="170" fill="var(--muted)" font-size="11.5">복구</text>
+            <text x="880" y="170" text-anchor="end" fill="var(--ok)" font-weight="700">✓ 안 밀림</text>
+
+            <text x="20" y="210" fill="var(--ink)">resize 없으면</text>
+            <rect x="190" y="200" width="560" height="22" rx="4" fill="var(--ok-soft)" stroke="var(--ok)" stroke-dasharray="4 3"/>
+            <text x="756" y="216" fill="var(--muted)" font-size="11.5">1초 fallback</text>
+
+            <line x1="190" y1="240" x2="880" y2="240" stroke="var(--line)"/>
+            <line x1="190" y1="234" x2="190" y2="246" stroke="var(--muted)"/>
+            <text x="190" y="258" text-anchor="middle" fill="var(--muted)" font-size="11.5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">focus</text>
+          </g>
+        </svg>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--ok)"></i>입력창 opacity 0 구간</span>
+        <span class="concept">개념도 · 실제 타이밍과 다름</span>
+      </div>
+      <p class="note">투명 여부는 EditorState로 비동기 전달된다. 키보드 신호 전에 opacity를 되돌리면 억제가 풀린 상태가 먼저 도착한다(추정).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8 함정 2 남은 포커스 -->
+<section class="slide" data-sec="원인" aria-label="함정 2: 남은 포커스" hidden>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow"><b>함정 ②</b> · 남은 포커스</span>
+      <h2>드래그로 닫으면 포커스가 남아, 다음 탭엔 투명 처리가 안 걸린다</h2>
+    </div>
+    <div class="viz">
+      <div class="flows">
+        <div class="flow-row">
+          <h3 class="warn">중간 시도 · 투명 처리만</h3>
+          <div class="steps">
+            <div class="st">탭<small>focus</small></div><span class="arr">→</span>
+            <div class="st">opacity 0<small>①</small></div><span class="arr">→</span>
+            <div class="st good">키보드 ↑<small>안 밀림</small></div><span class="arr">→</span>
+            <div class="st">드래그로 닫기<small>네이티브</small></div><span class="arr">→</span>
+            <div class="st bad">포커스 남음<small>activeElement = textarea</small></div><span class="arr">→</span>
+            <div class="st">다시 탭<small>focus 이벤트 없음</small></div><span class="arr">→</span>
+            <div class="st bad">밀림<small>resize 약 50ms 뒤 결정</small></div>
+          </div>
+        </div>
+        <div class="flow-row">
+          <h3 class="ok">최종 · 내려가면 blur()</h3>
+          <div class="steps">
+            <div class="st">탭<small>focus</small></div><span class="arr">→</span>
+            <div class="st">opacity 0<small>①</small></div><span class="arr">→</span>
+            <div class="st good">키보드 ↑<small>안 밀림</small></div><span class="arr">→</span>
+            <div class="st">드래그로 닫기<small>네이티브</small></div><span class="arr">→</span>
+            <div class="st key">blur()<small>② 열림→닫힘 resize</small></div><span class="arr">→</span>
+            <div class="st">다시 탭<small>focus 이벤트 있음</small></div><span class="arr">→</span>
+            <div class="st good">안 밀림<small>①이 매번 걸림</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="scorebox">
+        <span class="eyebrow">중간 시도 · 앱 새 실행 후 9회</span>
+        <div class="dots" aria-label="1회차 성공, 2회차부터 8회 실패"><i></i><i class="x"></i><i class="x"></i><i class="x"></i><i class="x"></i><i class="x"></i><i class="x"></i><i class="x"></i><i class="x"></i></div>
+        <span class="note">1회차만 성공. 페이지 새로고침 조건으로만 검증해서 처음엔 놓쳤다.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 해결 한눈에 -->
+<section class="slide" data-sec="해결" aria-label="해결 요약" hidden>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow"><b>해결</b> · 네 가지</span>
+      <h2>밀림을 보정하지 않고, 일어나지 않게 한다</h2>
+    </div>
+    <div class="viz">
+      <div class="fixes">
+        <div class="fx">
+          <span class="n">①</span>
+          <svg viewBox="0 0 200 110" aria-hidden="true">
+            <rect x="20" y="40" width="160" height="30" rx="15" fill="none" stroke="var(--warn)" stroke-width="1.8" stroke-dasharray="5 4"/>
+            <text x="100" y="60" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" fill="var(--warn)">opacity 0</text>
+            <text x="100" y="96" text-anchor="middle" font-family="Pretendard Variable, Pretendard, sans-serif" font-size="11.5" fill="var(--muted)">키보드 뜬 resize에서 복구</text>
+          </svg>
+          <b>키보드 뜰 때까지 투명</b>
+          <code>_lib/hideUntilKeyboardShown.ts</code>
+        </div>
+        <div class="fx">
+          <span class="n">②</span>
+          <svg viewBox="0 0 200 110" aria-hidden="true">
+            <rect x="20" y="20" width="160" height="30" rx="15" fill="none" stroke="var(--accent)" stroke-width="2"/>
+            <line x1="40" y1="27" x2="40" y2="43" stroke="var(--accent)" stroke-width="2"/>
+            <path d="M100 56 V74" stroke="var(--muted)" stroke-width="1.5"/>
+            <rect x="20" y="78" width="160" height="30" rx="15" fill="none" stroke="var(--line)" stroke-width="2"/>
+            <text x="100" y="98" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" fill="var(--ok)">blur()</text>
+          </svg>
+          <b>키보드 내려가면 포커스 해제</b>
+          <code>_lib/hideUntilKeyboardShown.ts</code>
+        </div>
+        <div class="fx">
+          <span class="n">③</span>
+          <svg viewBox="0 0 200 110" aria-hidden="true">
+            <rect x="60" y="4" width="80" height="102" rx="10" fill="var(--screen)" stroke="var(--ink)" stroke-width="1.5"/>
+            <rect x="60" y="66" width="80" height="40" fill="var(--kb)"/>
+            <rect x="63" y="7" width="74" height="57" rx="6" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+            <rect x="68" y="50" width="64" height="10" rx="5" fill="none" stroke="var(--accent)"/>
+            <path d="M152 8 V62" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="156" y="38" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" fill="var(--accent)">vv</text>
+          </svg>
+          <b>프레임 높이 = 보이는 창</b>
+          <code>_hooks/useFitToVisualViewport.ts</code>
+        </div>
+        <div class="fx">
+          <span class="n">④</span>
+          <svg viewBox="0 0 200 110" aria-hidden="true">
+            <rect x="60" y="4" width="80" height="102" rx="10" fill="var(--screen)" stroke="var(--ink)" stroke-width="1.5"/>
+            <rect x="68" y="14" width="46" height="10" rx="5" fill="var(--bubble-bot)"/>
+            <rect x="86" y="30" width="46" height="10" rx="5" fill="var(--bubble-user)"/>
+            <rect x="68" y="46" width="52" height="10" rx="5" fill="var(--ok)"/>
+            <rect x="60" y="66" width="80" height="40" fill="var(--kb)"/>
+            <path d="M156 70 V40 M150 48 L156 38 L162 48" stroke="var(--ok)" stroke-width="1.8" fill="none"/>
+          </svg>
+          <b>목록 줄어도 보던 끝 유지</b>
+          <code>_hooks/useChatScroll.ts</code>
+        </div>
+      </div>
+      <div class="pipe" aria-label="고친 뒤 이벤트 흐름">
+        <div class="st"><span>탭 → focus → <em>opacity 0</em></span><small>입력창 ①</small></div>
+        <div class="st good"><span>투명이라 안 민다</span><small>WebKit</small></div>
+        <div class="st"><span>resize &gt; 150px → <em>복구</em></span><small>visualViewport ①</small></div>
+        <div class="st"><span>height = vv.height</span><small>채팅 프레임 ③</small></div>
+        <div class="st"><span>scrollTop ↑ 보정</span><small>메시지 목록 ④</small></div>
+        <div class="st key"><span>닫힘 resize → <em>blur()</em></span><small>닫을 때 ②</small></div>
+      </div>
+      <p class="note">대가: 키보드가 올라오는 짧은 동안 입력창 글자·커서가 안 보인다. iOS 전용 (Android 시트는 웹뷰가 줄어 판정이 늘 false).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 ①② 코드 -->
+<section class="slide" data-sec="해결" aria-label="해결 ① ② 코드" hidden>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow"><b>해결 ① ②</b> · 코드</span>
+      <h2>키보드 열림은 <code>innerHeight − visualViewport.height &gt; 150</code></h2>
+      <p class="sub">iOS는 innerHeight가 그대로라 이 차이가 곧 키보드 높이. iPhone 소프트 키보드는 260pt 이상.</p>
+    </div>
+    <div class="viz">
+      <div class="codeline">
+<pre><span class="c">// ① onFocus</span>
+const isKeyboardShown = (vv) =&gt;
+  window.innerHeight - vv.height &gt; 150
+
+export function hideUntilKeyboardShown({ currentTarget: textarea }) {
+  const vv = window.visualViewport
+  if (!vv || !isIOS() || textarea.disabled) return
+  if (isKeyboardShown(vv)) return  <span class="c">// 커서 이동 탭</span>
+
+  <mark>textarea.style.opacity = '0'</mark>
+  const restore = () =&gt; { clearTimeout(timer)
+    vv.removeEventListener('resize', onResize)
+    textarea.style.opacity = '' }
+  <mark>const onResize = () =&gt; { if (isKeyboardShown(vv)) restore() }</mark>
+  const timer = setTimeout(restore, 1000)
+  vv.addEventListener('resize', onResize)
+}</pre>
+<pre><span class="c">// ② useEffect</span>
+let wasShown = isKeyboardShown(vv)
+const onResize = () =&gt; {
+  const shown = isKeyboardShown(vv)
+  <mark>if (wasShown &amp;&amp; !shown &amp;&amp;</mark>
+      <mark>document.activeElement === textarea)</mark>
+    <mark>textarea.blur()</mark>
+  wasShown = shown
+}
+vv.addEventListener('resize', onResize)
+
+<span class="c">// 다음 탭은 항상 focus부터 → ①이 매번 걸린다</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 ③ 프레임 -->
+<section class="slide" data-sec="해결" aria-label="해결 ③ 프레임 맞춤" hidden>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow"><b>해결 ③</b> · useFitToVisualViewport</span>
+      <h2>헤더 대신 채팅 프레임을 보이는 창에 맞춘다</h2>
+    </div>
+    <div class="viz">
+      <div class="svgbox">
+        <svg viewBox="0 -70 860 430" style="min-width:600px" role="img" aria-label="평소에는 프레임 높이만 보이는 창에 맞추고, 화면이 밀렸을 때만 프레임을 translateY로 끌어내려 안쪽 헤더도 같이 내려오게 한다">
+          <defs>
+            <marker id="aa" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="var(--accent)"/></marker>
+            <marker id="aw" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="var(--warn)"/></marker>
+          </defs>
+          <g font-family="Pretendard Variable, Pretendard, sans-serif" font-size="13">
+            <text x="170" y="-44" text-anchor="middle" font-weight="700" fill="var(--ink)">평소 · offsetTop 0</text>
+            <text x="170" y="-26" text-anchor="middle" fill="var(--muted)" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">transform 없음</text>
+            <rect x="90" y="0" width="160" height="300" rx="16" fill="var(--screen)" stroke="var(--ink)" stroke-width="1.5"/>
+            <rect x="94" y="4" width="152" height="196" rx="12" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/>
+            <rect x="102" y="12" width="136" height="22" rx="5" fill="var(--bubble-bot)"/>
+            <text x="112" y="28" font-size="12" fill="var(--ink)">헤더</text>
+            <rect x="102" y="168" width="136" height="22" rx="11" fill="var(--screen)" stroke="var(--accent)"/>
+            <text x="114" y="183" font-size="11" fill="var(--accent)">입력바</text>
+            <rect x="90" y="204" width="160" height="96" fill="var(--kb)"/>
+            <text x="170" y="256" text-anchor="middle" fill="var(--muted)" font-size="12">키보드</text>
+            <path d="M270 6 V198" stroke="var(--accent)" stroke-width="1.8" marker-start="url(#aa)" marker-end="url(#aa)" fill="none"/>
+            <text x="278" y="98" fill="var(--accent)" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">height =</text>
+            <text x="278" y="114" fill="var(--accent)" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">vv.height</text>
+
+            <text x="620" y="-44" text-anchor="middle" font-weight="700" fill="var(--ink)">①이 실패해 밀렸을 때 · 안전망</text>
+            <text x="620" y="-26" text-anchor="middle" fill="var(--muted)" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">translateY(offsetTop)</text>
+            <rect x="540" y="-60" width="160" height="300" rx="16" fill="none" stroke="var(--warn)" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <rect x="540" y="0" width="160" height="300" rx="16" fill="var(--screen)" stroke="var(--ink)" stroke-width="1.5"/>
+            <rect x="544" y="4" width="152" height="196" rx="12" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/>
+            <rect x="552" y="12" width="136" height="22" rx="5" fill="var(--bubble-bot)"/>
+            <text x="562" y="28" font-size="12" fill="var(--ink)">헤더도 같이 내려옴</text>
+            <rect x="552" y="168" width="136" height="22" rx="11" fill="var(--screen)" stroke="var(--accent)"/>
+            <rect x="540" y="204" width="160" height="96" fill="var(--kb)"/>
+            <path d="M520 -56 V0" stroke="var(--warn)" stroke-width="1.8" marker-start="url(#aw)" marker-end="url(#aw)" fill="none"/>
+            <text x="512" y="-22" text-anchor="end" fill="var(--warn)" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">offsetTop</text>
+            <text x="716" y="100" fill="var(--muted)" font-size="12">조상에 transform이 있으면</text>
+            <text x="716" y="118" fill="var(--muted)" font-size="12">안쪽 fixed 헤더의 기준이</text>
+            <text x="716" y="136" fill="var(--muted)" font-size="12">화면 → 프레임으로 바뀐다</text>
+          </g>
+        </svg>
+      </div>
+<pre>const apply = () =&gt; {
+  el.style.height = `${vv.height}px`
+  <mark>el.style.transform = vv.offsetTop ? `translateY(${vv.offsetTop}px)` : ''</mark>  <span class="c">// 평소엔 비워 fixed 기준 유지</span>
+}</pre>
+      <p class="note"><code>useLayoutEffect</code>로 첫 페인트 전에 맞춰 <code>h-dvh</code>로 한 번 그린 뒤 튀는 일을 막는다. 헤더 개별 보정과 transition은 지웠다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 ④ 목록 -->
+<section class="slide" data-sec="해결" aria-label="해결 ④ 목록 보정" hidden>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow"><b>해결 ④</b> · useChatScroll</span>
+      <h2>목록이 줄면 scrollTop을 올려 보던 끝을 붙잡는다</h2>
+    </div>
+    <div class="viz">
+      <div class="anchor-demo">
+        <div class="ad-phone" role="group" aria-label="목록 위치 보정 데모">
+          <div class="ad-vp" id="adVp">
+            <div class="ad-list" id="adList">
+              <div class="msg bot">어제 저녁 혈당은 안정적이었어요.</div>
+              <div class="msg user">오늘 아침은 어때?</div>
+              <div class="msg bot">공복 혈당이 평소보다 조금 높아요. 어젯밤 늦은 간식이 영향을 줬을 수 있어요.</div>
+              <div class="msg user">간식 줄여볼게</div>
+              <div class="msg bot">좋아요. 3일 정도 기록하면 차이를 보여드릴게요. (최신)</div>
+            </div>
+            <button class="ad-down" id="adDown" type="button" tabindex="-1" hidden>↓ 아래로</button>
+          </div>
+          <div class="ad-kb">입력바 + 키보드</div>
+        </div>
+        <div class="ad-ctrl">
+          <label for="adRange">키보드 높이</label>
+          <input type="range" id="adRange" min="0" max="150" value="90">
+          <label for="adAnchor"><input type="checkbox" id="adAnchor" checked> 보던 끝 유지 보정 (anchorShift)</label>
+          <dl class="ad-meter">
+            <dt>키보드</dt><dd id="adVal">0px</dd>
+            <dt>scrollTop 보정</dt><dd id="adShift">0px</dd>
+            <dt>가려진 최신 메시지</dt><dd id="adHidden">0px</dd>
+          </dl>
+          <p class="note">다시 늘면 쌓인 만큼 되돌린다. 그 사이 사용자가 스크롤했으면 버린다. 하단 스페이서는 계산에서 뺀다. CSS 스크롤 앵커링은 스크롤 영역이 줄어드는 경우를 잡지 않는다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 시뮬레이터 -->
+<section class="slide" data-sec="해결" aria-label="시뮬레이터" hidden>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow"><b>시뮬레이터</b> · 직접 비교</span>
+      <h2>Before · 중간 시도 · After를 여닫아 본다</h2>
+    </div>
+    <div class="viz">
+      <div class="sim">
+        <div class="sim-ctrl">
+          <div class="seg" role="radiogroup" aria-label="모드">
+            <input type="radio" name="mode" id="m-before" value="before" checked><label for="m-before">Before<small>밀린 뒤 헤더 보정</small></label>
+            <input type="radio" name="mode" id="m-mid" value="mid"><label for="m-mid">중간 시도<small>①③④ · blur 없음</small></label>
+            <input type="radio" name="mode" id="m-after" value="after"><label for="m-after">After<small>①②③④ · 최종</small></label>
+          </div>
+          <div class="actions">
+            <button class="btn pri" id="tapBtn" type="button">입력창 탭</button>
+            <button class="btn" id="closeBtn" type="button" aria-disabled="true">키보드 닫기</button>
+            <button class="btn" id="resetBtn" type="button">초기화</button>
+            <label class="slow" for="slowChk"><input type="checkbox" id="slowChk" checked> 느리게 ×3</label>
+          </div>
+          <p class="note">중간 시도는 탭 → 닫기 → <b>다시 탭</b>. <span class="concept">개념 모형 · 타이밍·픽셀은 실제와 다름</span></p>
+        </div>
+
+        <div class="phone-wrap">
+          <div class="phone" role="group" aria-label="채팅 화면 시뮬레이션">
+            <div class="screen" id="screen">
+              <div class="guide"><span>헤더 기준선</span></div>
+              <div class="page" id="page">
+                <div class="frame" id="frame">
+                  <div class="chat-hdr" id="hdr">
+                    <span class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span>
+                    <span class="date">10월 20일 (화)</span>
+                    <span class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M3 5h12M3 9h12M3 13h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span>
+                  </div>
+                  <div class="list-vp" id="listVp" title="키보드가 열려 있으면 탭해서 닫기">
+                    <div class="list" id="list">
+                      <div class="msg bot">안녕하세요! 오늘 식사나 혈당에 대해 궁금한 게 있으면 물어보세요.</div>
+                      <div class="msg user">오늘 점심 먹고 혈당이 좀 높게 나왔어</div>
+                      <div class="msg bot">점심 2시간 뒤 측정값이 목표 범위보다 조금 높았네요. 어떤 메뉴를 드셨는지 알려주시면 원인을 같이 살펴볼게요.</div>
+                      <div class="msg user">김치볶음밥이랑 콜라</div>
+                      <div class="msg bot">탄수화물과 당이 한 번에 들어온 조합이에요. 콜라를 제로 음료로 바꾸고 밥 양을 2/3로 줄여 보세요.</div>
+                      <div class="msg user">저녁은 뭐 먹으면 좋을까?</div>
+                      <div class="msg bot">채소와 단백질을 먼저 드시고 잡곡밥을 곁들이는 순서를 추천해요.</div>
+                      <div class="msg bot">내일 아침 공복 혈당도 기록해 두시면 비교해 드릴게요. (최신 메시지)</div>
+                    </div>
+                  </div>
+                  <div class="bar">
+                    <span class="round" aria-hidden="true">+</span>
+                    <div class="field-wrap" id="fieldWrap">
+                      <span class="ghost-tag" id="ghostTag" hidden>opacity 0 · 실제론 안 보임</span>
+                      <div class="field" id="field" role="button" tabindex="0" aria-label="입력창 탭">무엇이든 물어보세요</div>
+                    </div>
+                    <span class="round send" aria-hidden="true">↑</span>
+                  </div>
+                </div>
+              </div>
+              <div class="kb" id="kb" aria-hidden="true">
+                <div class="kb-row"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                <div class="kb-row"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                <div class="kb-row"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                <div class="kb-row"><span></span><span></span><span class="w"></span><span></span><span></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <dl class="readout">
+            <div><dt>visualViewport.height</dt><dd id="rVv">520</dd></div>
+            <div><dt>offsetTop</dt><dd id="rOff">0</dd></div>
+            <div><dt>헤더 화면 Y</dt><dd id="rHdr">0</dd></div>
+            <div><dt>입력창 opacity</dt><dd id="rOp">1</dd></div>
+            <div><dt>activeElement</dt><dd id="rAe">body</dd></div>
+            <div><dt>프레임 height</dt><dd id="rFr">520</dd></div>
+          </dl>
+          <div class="plot">
+            <div class="plot-head"><span>헤더 위치 (마지막 동작)</span><span>최대 이탈 <b id="maxDev">–</b></span></div>
+            <canvas id="plot" width="600" height="110" aria-hidden="true"></canvas>
+          </div>
+          <ol class="board" id="board"><li class="empty">동작별 최대 이탈이 여기 쌓인다</li></ol>
+          <ol class="log" id="log" aria-live="off"><li class="empty">입력창을 탭하면 이벤트 순서가 여기에 쌓인다.</li></ol>
+          <p class="sr-only" role="status" id="status"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 버린 대안 -->
+<section class="slide" data-sec="검증" aria-label="검토했지만 쓰지 않은 방법" hidden>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow"><b>대안</b> · 검토했지만 안 씀</span>
+      <h2>다른 길은 왜 안 됐나</h2>
+    </div>
+    <div class="viz">
+      <div class="cards">
+        <div class="card"><span class="mark no">✕</span><b><code>interactive-widget</code> · VirtualKeyboard API</b><span class="why">Chromium 계열 기능. WKWebView에선 기대하기 어렵다.</span></div>
+        <div class="card"><span class="mark no">✕</span><b><code>scrollIntoView</code> · scroll 보정</b><span class="why">이미 일어난 밀림을 뒤쫓는다. 원인 B와 같은 출렁임.</span></div>
+        <div class="card"><span class="mark no">✕</span><b><code>focus({ preventScroll: true })</code></b><span class="why">WebKit도 건너뛰지만 사용자 탭으로 생긴 focus엔 옵션을 못 준다.</span></div>
+        <div class="card"><span class="mark yes">→</span><b>네이티브가 웹뷰를 줄이기</b><span class="why">근본 해결. 남은 일로 넘겼다.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 15 테스트 -->
+<section class="slide" data-sec="검증" aria-label="테스트 범위" hidden>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow"><b>검증</b> · 테스트 범위</span>
+      <h2>단위 테스트가 지키는 것과 손으로 확인할 것</h2>
+    </div>
+    <div class="viz">
+      <div class="split">
+        <div class="col">
+          <h3><span class="mark yes">✓</span>vitest가 지킨다</h3>
+          <div class="pills">
+            <span class="pill g">150px 판정</span><span class="pill g">1초 fallback</span><span class="pill g">열림→닫힘에서만 blur</span>
+            <span class="pill g">리스너·rAF 정리</span><span class="pill g">목록 축소·복구 anchorShift</span><span class="pill g">사용자 스크롤 시 폐기</span>
+          </div>
+        </div>
+        <div class="col">
+          <h3><span class="mark no">!</span>jsdom에는 WebKit이 없다</h3>
+          <div class="pills">
+            <span class="pill r">"투명하면 안 민다"는 전제</span><span class="pill r">앱 새 실행 후 2회차</span>
+          </div>
+          <p class="note">iOS를 올릴 때마다 실기기에서 <b>앱 새 실행 후 5회 여닫기</b>를 손으로 확인한다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 체크리스트 -->
+<section class="slide" data-sec="다음" aria-label="체크리스트" hidden>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow"><b>체크리스트</b> · 다음에 비슷한 문제를 만나면</span>
+      <h2>iOS 웹뷰 키보드 이슈 점검 순서</h2>
+    </div>
+    <div class="viz">
+      <ul class="checks">
+        <li><span>transform 보정보다 <b>밀림 자체를 막을 수 있는지</b> 먼저 본다</span></li>
+        <li><span>focus·resize·scroll 순서를 <b>임시 로그</b>로 찍어 타이밍 확인</span></li>
+        <li><span>키보드 열림은 <code>innerHeight − vv.height</code>로 판정 (웹뷰가 줄어드는 환경에선 안 통함)</span></li>
+        <li><span>네이티브가 키보드를 내리면 <b>DOM 포커스도 푼다</b></span></li>
+        <li><span>조상 transform은 필요할 때만. 안쪽 fixed 기준이 바뀐다</span></li>
+        <li><span>검증은 새로고침이 아니라 <b>앱 새 실행 후 여러 번</b></span></li>
+        <li><span>같은 "헤더 튐"도 플랫폼마다 원인이 다르다 (iOS: WebKit 밀림 · Android: <code>adjust=pan</code>)</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 17 남은 일 -->
+<section class="slide" data-sec="다음" aria-label="남은 일" hidden>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow"><b>남은 일</b> · 후속과 미검증</span>
+      <h2>아직 열려 있는 것</h2>
+    </div>
+    <div class="viz">
+      <div class="todo">
+        <div class="card">
+          <span class="tag an">ANDROID · 네이티브 전달 예정 · 티켓 미생성</span>
+          <b>시트 Dialog 창 <code>adjust=pan</code></b>
+          <span class="why">키보드 올라오는 0.1~0.3초 헤더 튐. 시스템이 창 전체를 민다 → <code>SOFT_INPUT_ADJUST_NOTHING</code>, ime 패딩 유지. 완료 기준: 헤더 Y 변화 0.</span>
+        </div>
+        <div class="card">
+          <span class="tag io">iOS · 원천 수정 후보</span>
+          <b>네이티브가 키보드만큼 WKWebView 줄이기</b>
+          <span class="caution">innerHeight도 같이 줄어 ①이 포커스마다 1초 숨기는 회귀가 된다. <b>같은 배포에서 웹 트릭 ①②를 제거.</b></span>
+        </div>
+        <div class="card">
+          <span class="tag rk">위험 가설 · 확인 필요</span>
+          <b>사진 첨부 후 자동 <code>focus()</code></b>
+          <span class="why">키보드가 안 뜨면 포커스만 남아 다음 탭이 밀릴 수 있다. <code>keyboardDisplayRequiresUserAction</code> 확인. 스크립트 focus라 <code>preventScroll: true</code>로 피할 수 있다(실기기 확인).</span>
+        </div>
+        <div class="card">
+          <span class="tag un">미검증</span>
+          <b>검증 못 한 조건</b>
+          <div class="pills"><span class="pill">실기기</span><span class="pill">iOS 26.4 외 버전</span><span class="pill">하드웨어·플로팅 키보드</span><span class="pill">서드파티 키보드</span><span class="pill">가로 모드</span><span class="pill">VoiceOver</span></div>
+        </div>
+        <div class="card">
+          <span class="tag un">제안</span>
+          <b>트릭이 안 듣는 버전 감지</b>
+          <span class="why">1초 fallback 발동 횟수를 iOS 버전별로 수집 (Sentry breadcrumb 등).</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 부록 -->
+<section class="slide" data-sec="다음" aria-label="부록: 바뀐 파일과 소스" hidden>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow"><b>부록</b> · 파일과 소스</span>
+      <h2>바뀐 파일과 WebKit 소스 위치</h2>
+    </div>
+    <div class="viz">
+      <ul class="files" aria-label="채팅 화면 폴더 아래 바뀐 파일">
+        <li class="muted">app/(chat)/</li>
+        <li class="add">+ _lib/hideUntilKeyboardShown.ts (+ test)</li>
+        <li class="add">+ _hooks/useFitToVisualViewport.ts (+ test)</li>
+        <li class="del">_hooks/useStickyToVisualViewport.ts</li>
+        <li class="mod">~ _hooks/useChatScroll.ts (+ test)</li>
+        <li class="mod">~ _components/ChatShell.tsx · ChatHeader.tsx · ChatInputBar.tsx</li>
+      </ul>
+      <p class="eyebrow">WebKit main 2a0b884</p>
+      <div class="srcs">
+        <a href="https://github.com/WebKit/WebKit/blob/2a0b884795fadf3f2c635025f4ccf367f1d36488/Source/WebKit/UIProcess/ios/WKContentViewInteraction.mm#L2984-L3002">_zoomToRevealFocusedElement</a>
+        <a href="https://github.com/WebKit/WebKit/blob/2a0b884795fadf3f2c635025f4ccf367f1d36488/Source/WebKit/UIProcess/ios/WKContentViewInteraction.mm#L8708-L8741">_continueElementDidFocus</a>
+        <a href="https://github.com/WebKit/WebKit/blob/2a0b884795fadf3f2c635025f4ccf367f1d36488/Source/WebKit/UIProcess/ios/WKContentViewInteraction.mm#L2946-L2969">_keyboardWillShow / DidShow</a>
+        <a href="https://github.com/WebKit/WebKit/blob/2a0b884795fadf3f2c635025f4ccf367f1d36488/Source/WebKit/UIProcess/ios/RevealFocusedElementDeferrer.mm#L47-L55">RevealFocusedElementDeferrer::fulfill</a>
+        <a href="https://github.com/WebKit/WebKit/blob/2a0b884795fadf3f2c635025f4ccf367f1d36488/Source/WebKit/UIProcess/ios/WKContentViewInteraction.mm#L9476-L9515">_updateSelectionAssistantSuppressionState</a>
+        <a href="https://github.com/WebKit/WebKit/blob/2a0b884795fadf3f2c635025f4ccf367f1d36488/Source/WebKit/WebProcess/WebPage/Cocoa/WebPageCocoa.mm#L911-L926">isTransparentOrFullyClipped</a>
+        <a href="https://github.com/WebKit/WebKit/blob/2a0b884795fadf3f2c635025f4ccf367f1d36488/Source/WebKit/WebProcess/WebPage/Cocoa/WebPageCocoa.mm#L1039-L1041">EditorState에 싣기</a>
+        <a href="https://github.com/WebKit/WebKit/blob/2a0b884795fadf3f2c635025f4ccf367f1d36488/Source/WebCore/rendering/RenderLayer.cpp#L6739-L6751">RenderLayer::isTransparentRespectingParentFrames</a>
+        <a href="https://github.com/WebKit/WebKit/blob/2a0b884795fadf3f2c635025f4ccf367f1d36488/Source/WebCore/rendering/RenderObject.cpp#L2305-L2327">hasEmptyVisibleRectRespectingParentFrames</a>
+        <a href="https://github.com/WebKit/WebKit/blob/2a0b884795fadf3f2c635025f4ccf367f1d36488/Source/WebKit/WebProcess/WebPage/ios/WebPageIOS.mm#L2927">preventScroll 전달</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<nav class="bar" aria-label="슬라이드 이동">
+  <button type="button" id="prev" aria-label="이전 슬라이드">←</button>
+  <div class="track" id="track"></div>
+  <span class="count" id="count" aria-live="polite">1 / 18</span>
+  <button type="button" id="fsBtn" class="fs" aria-pressed="false" aria-label="전체 화면" title="전체 화면 (F)"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button type="button" id="next" aria-label="다음 슬라이드">→</button>
+</nav>    </article>
+    <div class="content">
+      <main>
+        <!-- 구독 섹션 -->
+        <section class="subscribe-inline">
+          <h3>새 글 알림 받기</h3>
+          <p>새로운 글이 발행되면 이메일로 알려드립니다.</p>
+          <form data-subscribe-form class="subscribe-inline-form">
+            <input
+              type="email"
+              name="email"
+              class="subscribe-input"
+              placeholder="이메일 주소"
+              required
+              autocomplete="email"
+            />
+            <button type="submit" class="subscribe-submit">구독</button>
+          </form>
+          <div data-subscribe-message class="subscribe-message" style="display: none"></div>
+        </section>
+
+        <div class="back-to-list">
+          <a href="/index.html" class="back-button">← 글 목록으로 돌아가기</a>
+        </div>
+      </main>
+      <script
+        src="https://utteranc.es/client.js"
+        repo="doong-jo/doong-jo.github.io"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async
+      ></script>
+    </div>
+    <script src="../common/common.js"></script>
+    <script src="../nav/nav.js"></script>
+    <script src="../subscribe/subscribe.js"></script>
+    <script src="../post/ios-keyboard-deck.js"></script>
+  </body>
+</html>
