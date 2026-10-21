@@ -6,7 +6,7 @@
     <link>https://doong-jo.github.io/</link>
     <atom:link href="https://doong-jo.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <language>ko-KR</language>
-    <lastBuildDate>Wed, 21 Oct 2026 00:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 20 Oct 2026 00:00:00 +0900</lastBuildDate>
     <managingEditor>doong-jo@github.io (Sungdong Cho)</managingEditor>
     <webMaster>doong-jo@github.io (Sungdong Cho)</webMaster>
 
@@ -14,7 +14,7 @@
       <title>iOS 웹뷰 키보드 노출 시 스크롤/화면 밀림 이슈 깔끔하게 해결하기</title>
       <link>https://doong-jo.github.io/posts/ios-webview-keyboard-scroll-shift.html</link>
       <description>iOS 웹뷰에서 키보드가 뜰 때 헤더가 화면 밖으로 밀리던 문제. 투명한 입력창은 WebKit이 밀지 않는다는 점을 이용해 밀림 자체를 막고, 드래그로 닫을 때 남는 포커스까지 정리했습니다.</description>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 +0900</pubDate>
+      <pubDate>Tue, 20 Oct 2026 00:00:00 +0900</pubDate>
       <guid isPermaLink="true">https://doong-jo.github.io/posts/ios-webview-keyboard-scroll-shift.html</guid>
       <author>doong-jo@github.io (Sungdong Cho)</author>
     </item>
