@@ -6,7 +6,7 @@
     <link>https://doong-jo.github.io/</link>
     <atom:link href="https://doong-jo.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <language>ko-KR</language>
-    <lastBuildDate>Sat, 29 Aug 2026 00:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 20 Oct 2026 00:00:00 +0900</lastBuildDate>
     <managingEditor>doong-jo@github.io (Sungdong Cho)</managingEditor>
     <webMaster>doong-jo@github.io (Sungdong Cho)</webMaster>
 
@@ -38,9 +38,9 @@
     </item>
 
     <item>
-      <title>프론트엔드 에러 핸들링, Sentry 설치가 전부가 아닙니다</title>
+      <title>에러 한 건이 알림이 되기까지</title>
       <link>https://doong-jo.github.io/posts/frontend-error-handling-beyond-throw-and-capture.html</link>
-      <description>분류·전파·표현·기록·운영 5단계 패턴. 커스텀 Error, React Query throwOnError, Sentry beforeSend, Ownership Rules, Dashboard, fatal/error 알림.</description>
+      <description>에러 한 건이 throw된 순간부터 알림이 울리기까지. normalize·classify·beforeSend, React Query·서버 컴포넌트 입구별 경로, Apps Script 알림 릴레이와 데일리 리포트.</description>
       <pubDate>Sat, 13 Jun 2026 00:00:00 +0900</pubDate>
       <guid isPermaLink="true">https://doong-jo.github.io/posts/frontend-error-handling-beyond-throw-and-capture.html</guid>
       <author>doong-jo@github.io (Sungdong Cho)</author>
